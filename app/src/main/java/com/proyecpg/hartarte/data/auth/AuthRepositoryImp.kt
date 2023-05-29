@@ -2,7 +2,9 @@ package com.proyecpg.hartarte.data.auth
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.proyecpg.hartarte.vo.Resource
+import kotlinx.coroutines.tasks.await
 
 class AuthRepositoryImp(
     private val firebaseAuth: FirebaseAuth,
@@ -12,7 +14,13 @@ class AuthRepositoryImp(
         get() = firebaseAuth.currentUser
 
     override suspend fun login(email: String, password: String): Resource<FirebaseUser> {
-        TODO("Añadir la funcion para loguearme")
+        return try {
+            val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            Resource.Success(result.user!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
     }
 
     override suspend fun signup(
@@ -20,10 +28,17 @@ class AuthRepositoryImp(
         email: String,
         password: String
     ): Resource<FirebaseUser> {
-        TODO("Añadir la funcion para registrarme")
+        return try {
+            val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            result.user?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(name).build())?.await()
+            return Resource.Success(result.user!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
     }
 
     override fun logout() {
-        TODO("Añadir la funcion para desloguearme")
+        firebaseAuth.signOut()
     }
 }
