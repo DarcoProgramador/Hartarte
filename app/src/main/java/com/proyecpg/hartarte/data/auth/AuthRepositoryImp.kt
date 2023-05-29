@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.data.auth
 
+import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -52,6 +53,11 @@ class AuthRepositoryImp @Inject constructor(
             Resource.Failure(e)
         }
     }
+
+    override suspend fun oneTapSignInWithGoogle(): Resource<BeginSignInResult> {
+        TODO("Tetornar el BeginSingInResult mediante esta funcion")
+    }
+
     override fun logout() {
         firebaseAuth.signOut()
     }
