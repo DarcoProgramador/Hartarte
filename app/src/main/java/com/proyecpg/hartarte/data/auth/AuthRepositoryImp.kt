@@ -1,16 +1,26 @@
 package com.proyecpg.hartarte.data.auth
 
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInResult
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.proyecpg.hartarte.utils.Constants.SIGN_IN_REQUEST
+import com.proyecpg.hartarte.utils.Constants.SIGN_UP_REQUEST
 import com.proyecpg.hartarte.utils.Resource
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import javax.inject.Named
 
 class AuthRepositoryImp @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private var oneTapClient: SignInClient,
+    @Named(SIGN_IN_REQUEST)
+    private var signInRequest: BeginSignInRequest,
+    @Named(SIGN_UP_REQUEST)
+    private var signUpRequest: BeginSignInRequest,
     ): AuthRepository {
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
@@ -55,7 +65,18 @@ class AuthRepositoryImp @Inject constructor(
     }
 
     override suspend fun oneTapSignInWithGoogle(): Resource<BeginSignInResult> {
-        TODO("Tetornar el BeginSingInResult mediante esta funcion")
+        return try {
+            val signInResult = oneTapClient.beginSignIn(signInRequest).await()
+            return Resource.Success(signInResult)
+        } catch (e: Exception) {
+            try {
+                val signUpResult = oneTapClient.beginSignIn(signUpRequest).await()
+                Resource.Success(signUpResult)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Resource.Failure(e)
+            }
+        }
     }
 
     override fun logout() {
