@@ -12,7 +12,7 @@ class AuthRepositoryImp(
         get() = firebaseAuth.currentUser
 
     override suspend fun login(email: String, password: String): Resource<FirebaseUser> {
-        TODO("Not yet implemented")
+        TODO("Añadir la funcion para loguearme")
     }
 
     override suspend fun signup(
@@ -20,12 +20,10 @@ class AuthRepositoryImp(
         email: String,
         password: String
     ): Resource<FirebaseUser> {
-        TODO("Not yet implemented")
+        TODO("Añadir la funcion para registrarme")
     }
 
     override fun logout() {
-        TODO("Not yet implemented")
+        TODO("Añadir la funcion para desloguearme")
     }
-
-
 }
