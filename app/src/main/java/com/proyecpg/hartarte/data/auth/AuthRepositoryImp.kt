@@ -3,7 +3,7 @@ package com.proyecpg.hartarte.data.auth
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.proyecpg.hartarte.vo.Resource
+import com.proyecpg.hartarte.utils.Resource
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 

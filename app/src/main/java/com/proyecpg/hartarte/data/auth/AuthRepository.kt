@@ -1,7 +1,7 @@
 package com.proyecpg.hartarte.data.auth
 
 import com.google.firebase.auth.FirebaseUser
-import com.proyecpg.hartarte.vo.Resource
+import com.proyecpg.hartarte.utils.Resource
 
 interface AuthRepository {
     val currentUser: FirebaseUser?
