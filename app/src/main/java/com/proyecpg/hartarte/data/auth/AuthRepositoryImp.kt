@@ -5,10 +5,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.proyecpg.hartarte.vo.Resource
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class AuthRepositoryImp(
-    private val firebaseAuth: FirebaseAuth,
-
+class AuthRepositoryImp @Inject constructor(
+    private val firebaseAuth: FirebaseAuth
     ): AuthRepository {
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
