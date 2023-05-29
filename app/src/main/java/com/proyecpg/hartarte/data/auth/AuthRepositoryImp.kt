@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.data.auth
 
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -36,6 +37,10 @@ class AuthRepositoryImp @Inject constructor(
             e.printStackTrace()
             Resource.Failure(e)
         }
+    }
+
+    override suspend fun singInWithCredentials(credentials: AuthCredential): Resource<FirebaseUser> {
+        TODO("add SingInWithCresentials to login with google")
     }
 
     override fun logout() {
