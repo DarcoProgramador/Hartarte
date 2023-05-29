@@ -40,9 +40,18 @@ class AuthRepositoryImp @Inject constructor(
     }
 
     override suspend fun singInWithCredentials(credentials: AuthCredential): Resource<FirebaseUser> {
-        TODO("add SingInWithCresentials to login with google")
+        return try {
+            val result = firebaseAuth.signInWithCredential(credentials).await()
+            val isNewUser = result.additionalUserInfo?.isNewUser ?: false
+            if (isNewUser) {
+                TODO("implement funtion addUserToFirestore() to add more data for the users")
+            }
+            return Resource.Success(result.user!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
     }
-
     override fun logout() {
         firebaseAuth.signOut()
     }
