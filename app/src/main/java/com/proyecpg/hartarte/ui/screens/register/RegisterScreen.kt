@@ -1,7 +1,5 @@
 package com.proyecpg.hartarte.ui.screens.register
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,9 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.ui.components.CustomPasswordField
 import com.proyecpg.hartarte.ui.components.CustomTextField
 import com.proyecpg.hartarte.ui.components.ProgressButton
-import com.proyecpg.hartarte.ui.screens.login.LoginState
 
 @Composable
 fun RegisterScreen(
@@ -77,13 +75,13 @@ fun RegisterScreen(
 
             TitleText( stringResource(id = R.string.title_password) )
 
-            password = CustomTextField( stringResource(id = R.string.password) )
+            password = CustomPasswordField( stringResource(id = R.string.password) )
 
             Spacer(modifier = Modifier.size(30.dp))
 
             TitleText( stringResource(id = R.string.title_password_confirm) )
 
-            passwordConfirmation = CustomTextField( stringResource(id = R.string.password_confirm) )
+            passwordConfirmation = CustomPasswordField( stringResource(id = R.string.password_confirm) )
 
             Spacer(modifier = Modifier.size(40.dp))
 
