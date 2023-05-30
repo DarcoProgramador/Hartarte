@@ -1,4 +1,4 @@
-package com.proyecpg.hartarte.ui.screens
+package com.proyecpg.hartarte.ui.screens.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +29,7 @@ import com.proyecpg.hartarte.ui.components.ProgressButton
 
 @Composable
 fun LoginScreen(
-    //State
+    state: LoginState
     //OnLoginClick
     //OnRegisterClick
 ) {
@@ -89,5 +88,6 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen(){
-    LoginScreen()
+    //Mientras se implemente el hilt
+    // LoginScreen(state = state)
 }
