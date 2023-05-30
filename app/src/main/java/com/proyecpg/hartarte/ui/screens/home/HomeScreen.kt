@@ -33,7 +33,9 @@ fun HomeScreen(
         if (it){
             HomeScreenContent()
         }else{
-            navigateToAuthScrens()
+            LaunchedEffect(false) {
+                navigateToAuthScrens()
+            }
         }
     }
 }
