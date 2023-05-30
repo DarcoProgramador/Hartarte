@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Hartarte</string>
+
+    //Text fields
+    <string name="show_password">Mostrar contraseña</string>
+    <string name="hide_password">Ocultar contraseña</string>
+
+    //Login screen
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="no_account">¿No tienes una cuenta? Crea una aquí</string>
+    <string name="google_login">Iniciar sesión con Google</string>
+    <string name="facebool_login">Iniciar sesión con Facebook</string>
+    <string name="google_logo">Logo Google</string>
+    <string name="facebook_logo">Logo Facebook</string>
+    <string name="missing_credentials">Faltan credenciales en los campos</string>
+
+    //Register screen
 </resources>
