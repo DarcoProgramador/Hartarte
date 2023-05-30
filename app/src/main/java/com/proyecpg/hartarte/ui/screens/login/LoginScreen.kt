@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.ui.screens.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,8 +12,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -29,10 +32,25 @@ import com.proyecpg.hartarte.ui.components.ProgressButton
 
 @Composable
 fun LoginScreen(
-    state: LoginState
-    //OnLoginClick
+    state: LoginState,
+    //onLoginClick : () -> Unit,
+    onEventLogin : (LoginEvent) -> Unit
     //OnRegisterClick
 ) {
+
+    val context = LocalContext.current
+    LaunchedEffect(key1 = state.loginError) {
+        state.loginError?.let { error ->
+            Toast.makeText(
+                context,
+                error,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    var email: String
+    var password: String
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -50,15 +68,26 @@ fun LoginScreen(
             modifier = Modifier.padding(horizontal = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomTextField( stringResource(id = R.string.email) )
+            email = CustomTextField( stringResource(id = R.string.email) )
 
             Spacer(modifier = Modifier.size(30.dp))
 
-            CustomPasswordField( stringResource(id = R.string.password) )
+            password = CustomPasswordField( stringResource(id = R.string.password) )
 
             Spacer(modifier = Modifier.size(30.dp))
             
-            ProgressButton( stringResource(id = R.string.login), state.isLoading)
+            ProgressButton(
+                stringResource(id = R.string.login),
+                state.isLoading,
+                onEventClick = {
+                    onEventLogin(
+                        LoginEvent.LoginClicked(
+                                email = email,
+                                password = password
+                        )
+                    )
+                }
+            )
 
             Spacer(modifier = Modifier.size(10.dp))
 
@@ -88,5 +117,5 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen(){
-    LoginScreen(state = LoginState(isLoading = false))
+    LoginScreen(state = LoginState(isLoading = false), onEventLogin = {})
 }

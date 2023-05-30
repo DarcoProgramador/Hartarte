@@ -15,11 +15,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 
 @Composable
 fun ProgressButton(
     text: String,
-    displayProgressBar: Boolean
+    displayProgressBar: Boolean,
+    onEventClick : () -> Unit
 ) {
     if(!displayProgressBar) {
         Button(
@@ -31,9 +33,7 @@ fun ProgressButton(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ),
-            onClick = {
-                /* TODO: Llamar al respectivo OnClick */
-            }
+            onClick = onEventClick
         ) {
             Text(
                 text = text,
