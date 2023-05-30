@@ -17,6 +17,7 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository:AuthRepository)
     : ViewModel() {
+
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
 
@@ -32,17 +33,11 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun changeLogged(){
-        viewModelScope.launch{
-            _logged.emit(true)
-        }
-    }
-
     private suspend fun isLogged(){
         if (currentUser != null){
-            _logged.emit(true)
+            _logged.update { true }
         }else{
-            _logged.emit(false)
+            _logged.update { false }
         }
     }
 

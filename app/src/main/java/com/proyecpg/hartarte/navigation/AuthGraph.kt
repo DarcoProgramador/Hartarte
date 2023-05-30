@@ -20,7 +20,7 @@ fun NavGraphBuilder.authNavGraph(
     ){
         composable(AuthScreens.LoginScreen.route){
             LoginScreen(state = LoginState(isLoading = false), onLoginClick = {
-                authViewModel.changeLogged()
+                TODO("Add login event here")
                 navController.navigate(Graph.HOME){
                     popUpTo(AuthScreens.LoginScreen.route){
                         inclusive = true
