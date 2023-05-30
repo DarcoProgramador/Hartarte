@@ -62,13 +62,17 @@ class AuthViewModel @Inject constructor(
                 when(it){
                     is Resource.Success -> {
                         _stateLogin.update { state ->
-                            state.copy(isLoginSuccessful = true)
+                            state.copy(isLoginSuccessful = true,
+                                        isLoading = false
+                            )
                         }
                         isLogged()
                     }
                     is Resource.Failure -> {
                         _stateLogin.update {state ->
-                            state.copy(loginError = "Ha ocurrido un error")
+                            state.copy(loginError = "Ha ocurrido un error",
+                                        isLoading = false
+                            )
                         }
                     }
                     is Resource.Loading -> {

@@ -1,5 +1,9 @@
 package com.proyecpg.hartarte.navigation
 
+import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -19,14 +23,23 @@ fun NavGraphBuilder.authNavGraph(
         startDestination = AuthScreens.LoginScreen.route
     ){
         composable(AuthScreens.LoginScreen.route){
-            LoginScreen(state = LoginState(isLoading = false), onLoginClick = {
-                TODO("Add login event here")
-                navController.navigate(Graph.HOME){
-                    popUpTo(AuthScreens.LoginScreen.route){
-                        inclusive = true
+            val state by authViewModel.stateLogin.collectAsStateWithLifecycle()
+
+            LaunchedEffect(key1 = state.isLoginSuccessful) {
+                if (state.isLoginSuccessful){
+                    navController.navigate(Graph.HOME){
+                        popUpTo(AuthScreens.LoginScreen.route){
+                            inclusive = true
+                        }
                     }
+                    authViewModel.resetState()
                 }
-            })
+
+            }
+            LoginScreen(
+                state = state,
+                onEventLogin = authViewModel::process
+            )
         }
         composable(AuthScreens.RegisterScreen.route){
             RegisterScreen(state = RegisterState(isLoading = false))
