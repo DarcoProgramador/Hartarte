@@ -58,7 +58,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.size(30.dp))
             
-            ProgressButton( stringResource(id = R.string.login), false )
+            ProgressButton( stringResource(id = R.string.login), state.isLoading)
 
             Spacer(modifier = Modifier.size(10.dp))
 
@@ -88,6 +88,5 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen(){
-    //Mientras se implemente el hilt
-    // LoginScreen(state = state)
+    LoginScreen(state = LoginState(isLoading = false))
 }
