@@ -85,7 +85,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.size(40.dp))
 
-            ProgressButton( stringResource(id = R.string.register), false )
+            ProgressButton( stringResource(id = R.string.register), state.isLoading )
         }
     }
 }
