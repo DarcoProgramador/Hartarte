@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Hartarte</string>
 
+    //Globales
+    <string name="back">Regresar</string>
+
     //Text fields
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
@@ -14,7 +17,26 @@
     <string name="facebool_login">Iniciar sesión con Facebook</string>
     <string name="google_logo">Logo Google</string>
     <string name="facebook_logo">Logo Facebook</string>
-    <string name="missing_credentials">Faltan credenciales en los campos</string>
+
+    //Register screen
+    <string name="register">Crear cuenta</string>
+    <string name="title_user">Ingrese su nombre de usuario</string>
+    <string name="username">Nombre de usuario</string>
+    <string name="title_email">Ingrese su correo electrónico</string>
+    <string name="title_password">Ingrese su contraseña</string>
+    <string name="title_password_confirm">Confirme su contraseña</string>
+    <string name="password_confirm">Confirmar contraseñas</string>
+
+    //Errores en login y register screen
+    <string name="error_missing_username">Ingrese un nombre de usuario</string>
+    <string name="error_missing_email">Ingrese el correo electrónico</string>
+    <string name="error_missing_password">Ingrese la contraseña</string>
+    <string name="error_missing_password_confirmation">Confirme su contraseña</string>
+    <string name="error_missing_credentials">Faltan credenciales en los campos</string>
+    <string name="error_invalid_email">Correo electrónico inválido</string>
+    <string name="error_invalid_credentials">Los datos ingresados son incorrectos, intente de nuevo</string>
+    <string name="error_password_confirmation_match">Las contraseñas no coinciden</string>
+    <string name="error_password_weak">La contraseña es muy débil, ingrese números y caracteres especiales</string>
 
     //Otros
     <string name="web_client_id">977446594568-4mfefmfj6kg4dpqqfnbi97apc093bo9n.apps.googleusercontent.com</string>

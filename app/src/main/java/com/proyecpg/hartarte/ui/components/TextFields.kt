@@ -28,7 +28,7 @@ import com.proyecpg.hartarte.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTextField(placeholder: String){
+fun CustomTextField(placeholder: String): String {
 
     var text by remember { (mutableStateOf("")) }
 
@@ -52,13 +52,15 @@ fun CustomTextField(placeholder: String){
             )
         }
     )
+
+    return text
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomPasswordField(placeholder: String){
+fun CustomPasswordField(placeholder: String): String {
 
-    var text by remember { (mutableStateOf("")) }
+    var password by remember { (mutableStateOf("")) }
     var passwordVisible by remember { mutableStateOf(false) }
 
     OutlinedTextField(
@@ -69,8 +71,8 @@ fun CustomPasswordField(placeholder: String){
         colors = TextFieldDefaults.textFieldColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
-        value = text,
-        onValueChange = {text = it},
+        value = password,
+        onValueChange = {password = it},
         placeholder = {
             Text(
                 text = placeholder,
@@ -86,7 +88,6 @@ fun CustomPasswordField(placeholder: String){
                 painterResource(id = R.drawable.ic_visibility_on)
             else painterResource(id = R.drawable.ic_visibility_off)
 
-            // Please provide localized description for accessibility services
             val description = if (passwordVisible)
                 stringResource(id = R.string.hide_password)
             else stringResource(id = R.string.show_password)
@@ -101,4 +102,6 @@ fun CustomPasswordField(placeholder: String){
             }
         )
     )
+
+    return password
 }
