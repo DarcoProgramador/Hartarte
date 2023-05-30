@@ -16,5 +16,6 @@
     <string name="facebook_logo">Logo Facebook</string>
     <string name="missing_credentials">Faltan credenciales en los campos</string>
 
-    //Register screen
+    //Otros
+    <string name="web_client_id">977446594568-4mfefmfj6kg4dpqqfnbi97apc093bo9n.apps.googleusercontent.com</string>
 </resources>
