@@ -5,11 +5,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 
 @Composable
 fun NavigationRoot(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    authViewModel: AuthViewModel
 ) {
     NavHost(
     navController = navController,
@@ -21,7 +23,16 @@ fun NavigationRoot(
         )
 
         composable(Graph.HOME){
-            HomeScreen()
+            HomeScreen(
+                viewModel = authViewModel,
+                navigateToAuthScrens = {
+                    navController.navigate(Graph.AUTHENTICATION){
+                        popUpTo(Graph.HOME){
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
     }
 }
