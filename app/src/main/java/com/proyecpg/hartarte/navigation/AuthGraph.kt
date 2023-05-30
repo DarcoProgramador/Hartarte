@@ -34,7 +34,6 @@ fun NavGraphBuilder.authNavGraph(
                     }
                     authViewModel.resetState()
                 }
-
             }
             LoginScreen(
                 state = state,
