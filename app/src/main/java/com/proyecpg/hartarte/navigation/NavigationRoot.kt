@@ -20,9 +20,9 @@ fun NavigationRoot(
     startDestination = Graph.HOME
     ){
         authNavGraph(
-            navController = navController
+            navController = navController,
+            authViewModel = authViewModel
         )
-
         composable(Graph.HOME){
             HomeScreen(
                 viewModel = authViewModel,

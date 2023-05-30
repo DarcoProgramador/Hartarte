@@ -32,6 +32,12 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun changeLogged(){
+        viewModelScope.launch{
+            _logged.emit(true)
+        }
+    }
+
     private suspend fun isLogged(){
         if (currentUser != null){
             _logged.emit(true)

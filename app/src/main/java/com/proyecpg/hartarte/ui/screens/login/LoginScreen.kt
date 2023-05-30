@@ -29,8 +29,8 @@ import com.proyecpg.hartarte.ui.components.ProgressButton
 
 @Composable
 fun LoginScreen(
-    state: LoginState
-    //OnLoginClick
+    state: LoginState,
+    onLoginClick : () -> Unit
     //OnRegisterClick
 ) {
     Column(
@@ -58,7 +58,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.size(30.dp))
             
-            ProgressButton( stringResource(id = R.string.login), state.isLoading)
+            ProgressButton( stringResource(id = R.string.login), state.isLoading, onEventClick = onLoginClick)
 
             Spacer(modifier = Modifier.size(10.dp))
 
@@ -88,5 +88,5 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen(){
-    LoginScreen(state = LoginState(isLoading = false))
+    LoginScreen(state = LoginState(isLoading = false), onLoginClick = {})
 }

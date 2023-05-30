@@ -19,7 +19,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ProgressButton(
     text: String,
-    displayProgressBar: Boolean
+    displayProgressBar: Boolean,
+    onEventClick : () -> Unit
 ) {
     if(!displayProgressBar) {
         Button(
@@ -31,9 +32,7 @@ fun ProgressButton(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ),
-            onClick = {
-                /* TODO: Llamar al respectivo OnClick */
-            }
+            onClick = onEventClick
         ) {
             Text(
                 text = text,

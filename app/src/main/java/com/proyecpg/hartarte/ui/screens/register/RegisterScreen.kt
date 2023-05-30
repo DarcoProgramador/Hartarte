@@ -85,7 +85,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.size(40.dp))
 
-            ProgressButton( stringResource(id = R.string.register), state.isLoading )
+            ProgressButton( stringResource(id = R.string.register), state.isLoading , onEventClick = { TODO("Añadir evento para registrar") })
         }
     }
 }
