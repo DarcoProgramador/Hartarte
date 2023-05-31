@@ -52,7 +52,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private suspend fun isLogged(){
+    fun isLogged(){
         if (currentUser != null){
             _logged.update { true }
         }else{

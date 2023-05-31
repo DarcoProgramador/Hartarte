@@ -55,7 +55,7 @@ class AuthRepositoryImp @Inject constructor(
             val result = firebaseAuth.signInWithCredential(credentials).await()
             val isNewUser = result.additionalUserInfo?.isNewUser ?: false
             if (isNewUser) {
-                TODO("implement funtion addUserToFirestore() to add more data for the users")
+               // TODO("implement funtion addUserToFirestore() to add more data for the users")
             }
             return Resource.Success(result.user!!)
         } catch (e: Exception) {

@@ -41,7 +41,12 @@ fun LoginScreen(
     onEventLogin : (LoginEvent) -> Unit,
     onSignInGoogleClick: () -> Unit
 ) {
+    var email: String
+    var password: String
+
+
     val context = LocalContext.current
+
     LaunchedEffect(key1 = state.loginError) {
         state.loginError?.let { error ->
             Toast.makeText(
@@ -51,9 +56,6 @@ fun LoginScreen(
             ).show()
         }
     }
-
-    var email: String
-    var password: String
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

@@ -2,7 +2,6 @@ package com.proyecpg.hartarte.navigation
 
 import android.app.Activity
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,7 +19,6 @@ import com.proyecpg.hartarte.ui.components.OneTapSignIn
 import com.proyecpg.hartarte.ui.components.SignInWithGoogle
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.login.LoginScreen
-import com.proyecpg.hartarte.ui.screens.login.LoginState
 import com.proyecpg.hartarte.ui.screens.register.RegisterScreen
 import com.proyecpg.hartarte.ui.screens.register.RegisterState
 import com.proyecpg.hartarte.utils.Constants
@@ -69,6 +67,7 @@ fun NavGraphBuilder.authNavGraph(
                                 inclusive = true
                             }
                         }
+                        authViewModel.resetState()
                     }
                 },
                 viewModel = authViewModel

@@ -14,12 +14,11 @@ fun SignInWithGoogle(
     navigateToHomeScreen: (signedIn: Boolean) -> Unit
 ) {
     when(val signInWithGoogleResponse = viewModel.signInWithGoogleResponse) {
-        is Resource.Loading -> {}
+        is Resource.Loading -> {/*TODO: Hacer cargar el boton de google*/}
         is Resource.Success -> signInWithGoogleResponse.result?.let { signedIn ->
             LaunchedEffect(signedIn) {
-                if (signedIn != null){
-                    navigateToHomeScreen(true)
-                }
+                viewModel.isLogged()
+                navigateToHomeScreen(true)
             }
         }
         is Resource.Failure -> LaunchedEffect(Unit) {
