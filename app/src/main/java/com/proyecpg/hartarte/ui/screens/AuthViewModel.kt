@@ -1,7 +1,12 @@
 package com.proyecpg.hartarte.ui.screens
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.identity.BeginSignInResult
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseUser
 import com.proyecpg.hartarte.data.auth.AuthRepository
@@ -17,8 +22,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository:AuthRepository)
-    : ViewModel() {
+    private val authRepository:AuthRepository,
+    val oneTapClient: SignInClient
+    ) : ViewModel() {
+
+    var oneTapSignInResponse by mutableStateOf<Resource<BeginSignInResult>>(Resource.Success(null))
+        private set
+    var signInWithGoogleResponse by mutableStateOf<Resource<FirebaseUser>>(Resource.Success(null))
+        private set
 
     private val _stateLogin = MutableStateFlow(LoginState())
     val stateLogin = _stateLogin.asStateFlow()
@@ -91,10 +102,18 @@ class AuthViewModel @Inject constructor(
 
 
     fun signInWithCredentials(credential: AuthCredential){
-        TODO("Hacer logueo con credenciales")
+        viewModelScope.launch {
+            oneTapSignInResponse = Resource.Loading
+
+            signInWithGoogleResponse = authRepository.singInWithCredentials(credential)
+        }
     }
 
     fun oneTapSignIn(){
-        TODO("Hacer llamado al oneTap de google")
+        viewModelScope.launch {
+            oneTapSignInResponse = Resource.Loading
+
+            oneTapSignInResponse = authRepository.oneTapSignInWithGoogle()
+        }
     }
 }
