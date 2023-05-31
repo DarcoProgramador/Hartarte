@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecpg.hartarte.R
-import com.proyecpg.hartarte.ui.components.CustomPasswordField
-import com.proyecpg.hartarte.ui.components.CustomTextField
+import com.proyecpg.hartarte.ui.components.customPasswordField
+import com.proyecpg.hartarte.ui.components.customTextField
 import com.proyecpg.hartarte.ui.components.ProgressButton
 
 @Composable
@@ -63,25 +63,25 @@ fun RegisterScreen(
 
             TitleText( stringResource(id = R.string.title_user) )
 
-            username = CustomTextField( stringResource(id = R.string.username))
+            username = customTextField( stringResource(id = R.string.username))
 
             Spacer(modifier = Modifier.size(30.dp))
 
             TitleText( stringResource(id = R.string.title_email) )
 
-            email = CustomTextField( stringResource(id = R.string.email) )
+            email = customTextField( stringResource(id = R.string.email) )
 
             Spacer(modifier = Modifier.size(30.dp))
 
             TitleText( stringResource(id = R.string.title_password) )
 
-            password = CustomPasswordField( stringResource(id = R.string.password) )
+            password = customPasswordField( stringResource(id = R.string.password) )
 
             Spacer(modifier = Modifier.size(30.dp))
 
             TitleText( stringResource(id = R.string.title_password_confirm) )
 
-            passwordConfirmation = CustomPasswordField( stringResource(id = R.string.password_confirm) )
+            passwordConfirmation = customPasswordField( stringResource(id = R.string.password_confirm) )
 
             Spacer(modifier = Modifier.size(40.dp))
 

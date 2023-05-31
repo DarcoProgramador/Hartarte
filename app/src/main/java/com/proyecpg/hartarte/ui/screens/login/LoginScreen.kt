@@ -24,8 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecpg.hartarte.R
-import com.proyecpg.hartarte.ui.components.CustomPasswordField
-import com.proyecpg.hartarte.ui.components.CustomTextField
+import com.proyecpg.hartarte.ui.components.customPasswordField
+import com.proyecpg.hartarte.ui.components.customTextField
 import com.proyecpg.hartarte.ui.components.FacebookLoginButton
 import com.proyecpg.hartarte.ui.components.GoogleLoginButton
 import com.proyecpg.hartarte.ui.components.ProgressButton
@@ -68,11 +68,11 @@ fun LoginScreen(
             modifier = Modifier.padding(horizontal = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            email = CustomTextField( stringResource(id = R.string.email) )
+            email = customTextField( stringResource(id = R.string.email) )
 
             Spacer(modifier = Modifier.size(30.dp))
 
-            password = CustomPasswordField( stringResource(id = R.string.password) )
+            password = customPasswordField( stringResource(id = R.string.password) )
 
             Spacer(modifier = Modifier.size(30.dp))
             

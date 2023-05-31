@@ -13,8 +13,8 @@
     <string name="password">Contraseña</string>
     <string name="login">Iniciar sesión</string>
     <string name="no_account">¿No tienes una cuenta? Crea una aquí</string>
-    <string name="google_login">Iniciar sesión con Google</string>
-    <string name="facebool_login">Iniciar sesión con Facebook</string>
+    <string name="google_login">Iniciar con Google</string>
+    <string name="facebool_login">Iniciar con Facebook</string>
     <string name="google_logo">Logo Google</string>
     <string name="facebook_logo">Logo Facebook</string>
 
