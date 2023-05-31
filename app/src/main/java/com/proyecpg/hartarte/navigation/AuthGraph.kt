@@ -89,6 +89,9 @@ fun NavGraphBuilder.authNavGraph(
                 onEventLogin = authViewModel::process,
                 onSignInGoogleClick = {
                     authViewModel.oneTapSignIn()
+                },
+                navigateToRegister = {
+                    navController.navigate(AuthScreens.RegisterScreen.route)
                 }
             )
         }
