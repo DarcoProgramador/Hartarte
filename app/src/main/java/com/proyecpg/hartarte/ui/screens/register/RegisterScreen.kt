@@ -25,8 +25,8 @@ import com.proyecpg.hartarte.ui.components.ProgressButton
 
 @Composable
 fun RegisterScreen(
-    state: RegisterState
-    //OnLoginClick
+    state: RegisterState,
+    navigateToLogin : () -> Unit
     //OnRegisterClick
 ){
 
@@ -41,7 +41,7 @@ fun RegisterScreen(
             .padding(horizontal = 40.dp, vertical = 40.dp)
     ) {
         item {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = navigateToLogin) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = stringResource(id = R.string.back)
@@ -105,5 +105,8 @@ fun TitleText(text: String){
 @Preview(showBackground = true)
 @Composable
 fun PreviewRegisterScreen(){
-    RegisterScreen(state = RegisterState(isLoading = false))
+    RegisterScreen(
+        state = RegisterState(isLoading = false),
+        navigateToLogin = {}
+    )
 }

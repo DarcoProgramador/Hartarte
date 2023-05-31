@@ -34,7 +34,8 @@ import com.proyecpg.hartarte.ui.components.ProgressButton
 fun LoginScreen(
     state: LoginState,
     onEventLogin : (LoginEvent) -> Unit,
-    onSignInGoogleClick: () -> Unit
+    onSignInGoogleClick: () -> Unit,
+    navigateToRegister: () -> Unit
 ) {
     var email: String
     var password: String
@@ -99,7 +100,7 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.onBackground
                 ),
                 modifier = Modifier.clickable {
-                    /* TODO: Llamar a la pantalla RegisterScreen */
+                    navigateToRegister()
                 }
             )
 
@@ -117,5 +118,9 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen(){
-    LoginScreen(state = LoginState(isLoading = false), onEventLogin = {}, onSignInGoogleClick = {})
+    LoginScreen(state = LoginState(isLoading = false),
+        onEventLogin = {},
+        onSignInGoogleClick = {},
+        navigateToRegister = {}
+    )
 }

@@ -89,11 +89,19 @@ fun NavGraphBuilder.authNavGraph(
                 onEventLogin = authViewModel::process,
                 onSignInGoogleClick = {
                     authViewModel.oneTapSignIn()
+                },
+                navigateToRegister = {
+                    navController.navigate(AuthScreens.RegisterScreen.route)
                 }
             )
         }
         composable(AuthScreens.RegisterScreen.route){
-            RegisterScreen(state = RegisterState(isLoading = false))
+            RegisterScreen(
+                state = RegisterState(isLoading = false),
+                navigateToLogin = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
