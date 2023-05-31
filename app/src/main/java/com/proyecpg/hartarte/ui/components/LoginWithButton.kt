@@ -23,7 +23,7 @@ import com.proyecpg.hartarte.R
 
 @Composable
 fun GoogleLoginButton(
-    //OnClick
+    onClick : () -> Unit
 ){
 
     Button(
@@ -35,9 +35,8 @@ fun GoogleLoginButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
-        onClick = {
-            /* TODO: Llamar a la respectiva función OnClick */
-        }
+        onClick = onClick
+
     ) {
         Image(
             painter = painterResource(id = R.drawable.img_google),

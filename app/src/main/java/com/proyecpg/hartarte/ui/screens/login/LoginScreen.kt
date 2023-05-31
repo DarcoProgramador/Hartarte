@@ -33,12 +33,15 @@ import com.proyecpg.hartarte.ui.components.ProgressButton
 @Composable
 fun LoginScreen(
     state: LoginState,
-    //onLoginClick : () -> Unit,
-    onEventLogin : (LoginEvent) -> Unit
-    //OnRegisterClick
+    onEventLogin : (LoginEvent) -> Unit,
+    onSignInGoogleClick: () -> Unit
 ) {
+    var email: String
+    var password: String
+
 
     val context = LocalContext.current
+
     LaunchedEffect(key1 = state.loginError) {
         state.loginError?.let { error ->
             Toast.makeText(
@@ -48,9 +51,6 @@ fun LoginScreen(
             ).show()
         }
     }
-
-    var email: String
-    var password: String
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,7 +105,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.size(80.dp))
 
-            GoogleLoginButton()
+            GoogleLoginButton(onSignInGoogleClick)
 
             Spacer(modifier = Modifier.size(30.dp))
 
@@ -117,5 +117,5 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen(){
-    LoginScreen(state = LoginState(isLoading = false), onEventLogin = {})
+    LoginScreen(state = LoginState(isLoading = false), onEventLogin = {}, onSignInGoogleClick = {})
 }
