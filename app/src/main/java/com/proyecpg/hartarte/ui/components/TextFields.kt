@@ -22,13 +22,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecpg.hartarte.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTextField(placeholder: String): String {
+fun customTextField(placeholder: String): String {
 
     var text by remember { (mutableStateOf("")) }
 
@@ -42,13 +43,13 @@ fun CustomTextField(placeholder: String): String {
         ),
         value = text,
         onValueChange = {text = it},
+        textStyle = TextStyle(
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            fontSize = 15.sp
+        ),
         placeholder = {
             Text(
-                text = placeholder,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = TextStyle(
-                    fontSize = 16.sp
-                )
+                text = placeholder
             )
         }
     )
@@ -58,7 +59,7 @@ fun CustomTextField(placeholder: String): String {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomPasswordField(placeholder: String): String {
+fun customPasswordField(placeholder: String): String {
 
     var password by remember { (mutableStateOf("")) }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -73,13 +74,13 @@ fun CustomPasswordField(placeholder: String): String {
         ),
         value = password,
         onValueChange = {password = it},
+        textStyle = TextStyle(
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            fontSize = 15.sp
+        ),
         placeholder = {
             Text(
-                text = placeholder,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = TextStyle(
-                    fontSize = 16.sp
-                )
+                text = placeholder
             )
         },
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
