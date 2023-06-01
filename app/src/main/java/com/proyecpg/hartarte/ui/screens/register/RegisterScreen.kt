@@ -26,8 +26,8 @@ import com.proyecpg.hartarte.ui.components.ProgressButton
 @Composable
 fun RegisterScreen(
     state: RegisterState,
-    navigateToLogin : () -> Unit
-    //OnRegisterClick
+    navigateToLogin : () -> Unit,
+    onRegisterEvent: (RegisterEvent) -> Unit
 ){
 
     var username: String
@@ -85,7 +85,18 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.size(40.dp))
 
-            ProgressButton( stringResource(id = R.string.register), state.isLoading , onEventClick = { TODO("Añadir evento para registrar") })
+            ProgressButton(
+                stringResource(id = R.string.register),
+                state.isLoading ,
+                onEventClick = {
+                    onRegisterEvent(RegisterEvent.RegisterClicked(
+                        username = username,
+                        email = email,
+                        password = password,
+                        comfirmPassword = passwordConfirmation
+                    ))
+                }
+            )
         }
     }
 }
@@ -107,6 +118,7 @@ fun TitleText(text: String){
 fun PreviewRegisterScreen(){
     RegisterScreen(
         state = RegisterState(isLoading = false),
-        navigateToLogin = {}
+        navigateToLogin = {},
+        onRegisterEvent = {}
     )
 }
