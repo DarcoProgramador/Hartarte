@@ -98,7 +98,7 @@ fun NavGraphBuilder.authNavGraph(
             )
         }
         composable(AuthScreens.RegisterScreen.route){
-            val registerViewModel : RegisterViewModel = hiltViewModel()
+            val registerViewModel  = hiltViewModel<RegisterViewModel>()
             val stateRegister by registerViewModel.stateRegister.collectAsStateWithLifecycle()
 
             LaunchedEffect(key1 = stateRegister.isRegisterSuccessful) {

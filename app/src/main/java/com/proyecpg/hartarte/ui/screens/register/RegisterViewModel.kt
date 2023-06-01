@@ -1,11 +1,14 @@
 package com.proyecpg.hartarte.ui.screens.register
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.auth.AuthRepository
+import com.proyecpg.hartarte.utils.Constants
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -35,13 +38,16 @@ class RegisterViewModel @Inject constructor(
         password: String,
         comfirmPassword: String
     ){
+        //TODO:Hacer que use los archivos de string resource para mostrar el texto del error cuando se necesite
         viewModelScope.launch {
             _stateRegister.update { it.copy(isLoading = true) }
+
+            delay(1000) //para ver que carga
 
             if (password != comfirmPassword){
                 _stateRegister.update { it.copy(
                     isLoading = false,
-                    registerError = R.string.error_password_confirmation_match
+                    registerError = "Las contraseñas no coinciden"
                 )
                 }
                 return@launch
@@ -50,7 +56,7 @@ class RegisterViewModel @Inject constructor(
             val result = authRepository.signup(username, email, password)
 
             result.let {
-                when(it){
+                when(val resource = it){
                     is Resource.Success -> {
                         _stateRegister.update { state ->
                             state.copy(
@@ -62,7 +68,7 @@ class RegisterViewModel @Inject constructor(
                     is Resource.Failure -> {
                         _stateRegister.update {state ->
                             state.copy(
-                                registerError = R.string.error_Register,
+                                registerError = resource.exception.toString(),
                                 isLoading = false
                             )
                         }

@@ -4,6 +4,6 @@ import androidx.annotation.StringRes
 
 data class RegisterState(
     val isRegisterSuccessful: Boolean = false,
-    @StringRes val registerError: Int? = null,
+    val registerError: String? = null,
     val isLoading: Boolean = false
 )
