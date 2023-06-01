@@ -3,6 +3,8 @@
 
     //Globales
     <string name="back">Regresar</string>
+    <string name="accept">Aceptar</string>
+    <string name="error">Error</string>
 
     //Text fields
     <string name="show_password">Mostrar contraseña</string>

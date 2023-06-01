@@ -113,7 +113,10 @@ fun NavGraphBuilder.authNavGraph(
                 navigateToLogin = {
                     navController.popBackStack()
                 },
-                onRegisterEvent = registerViewModel::process
+                onRegisterEvent = registerViewModel::process,
+                onDismissDialog = {
+                    registerViewModel.hideErrorDialog()
+                }
             )
         }
     }

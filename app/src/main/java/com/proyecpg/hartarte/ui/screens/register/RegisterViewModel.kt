@@ -1,10 +1,12 @@
 package com.proyecpg.hartarte.ui.screens.register
 
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.auth.AuthRepository
+import com.proyecpg.hartarte.utils.Constants
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -59,9 +61,10 @@ class RegisterViewModel @Inject constructor(
                 password to R.string.error_missing_password,
                 confirmPassword to R.string.error_missing_password_confirmation
             )
+
             for ((field, errorMessage) in fieldsToCheck) {
                 if (field.isBlank()) {
-                    setError(errorMessage.toString())
+                    setError( errorMessage.toString() )
                     return@launch
                 }
             }
@@ -119,6 +122,16 @@ class RegisterViewModel @Inject constructor(
                 isLoading = false,
                 registerError = error
             )
+        }
+    }
+
+    fun hideErrorDialog() {
+        viewModelScope.launch {
+            _stateRegister.update {
+                it.copy(
+                    registerError = null
+                )
+            }
         }
     }
 }

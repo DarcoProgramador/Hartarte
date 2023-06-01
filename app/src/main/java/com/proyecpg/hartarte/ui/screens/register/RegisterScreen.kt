@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.ui.components.EventDialog
 import com.proyecpg.hartarte.ui.components.ProgressButton
 import com.proyecpg.hartarte.ui.components.customPasswordField
 import com.proyecpg.hartarte.ui.components.customTextField
@@ -32,7 +33,8 @@ import com.proyecpg.hartarte.ui.components.customTextField
 fun RegisterScreen(
     state: RegisterState,
     navigateToLogin : () -> Unit,
-    onRegisterEvent: (RegisterEvent) -> Unit
+    onRegisterEvent: (RegisterEvent) -> Unit,
+    onDismissDialog: () -> Unit
 ){
 
     var username: String
@@ -40,8 +42,13 @@ fun RegisterScreen(
     var password: String
     var passwordConfirmation: String
 
+    EventDialog(
+        errorMessage = state.registerError.toString(),
+        onDismiss = onDismissDialog,
+        showDialog = state.registerError != null
+    )
 
-    // TODO("Hacer que los errores se muestren en pantalla")
+    // TODO: Solucionar error cuando devuelve errores de Firebase
 
     LazyColumn(
         modifier = Modifier
@@ -104,12 +111,14 @@ fun RegisterScreen(
                     stringResource(id = R.string.register),
                     state.isLoading ,
                     onEventClick = {
-                        onRegisterEvent(RegisterEvent.RegisterClicked(
-                            username = username,
-                            email = email,
-                            password = password,
-                            confirmPassword = passwordConfirmation
-                        ))
+                        onRegisterEvent(
+                            RegisterEvent.RegisterClicked(
+                                username = username,
+                                email = email,
+                                password = password,
+                                confirmPassword = passwordConfirmation
+                            )
+                        )
                     }
                 )
             }
@@ -135,6 +144,7 @@ fun PreviewRegisterScreen(){
     RegisterScreen(
         state = RegisterState(isLoading = false),
         navigateToLogin = {},
-        onRegisterEvent = {}
+        onRegisterEvent = {},
+        onDismissDialog = {}
     )
 }
