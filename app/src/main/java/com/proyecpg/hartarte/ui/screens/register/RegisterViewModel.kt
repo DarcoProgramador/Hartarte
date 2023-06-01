@@ -48,7 +48,6 @@ class RegisterViewModel @Inject constructor(
         password: String,
         confirmPassword: String
     ){
-        //TODO:Hacer que use los archivos de string resource para mostrar el texto del error cuando se necesite
         viewModelScope.launch {
             _stateRegister.update { it.copy(isLoading = true) }
 

@@ -48,8 +48,6 @@ fun RegisterScreen(
         showDialog = state.registerError != null
     )
 
-    // TODO: Solucionar error cuando devuelve errores de Firebase
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()

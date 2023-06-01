@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.utils.isInteger
 
 @Composable
 fun EventDialog(
@@ -22,6 +23,7 @@ fun EventDialog(
     showDialog: Boolean
 ) {
     if(showDialog){
+        val errorText: String = if(isInteger(errorMessage)) LocalContext.current.getString(errorMessage.toInt()) else  errorMessage
         AlertDialog(
             containerColor = MaterialTheme.colorScheme.error,
             onDismissRequest = { onDismiss?.invoke() },
@@ -38,7 +40,7 @@ fun EventDialog(
             },
             text = {
                 Text(
-                    text = LocalContext.current.getString(errorMessage.toInt()),
+                    text = errorText,
                     style = TextStyle(
                         color = MaterialTheme.colorScheme.onError,
                         fontSize = 16.sp
