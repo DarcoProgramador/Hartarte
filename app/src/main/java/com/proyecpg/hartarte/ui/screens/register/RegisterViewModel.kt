@@ -1,11 +1,10 @@
 package com.proyecpg.hartarte.ui.screens.register
 
-import android.util.Log
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.auth.AuthRepository
-import com.proyecpg.hartarte.utils.Constants
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,13 +22,21 @@ class RegisterViewModel @Inject constructor(
     private val _stateRegister = MutableStateFlow(RegisterState())
     val stateRegister = _stateRegister.asStateFlow()
 
+    private val passwordPattern: Pattern = Pattern.compile(
+        "^" +
+                "(?=.*[@#$%^&+=*])" +  // Al menos 1 caracter especial
+                "(?=\\S+$)" +  // No espacios en blanco
+                ".{4,}" +  // Al menos 3 caracteres
+                "$"
+    )
+
     fun resetState() {
         _stateRegister.update { RegisterState() }
     }
 
     fun process(event : RegisterEvent){
         when(event){
-            is RegisterEvent.RegisterClicked -> register(event.username, event.email, event.password , event.comfirmPassword)
+            is RegisterEvent.RegisterClicked -> register(event.username, event.email, event.password , event.confirmPassword)
         }
     }
 
@@ -36,20 +44,42 @@ class RegisterViewModel @Inject constructor(
         username : String,
         email : String,
         password: String,
-        comfirmPassword: String
+        confirmPassword: String
     ){
         //TODO:Hacer que use los archivos de string resource para mostrar el texto del error cuando se necesite
         viewModelScope.launch {
             _stateRegister.update { it.copy(isLoading = true) }
 
-            delay(1000) //para ver que carga
+            delay(1000) //Para ver que carga
 
-            if (password != comfirmPassword){
-                _stateRegister.update { it.copy(
-                    isLoading = false,
-                    registerError = "Las contraseñas no coinciden"
-                )
+            //Valida los campos vacíos
+            val fieldsToCheck = listOf(
+                username to R.string.error_missing_username,
+                email to R.string.error_missing_email,
+                password to R.string.error_missing_password,
+                confirmPassword to R.string.error_missing_password_confirmation
+            )
+            for ((field, errorMessage) in fieldsToCheck) {
+                if (field.isBlank()) {
+                    setError(errorMessage.toString())
+                    return@launch
                 }
+            }
+
+            //Valida el formato del email
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                setError( R.string.error_invalid_email.toString() )
+                return@launch
+            }
+
+            //Valida si la contraseña es débil
+            if (!passwordPattern.matcher(password).matches()){
+                setError( R.string.error_password_weak.toString() )
+                return@launch
+            }
+
+            if (password != confirmPassword){
+                setError( R.string.error_password_confirmation_match.toString() )
                 return@launch
             }
 
@@ -80,6 +110,15 @@ class RegisterViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    private fun setError(error: String){
+        _stateRegister.update {
+            it.copy(
+                isLoading = false,
+                registerError = error
+            )
         }
     }
 }

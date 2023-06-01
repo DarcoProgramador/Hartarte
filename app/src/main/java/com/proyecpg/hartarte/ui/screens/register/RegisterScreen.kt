@@ -1,9 +1,12 @@
 package com.proyecpg.hartarte.ui.screens.register
 
-import android.util.Log
-import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,10 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -27,7 +27,6 @@ import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.components.ProgressButton
 import com.proyecpg.hartarte.ui.components.customPasswordField
 import com.proyecpg.hartarte.ui.components.customTextField
-import com.proyecpg.hartarte.utils.Constants
 
 @Composable
 fun RegisterScreen(
@@ -95,18 +94,25 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.size(40.dp))
 
-            ProgressButton(
-                stringResource(id = R.string.register),
-                state.isLoading ,
-                onEventClick = {
-                    onRegisterEvent(RegisterEvent.RegisterClicked(
-                        username = username,
-                        email = email,
-                        password = password,
-                        comfirmPassword = passwordConfirmation
-                    ))
-                }
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(intrinsicSize = IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                ProgressButton(
+                    stringResource(id = R.string.register),
+                    state.isLoading ,
+                    onEventClick = {
+                        onRegisterEvent(RegisterEvent.RegisterClicked(
+                            username = username,
+                            email = email,
+                            password = password,
+                            confirmPassword = passwordConfirmation
+                        ))
+                    }
+                )
+            }
         }
     }
 }
