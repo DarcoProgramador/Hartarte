@@ -96,11 +96,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun register(){
-        TODO("Hacer la funcion para registrar")
-    }
-
-
     fun signInWithCredentials(credential: AuthCredential){
         viewModelScope.launch {
             oneTapSignInResponse = Resource.Loading
