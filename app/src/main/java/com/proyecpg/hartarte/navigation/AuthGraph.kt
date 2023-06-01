@@ -112,7 +112,8 @@ fun NavGraphBuilder.authNavGraph(
                 state = stateRegister,
                 navigateToLogin = {
                     navController.popBackStack()
-                }
+                },
+                onRegisterEvent = registerViewModel::process
             )
         }
     }
