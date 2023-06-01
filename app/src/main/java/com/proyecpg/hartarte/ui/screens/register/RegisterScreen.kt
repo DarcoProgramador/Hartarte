@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.ui.screens.register
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,7 +11,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -19,9 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.ui.components.ProgressButton
 import com.proyecpg.hartarte.ui.components.customPasswordField
 import com.proyecpg.hartarte.ui.components.customTextField
-import com.proyecpg.hartarte.ui.components.ProgressButton
 
 @Composable
 fun RegisterScreen(
@@ -35,6 +38,18 @@ fun RegisterScreen(
     var password: String
     var passwordConfirmation: String
 
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = state.registerError) {
+        state.registerError?.let { error ->
+            Toast.makeText(
+                context,
+                error,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+    
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
