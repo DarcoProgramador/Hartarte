@@ -1,7 +1,5 @@
 package com.proyecpg.hartarte.ui.screens.register
 
-import androidx.annotation.StringRes
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.R
@@ -25,8 +23,14 @@ class RegisterViewModel @Inject constructor(
         _stateRegister.update { RegisterState() }
     }
 
-    fun Register(
-        user : String,
+    fun process(event : RegisterEvent){
+        when(event){
+            is RegisterEvent.RegisterClicked -> register(event.username, event.email, event.password , event.comfirmPassword)
+        }
+    }
+
+    private fun register(
+        username : String,
         email : String,
         password: String,
         comfirmPassword: String
@@ -43,7 +47,7 @@ class RegisterViewModel @Inject constructor(
                 return@launch
             }
 
-            val result = authRepository.signup(user, email, password)
+            val result = authRepository.signup(username, email, password)
 
             result.let {
                 when(it){
