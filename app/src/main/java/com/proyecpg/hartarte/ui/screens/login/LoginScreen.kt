@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.ui.components.EventDialog
 import com.proyecpg.hartarte.ui.components.customPasswordField
 import com.proyecpg.hartarte.ui.components.customTextField
 import com.proyecpg.hartarte.ui.components.FacebookLoginButton
@@ -35,23 +36,18 @@ fun LoginScreen(
     state: LoginState,
     onEventLogin : (LoginEvent) -> Unit,
     onSignInGoogleClick: () -> Unit,
-    navigateToRegister: () -> Unit
+    navigateToRegister: () -> Unit,
+    onDismissDialog: () -> Unit
 ) {
     var email: String
     var password: String
 
+    EventDialog(
+        errorMessage = state.loginError.toString(),
+        onDismiss = onDismissDialog,
+        showDialog = state.loginError != null
+    )
 
-    val context = LocalContext.current
-
-    LaunchedEffect(key1 = state.loginError) {
-        state.loginError?.let { error ->
-            Toast.makeText(
-                context,
-                error,
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,9 +104,9 @@ fun LoginScreen(
 
             GoogleLoginButton(onSignInGoogleClick)
 
-            Spacer(modifier = Modifier.size(30.dp))
+            /*Spacer(modifier = Modifier.size(30.dp))
 
-            FacebookLoginButton()
+            FacebookLoginButton()*/
         }
     }
 }
@@ -121,6 +117,7 @@ fun PreviewLoginScreen(){
     LoginScreen(state = LoginState(isLoading = false),
         onEventLogin = {},
         onSignInGoogleClick = {},
-        navigateToRegister = {}
+        navigateToRegister = {},
+        onDismissDialog = {}
     )
 }

@@ -1,12 +1,11 @@
 package com.proyecpg.hartarte.ui.screens.register
 
-import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.auth.AuthRepository
-import com.proyecpg.hartarte.utils.Constants
+import com.proyecpg.hartarte.utils.FirebaseErrors
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -53,15 +52,15 @@ class RegisterViewModel @Inject constructor(
 
             delay(1000) //Para ver que carga
 
-            //Valida los campos vacíos
-            val fieldsToCheck = listOf(
+            val campos = listOf(
                 username to R.string.error_missing_username,
                 email to R.string.error_missing_email,
                 password to R.string.error_missing_password,
                 confirmPassword to R.string.error_missing_password_confirmation
             )
 
-            for ((field, errorMessage) in fieldsToCheck) {
+            //Valida los campos vacíos
+            for ((field, errorMessage) in campos) {
                 if (field.isBlank()) {
                     setError( errorMessage.toString() )
                     return@launch
@@ -98,6 +97,19 @@ class RegisterViewModel @Inject constructor(
                         }
                     }
                     is Resource.Failure -> {
+
+                        val error = FirebaseErrors.handleFirebaseError(resource.exception)
+
+                        if (error != 0){
+                            _stateRegister.update { state ->
+                                state.copy(
+                                    registerError = error.toString(),
+                                    isLoading = false
+                                )
+                            }
+                            return@launch
+                        }
+
                         _stateRegister.update {state ->
                             state.copy(
                                 registerError = resource.exception.toString(),

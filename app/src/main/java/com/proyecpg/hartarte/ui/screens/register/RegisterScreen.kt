@@ -10,16 +10,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +31,7 @@ import com.proyecpg.hartarte.ui.components.ProgressButton
 import com.proyecpg.hartarte.ui.components.customPasswordField
 import com.proyecpg.hartarte.ui.components.customTextField
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     state: RegisterState,
@@ -48,77 +51,83 @@ fun RegisterScreen(
         showDialog = state.registerError != null
     )
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 40.dp, vertical = 40.dp)
-    ) {
-
-        item {
-            IconButton(onClick = navigateToLogin) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = stringResource(id = R.string.back)
-                )
-            }
-
-            Spacer(modifier = Modifier.size(20.dp))
-
-            Text(
-                text = stringResource(id = R.string.register),
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            )
-
-            Spacer(modifier = Modifier.size(40.dp))
-
-            TitleText( stringResource(id = R.string.title_user) )
-
-            username = customTextField( stringResource(id = R.string.username))
-
-            Spacer(modifier = Modifier.size(30.dp))
-
-            TitleText( stringResource(id = R.string.title_email) )
-
-            email = customTextField( stringResource(id = R.string.email) )
-
-            Spacer(modifier = Modifier.size(30.dp))
-
-            TitleText( stringResource(id = R.string.title_password) )
-
-            password = customPasswordField( stringResource(id = R.string.password) )
-
-            Spacer(modifier = Modifier.size(30.dp))
-
-            TitleText( stringResource(id = R.string.title_password_confirm) )
-
-            passwordConfirmation = customPasswordField( stringResource(id = R.string.password_confirm) )
-
-            Spacer(modifier = Modifier.size(40.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(intrinsicSize = IntrinsicSize.Min),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                ProgressButton(
-                    stringResource(id = R.string.register),
-                    state.isLoading ,
-                    onEventClick = {
-                        onRegisterEvent(
-                            RegisterEvent.RegisterClicked(
-                                username = username,
-                                email = email,
-                                password = password,
-                                confirmPassword = passwordConfirmation
-                            )
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            LargeTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.register),
+                        modifier = Modifier.padding(start = 20.dp)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = navigateToLogin,
+                        modifier = Modifier.padding(start = 20.dp, top = 20.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_back),
+                            contentDescription = stringResource(id = R.string.back)
                         )
                     }
-                )
+                }
+            )
+        }
+    ){ innerPadding ->
+        LazyColumn(
+            contentPadding = innerPadding,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 40.dp, vertical = 20.dp)
+        ) {
+
+            item {
+                TitleText( stringResource(id = R.string.title_user) )
+
+                username = customTextField( stringResource(id = R.string.username))
+
+                Spacer(modifier = Modifier.size(30.dp))
+
+                TitleText( stringResource(id = R.string.title_email) )
+
+                email = customTextField( stringResource(id = R.string.email) )
+
+                Spacer(modifier = Modifier.size(30.dp))
+
+                TitleText( stringResource(id = R.string.title_password) )
+
+                password = customPasswordField( stringResource(id = R.string.password) )
+
+                Spacer(modifier = Modifier.size(30.dp))
+
+                TitleText( stringResource(id = R.string.title_password_confirm) )
+
+                passwordConfirmation = customPasswordField( stringResource(id = R.string.password_confirm) )
+
+                Spacer(modifier = Modifier.size(40.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(intrinsicSize = IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    ProgressButton(
+                        stringResource(id = R.string.register),
+                        state.isLoading ,
+                        onEventClick = {
+                            onRegisterEvent(
+                                RegisterEvent.RegisterClicked(
+                                    username = username,
+                                    email = email,
+                                    password = password,
+                                    confirmPassword = passwordConfirmation
+                                )
+                            )
+                        }
+                    )
+                }
             }
         }
     }

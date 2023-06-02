@@ -21,7 +21,6 @@ import com.proyecpg.hartarte.ui.components.SignInWithGoogle
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.login.LoginScreen
 import com.proyecpg.hartarte.ui.screens.register.RegisterScreen
-import com.proyecpg.hartarte.ui.screens.register.RegisterState
 import com.proyecpg.hartarte.ui.screens.register.RegisterViewModel
 import com.proyecpg.hartarte.utils.Constants
 
@@ -94,6 +93,9 @@ fun NavGraphBuilder.authNavGraph(
                 },
                 navigateToRegister = {
                     navController.navigate(AuthScreens.RegisterScreen.route)
+                },
+                onDismissDialog = {
+                    authViewModel.hideErrorDialog()
                 }
             )
         }
