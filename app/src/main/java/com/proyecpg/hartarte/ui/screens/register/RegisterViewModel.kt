@@ -1,6 +1,7 @@
 package com.proyecpg.hartarte.ui.screens.register
 
 import android.util.Patterns
+import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.R
@@ -68,7 +69,7 @@ class RegisterViewModel @Inject constructor(
             }
 
             //Valida el formato del email
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            if (!PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()){
                 setError( R.string.error_invalid_email.toString() )
                 return@launch
             }
