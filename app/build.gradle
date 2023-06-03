@@ -111,6 +111,8 @@ dependencies {
 
     //Icons
     implementation("androidx.compose.material:material-icons-extended")
+
+    testImplementation "org.mockito.kotlin:mockito-kotlin:x.x.x"
 }
 
 // Allow references to generated code
