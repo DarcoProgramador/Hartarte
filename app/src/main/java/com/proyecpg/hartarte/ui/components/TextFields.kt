@@ -22,9 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.proyecpg.hartarte.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,8 +42,7 @@ fun customTextField(placeholder: String): String {
         value = text,
         onValueChange = {text = it},
         textStyle = TextStyle(
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontSize = 15.sp
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         ),
         placeholder = {
             Text(
@@ -75,8 +72,7 @@ fun customPasswordField(placeholder: String): String {
         value = password,
         onValueChange = {password = it},
         textStyle = TextStyle(
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontSize = 15.sp
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         ),
         placeholder = {
             Text(

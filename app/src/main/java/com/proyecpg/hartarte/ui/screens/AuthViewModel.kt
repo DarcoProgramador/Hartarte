@@ -9,9 +9,11 @@ import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseUser
+import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.auth.AuthRepository
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 import com.proyecpg.hartarte.ui.screens.login.LoginState
+import com.proyecpg.hartarte.utils.FirebaseErrors
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,13 +66,28 @@ class AuthViewModel @Inject constructor(
         _stateLogin.update { LoginState() }
     }
 
-    private fun login(email : String, password: String){
+    private fun login(email: String, password: String){
         viewModelScope.launch {
             _stateLogin.update { it.copy(isLoading = true) }
             val result = authRepository.login(email, password)
 
+            val campos = listOf(
+                email to R.string.error_missing_email,
+                password to R.string.error_missing_password
+            )
+
+            //Valida los campos vacíos
+            if (email.isBlank()){
+                setError( R.string.error_missing_email.toString() )
+                return@launch
+            }
+            else if(password.isBlank()){
+                setError( R.string.error_missing_password.toString() )
+                return@launch
+            }
+
             result.let {
-                when(it){
+                when(val resource = it){
                     is Resource.Success -> {
                         _stateLogin.update { state ->
                             state.copy(isLoginSuccessful = true,
@@ -80,8 +97,21 @@ class AuthViewModel @Inject constructor(
                         isLogged()
                     }
                     is Resource.Failure -> {
+
+                        val error = FirebaseErrors.handleFirebaseError(resource.exception)
+
+                        if (error != 0){
+                            _stateLogin.update { state ->
+                                state.copy(
+                                    loginError = error.toString(),
+                                    isLoading = false
+                                )
+                            }
+                            return@launch
+                        }
+
                         _stateLogin.update {state ->
-                            state.copy(loginError = "Ha ocurrido un error",
+                            state.copy(loginError = resource.exception.toString(),
                                         isLoading = false
                             )
                         }
@@ -96,11 +126,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun register(){
-        TODO("Hacer la funcion para registrar")
-    }
-
-
     fun signInWithCredentials(credential: AuthCredential){
         viewModelScope.launch {
             oneTapSignInResponse = Resource.Loading
@@ -114,6 +139,25 @@ class AuthViewModel @Inject constructor(
             oneTapSignInResponse = Resource.Loading
 
             oneTapSignInResponse = authRepository.oneTapSignInWithGoogle()
+        }
+    }
+
+    private fun setError(error: String){
+        _stateLogin.update {
+            it.copy(
+                isLoading = false,
+                loginError = error
+            )
+        }
+    }
+
+    fun hideErrorDialog() {
+        viewModelScope.launch {
+            _stateLogin.update {
+                it.copy(
+                    loginError = null
+                )
+            }
         }
     }
 }
