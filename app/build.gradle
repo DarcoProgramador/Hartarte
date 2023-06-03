@@ -97,12 +97,20 @@ dependencies {
     def coruotines_version = "1.7.0"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coruotines_version")
 
+    // Coroutines Test
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coruotines_version"
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
+
+    //Mocck
+    testImplementation 'io.mockk:mockk:1.12.2'
+
     //test
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation composeBom
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
