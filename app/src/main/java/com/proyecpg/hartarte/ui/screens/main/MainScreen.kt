@@ -84,7 +84,7 @@ fun MainScreen(
         },
         bottomBar = {
             AnimatedNavigationBar(
-                modifier = Modifier.height(60.dp),
+                modifier = Modifier.height(65.dp),
                 selectedIndex = selectedIndex,
                 barColor = MaterialTheme.colorScheme.primary,
                 ballColor = MaterialTheme.colorScheme.primary,
