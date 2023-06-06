@@ -45,10 +45,11 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    //onHome
-    //onBookmark
-    //onUser
-    //onCreatePost
+    state: MainState,
+    onCreatePost: () -> Unit
+    //onHome ?
+    //onBookmark ?
+    //onUser ?
 ){
     var selectedIndex by remember { mutableStateOf(0) }
     val navigationBarItems = remember { NavigationBarItems.values() }
@@ -156,6 +157,9 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
 @Composable
 fun PreviewMainScreen(){
     HartarteTheme {
-        MainScreen()
+        MainScreen(
+            state = MainState(false),
+            onCreatePost = {}
+        )
     }
 }
