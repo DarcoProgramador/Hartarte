@@ -100,7 +100,7 @@ fun LoginScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.size(80.dp))
+            Spacer(modifier = Modifier.size(60.dp))
 
             GoogleLoginButton(onSignInGoogleClick)
 
