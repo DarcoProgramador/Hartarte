@@ -105,29 +105,22 @@ fun RegisterScreen(
 
                 passwordConfirmation = customPasswordField( stringResource(id = R.string.password_confirm) )
 
-                Spacer(modifier = Modifier.size(40.dp))
+                Spacer(modifier = Modifier.size(35.dp))
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(intrinsicSize = IntrinsicSize.Min),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    ProgressButton(
-                        stringResource(id = R.string.register),
-                        state.isLoading ,
-                        onEventClick = {
-                            onRegisterEvent(
-                                RegisterEvent.RegisterClicked(
-                                    username = username,
-                                    email = email,
-                                    password = password,
-                                    confirmPassword = passwordConfirmation
-                                )
+                ProgressButton(
+                    stringResource(id = R.string.register),
+                    state.isLoading ,
+                    onEventClick = {
+                        onRegisterEvent(
+                            RegisterEvent.RegisterClicked(
+                                username = username,
+                                email = email,
+                                password = password,
+                                confirmPassword = passwordConfirmation
                             )
-                        }
-                    )
-                }
+                        )
+                    }
+                )
             }
         }
     }

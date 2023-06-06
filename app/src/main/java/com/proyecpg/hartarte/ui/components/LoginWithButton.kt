@@ -1,6 +1,8 @@
 package com.proyecpg.hartarte.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,6 +13,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
@@ -25,34 +28,38 @@ import com.proyecpg.hartarte.R
 fun GoogleLoginButton(
     onClick : () -> Unit
 ){
+    Box(
+        modifier = Modifier.height(IntrinsicSize.Min),
+        contentAlignment = Alignment.Center
+    ){
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .shadow(5.dp, shape = RoundedCornerShape(20.dp)),
+            shape = RoundedCornerShape(20.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            onClick = onClick
 
-    Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .shadow(5.dp, shape = RoundedCornerShape(20.dp)),
-        shape = RoundedCornerShape(20.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        onClick = onClick
-
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.img_google),
-            contentDescription = stringResource(id = R.string.google_logo)
-        )
-
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Text(
-            text = stringResource(id = R.string.google_login),
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.img_google),
+                contentDescription = stringResource(id = R.string.google_logo)
             )
-        )
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Text(
+                text = stringResource(id = R.string.google_login),
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            )
+        }
     }
 }
 
