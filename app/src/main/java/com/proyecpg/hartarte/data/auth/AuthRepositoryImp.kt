@@ -51,6 +51,7 @@ class AuthRepositoryImp @Inject constructor(
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             result.user?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(name).build())?.await()
+            addUserToFirestore()
             return Resource.Success(result.user!!)
         } catch (e: Exception) {
             e.printStackTrace()
