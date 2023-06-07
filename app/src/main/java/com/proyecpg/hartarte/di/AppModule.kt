@@ -6,6 +6,8 @@ import com.google.firebase.firestore.Query.Direction.DESCENDING
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.proyecpg.hartarte.data.paging.PostPagingSource
+import com.proyecpg.hartarte.data.post.PostRepository
+import com.proyecpg.hartarte.data.post.PostRepositoryImp
 import com.proyecpg.hartarte.utils.Constants.PAGE_SIZE
 import com.proyecpg.hartarte.utils.Constants.POST_COLLECTION
 import com.proyecpg.hartarte.utils.Constants.TIME_STAMP
@@ -37,9 +39,9 @@ class AppModule {
 
     @Provides
     fun provideProductsRepository(
-        source: ProductsPagingSource,
+        source: PostPagingSource,
         config: PagingConfig
-    ): ProductsRepository = ProductsRepositoryImpl(
+    ): PostRepository = PostRepositoryImp(
         source = source,
         config = config
     )
