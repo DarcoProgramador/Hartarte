@@ -10,6 +10,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FieldValue.serverTimestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.proyecpg.hartarte.utils.Constants.CREATED_AT
+import com.proyecpg.hartarte.utils.Constants.DESCRIPCION
 import com.proyecpg.hartarte.utils.Constants.DISPLAY_NAME
 import com.proyecpg.hartarte.utils.Constants.EMAIL
 import com.proyecpg.hartarte.utils.Constants.PHOTO_URL
@@ -113,5 +114,6 @@ fun FirebaseUser.toUser() = mapOf(
     DISPLAY_NAME to displayName,
     EMAIL to email,
     PHOTO_URL to photoUrl?.toString(),
-    CREATED_AT to serverTimestamp()
+    CREATED_AT to serverTimestamp(),
+    DESCRIPCION to ""
 )
