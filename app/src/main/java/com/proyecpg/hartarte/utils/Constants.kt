@@ -12,6 +12,7 @@ object Constants {
     const val EMAIL = "email"
     const val PHOTO_URL = "photoUrl"
     const val CREATED_AT = "createdAt"
+    const val DESCRIPCION = "descripcion"
 
     //Names
     const val SIGN_IN_REQUEST = "signInRequest"
