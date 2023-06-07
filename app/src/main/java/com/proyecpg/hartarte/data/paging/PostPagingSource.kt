@@ -14,12 +14,14 @@ class PostPagingSource (
 
     override suspend fun load(params: LoadParams<QuerySnapshot>): LoadResult<QuerySnapshot, Post> = try {
         val currentPage = params.key ?: queryPostByCreationTime.get().await()
-        val lastVisibleProduct = currentPage.documents[currentPage.size() - 1]
-        val nextPage = queryPostByCreationTime.startAfter(lastVisibleProduct).get().await()
+        val lastVisiblePost = currentPage.documents[currentPage.size() - 1]
+        val nextPage = queryPostByCreationTime.startAfter(lastVisiblePost).get().await()
+
+
         LoadResult.Page(
             data = currentPage.toObjects(Post::class.java),
             prevKey = null,
-            nextKey = nextPage
+            nextKey = if(!nextPage.isEmpty) nextPage else null
         )
     } catch (e: Exception) {
         LoadResult.Error(e)
