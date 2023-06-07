@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.di
 
+import androidx.paging.PagingConfig
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Query.Direction.DESCENDING
 import com.google.firebase.firestore.ktx.firestore
