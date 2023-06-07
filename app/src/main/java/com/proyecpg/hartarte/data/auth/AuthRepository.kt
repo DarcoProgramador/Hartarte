@@ -12,5 +12,5 @@ interface AuthRepository {
     suspend fun singInWithCredentials(credentials: AuthCredential): Resource<FirebaseUser>
 
     suspend fun oneTapSignInWithGoogle(): Resource<BeginSignInResult>
-    fun logout()
+    suspend fun logout()
 }
