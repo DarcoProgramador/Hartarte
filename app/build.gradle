@@ -116,6 +116,14 @@ dependencies {
 
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    //Animated navigation
+    implementation("com.exyte:animated-navigation-bar:1.0.0")
+
+    //Icons
+    implementation("androidx.compose.material:material-icons-extended")
+
+    testImplementation "org.mockito.kotlin:mockito-kotlin:x.x.x"
 }
 
 // Allow references to generated code
