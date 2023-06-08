@@ -135,13 +135,13 @@ fun Post(
                     ) {
                         if (isLiked){
                             Icon(
-                                imageVector = Icons.Default.Favorite,
+                                painter = painterResource(id = R.drawable.ic_favorite_filled),
                                 contentDescription = "Like"
                             )
                         }
                         else {
                             Icon(
-                                imageVector = Icons.Outlined.Favorite,
+                                painter = painterResource(id = R.drawable.ic_favorite_outlined),
                                 contentDescription = "Like"
                             )
                         }
@@ -166,13 +166,13 @@ fun Post(
                         ) {
                             if(isBookmarked){
                                 Icon(
-                                    imageVector = Icons.Default.Bookmark,
+                                    painter = painterResource(id = R.drawable.ic_bookmark_filled),
                                     contentDescription = "Delete"
                                 )
                             }
                             else{
                                 Icon(
-                                    imageVector = Icons.Outlined.Bookmark,
+                                    painter = painterResource(id = R.drawable.ic_bookmark_outlined),
                                     contentDescription = "Bookmark"
                                 )
                             }
