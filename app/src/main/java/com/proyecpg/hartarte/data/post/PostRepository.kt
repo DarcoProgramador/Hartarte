@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface PostRepository {
     fun getPosts(): Flow<PagingData<Post>>
 
-    suspend fun isPostLiked(postId: String, uid: String): Resource<Boolean>
+    suspend fun isPostLiked(postId: String): Resource<Boolean>
 
     suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean>
 }
