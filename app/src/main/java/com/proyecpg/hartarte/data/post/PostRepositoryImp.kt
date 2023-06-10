@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.proyecpg.hartarte.data.paging.PostPagingSource
 import com.proyecpg.hartarte.domain.model.Post
+import com.proyecpg.hartarte.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,4 +21,14 @@ class PostRepositoryImp @Inject constructor(
     ) {
         source
     }.flow
+
+    override suspend fun isPostLiked(postId: String, uid: String): Resource<Boolean> {
+        TODO("Create funtion is post Liked comprobation")
+    }
+
+    override suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean> {
+        TODO("Create funtion register like in post")
+    }
+
+
 }
