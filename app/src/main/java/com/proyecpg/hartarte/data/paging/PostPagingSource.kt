@@ -17,7 +17,6 @@ class PostPagingSource (
         val lastVisiblePost = currentPage.documents[currentPage.size() - 1]
         val nextPage = queryPostByCreationTime.startAfter(lastVisiblePost).get().await()
 
-
         LoadResult.Page(
             data = currentPage.toObjects(Post::class.java),
             prevKey = null,
