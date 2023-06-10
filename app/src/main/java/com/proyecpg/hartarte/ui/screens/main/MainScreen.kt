@@ -80,7 +80,8 @@ fun MainScreen(
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            text = navigationTitle[selectedIndex]
+                            text = navigationTitle[selectedIndex],
+                            color = MaterialTheme.colorScheme.primary
                         )
                     },
                     navigationIcon = {
@@ -91,7 +92,8 @@ fun MainScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Menu,
-                                contentDescription = "Menu"
+                                contentDescription = "Menu",
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
