@@ -38,11 +38,5 @@ class AppModule {
     )
 
     @Provides
-    fun providePostsRepository(
-        source: PostPagingSource,
-        config: PagingConfig
-    ): PostRepository = PostRepositoryImp(
-        source = source,
-        config = config
-    )
+    fun providePostsRepository(impl : PostRepositoryImp): PostRepository = impl
 }
