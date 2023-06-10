@@ -1,13 +1,21 @@
 package com.proyecpg.hartarte.ui.screens.main
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -17,6 +25,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -40,6 +49,8 @@ import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
+import com.proyecpg.hartarte.ui.components.Post
+import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,8 +62,11 @@ fun MainScreen(
     //onBookmark ?
     //onUser ?
 ){
+    val lazyListState = rememberLazyListState()
+
     var selectedIndex by remember { mutableStateOf(0) }
     val navigationBarItems = remember { NavigationBarItems.values() }
+
     val navigationTitle = listOf(
         "Inicio",
         "Guardados",
@@ -62,25 +76,28 @@ fun MainScreen(
     Scaffold(
         modifier = Modifier.padding(all = 12.dp),
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = navigationTitle[selectedIndex]
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            /* TODO: Abrir pantalla de configuración */
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu"
+            Column() {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = navigationTitle[selectedIndex]
                         )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                /* TODO: Abrir pantalla de configuración */
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu"
+                            )
+                        }
                     }
-                }
-            )
+                )
+                SearchBar(lazyListState = lazyListState)
+            }
         },
         bottomBar = {
             AnimatedNavigationBar(
@@ -129,11 +146,41 @@ fun MainScreen(
             }
         }
     ){ innerPadding ->
-        innerPadding
+        val posts = listOf(
+            "Título de ejemplo 1",
+            "Título de ejemplo 2",
+            "Título de ejemplo 3"
+        )
 
-        //Barra de búsqueda colapsable
+        SearchBar(LazyListState())
 
-        //Contenido
+        LazyColumn(
+            modifier = Modifier.padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            state = lazyListState
+        ) {
+            items(posts.size) { post ->
+                Post(
+                    images = listOf
+                        (
+                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
+                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
+                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
+                    ),
+                    username = "TheJosuep",
+                    userPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                    title = posts[post],
+                    description = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
+                    isBookmarked = true,
+                    isLiked = false,
+                    likesCount = 40
+                )
+            }
+            item {
+                CircularProgressIndicator()
+            }
+        }
     }
 }
 
@@ -152,6 +199,10 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
         onClick()
     }
 }
+
+//Revisa si está scrolleado para colapasar un elemento
+val LazyListState.isScrolled: Boolean
+    get() = firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0
 
 @Preview(showBackground = true)
 @Composable
