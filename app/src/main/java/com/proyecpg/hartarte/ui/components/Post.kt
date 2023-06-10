@@ -1,8 +1,7 @@
 package com.proyecpg.hartarte.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,15 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.Bookmark
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,165 +31,232 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Scale
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Post(
-    //Image
+    images: List<String>,
+    username: String,
+    userPic: String,
     title: String,
     description: String,
-    likesCount: Int,
     isLiked: Boolean,
-    isBookmarked: Boolean
+    isBookmarked: Boolean,
+    likesCount: Int
 ){
-    val interactionSource = remember { MutableInteractionSource() }
+    val pagerState = rememberPagerState(initialPage = 0)
 
-    /* TODO: Recibir parámetros */
-    var isLiked by remember { mutableStateOf(isLiked) }
-    var isBookmarked by remember { mutableStateOf(isBookmarked) }
-    var likesCount by remember { mutableStateOf(likesCount) }
+    var liked by remember { mutableStateOf(isLiked) }
+    var bookmarked by remember { mutableStateOf(isBookmarked) }
+    var likeCount by remember { mutableStateOf(likesCount) }
 
     Card(
-        onClick = {
-                  /* TODO: Navegar al post */
-        },
-        modifier = Modifier.fillMaxWidth(0.94f),
-        enabled = true,
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ),
-        interactionSource = interactionSource
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(bottom = 10.dp)
-                .height(intrinsicSize = IntrinsicSize.Min)
-        ) {
-            Image(
-                /* TODO: Recibir URL en lugar de un painter */
+        border = null,
+        content = {
+
+            HorizontalPager(
+                count = images.size,
                 modifier = Modifier
-                    .height(150.dp)
                     .fillMaxWidth()
-                    .clip(shape = RoundedCornerShape(15.dp))
-                    .background(color = Color.White),
-                painter = painterResource(id = R.drawable.img_logo),
-                contentDescription = "Post image"
-            )
+                    .height(250.dp)
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                state = pagerState,
+                verticalAlignment = Alignment.CenterVertically
+            ) { page ->
 
-            Spacer(modifier = Modifier.size(8.dp))
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(images[page])
+                        .crossfade(true)
+                        .scale(Scale.FILL)
+                        .build(),
+                    contentDescription = "Carousel image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
 
-            Column(
-                modifier = Modifier.padding(horizontal = 15.dp)
+            //Current image
+            Row(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = title,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    maxLines = 1
-                )
+                repeat(images.size){
+                    Box(
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clip(shape = CircleShape)
+                            .size(5.dp)
+                            .background(if (pagerState.currentPage == it) Color.DarkGray else Color.LightGray)
+                    )
+                }
+            }
 
-                Spacer(modifier = Modifier.size(8.dp))
-
-                Text(
-                    text = description,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    fontSize = 16.sp,
-                    maxLines = 3
-                )
-
+            Column(modifier = Modifier
+                .clickable {
+                    /* TODO: Navigate to post creation screen */
+                }
+            ){
+                //User
                 Row(
-                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 17.dp, vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
-                ) {
-                    
-                    Spacer(modifier = Modifier.size(10.dp))
-                    
-                    IconButton(
-                        onClick = {
-                            /* TODO: Actualizar likes y estado de like del usuario */
-                            if (isLiked)
-                                likesCount--
-                            else
-                                likesCount++
+                ){
+                    //Clickable segment in the row
+                    Row(
+                        modifier = Modifier
+                            .height(IntrinsicSize.Min)
+                            .width(IntrinsicSize.Min)
+                            .clickable {
+                                /* TODO */
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        AsyncImage(
+                            model = userPic,
+                            contentDescription = "User avatar",
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clip(shape = CircleShape)
+                        )
 
-                            isLiked = !isLiked
-                        }
-                    ) {
-                        if (isLiked){
-                            Icon(
-                                imageVector = Icons.Default.Favorite,
-                                contentDescription = "Like"
-                            )
-                        }
-                        else {
-                            Icon(
-                                imageVector = Icons.Outlined.Favorite,
-                                contentDescription = "Like"
-                            )
-                        }
+                        Spacer(modifier = Modifier.size(10.dp))
+
+                        Text(
+                            text = username
+                        )
                     }
+                }
 
+                //Card information
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 17.dp)
+                ){
                     Text(
-                        text = likesCount.toString()
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        text = title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(end = 20.dp)
-                    ) {
+                    Text(
+                        text = description,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 3
+                    )
+                }
+
+                //Icon buttons
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 3.dp, bottom = 5.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
                             onClick = {
-                                /* TODO: Actualizar bookmark */
-                                isBookmarked = !isBookmarked
+
+                                if (liked)
+                                    likeCount--
+                                else
+                                    likeCount++
+
+                                liked = !liked
                             }
                         ) {
-                            if(isBookmarked){
+                            if(liked){
                                 Icon(
-                                    imageVector = Icons.Default.Bookmark,
-                                    contentDescription = "Delete"
+                                    painter = painterResource(id = R.drawable.ic_favorite),
+                                    contentDescription = "Favorite"
                                 )
                             }
                             else{
                                 Icon(
-                                    imageVector = Icons.Outlined.Bookmark,
-                                    contentDescription = "Bookmark"
+                                    painter = painterResource(id = R.drawable.ic_favorite_border),
+                                    contentDescription = "Favorite"
                                 )
                             }
+                        }
+
+                        Spacer(modifier = Modifier.size(5.dp))
+
+                        Text(text = likeCount.toString())
+                    }
+                    IconButton(
+                        onClick = {
+                            bookmarked = !bookmarked
+                        }
+                    ) {
+                        if(bookmarked){
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_bookmark),
+                                contentDescription = "Favorite"
+                            )
+                        }
+                        else{
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_bookmark_border),
+                                contentDescription = "Favorite"
+                            )
                         }
                     }
                 }
             }
         }
-    }
+    )
 }
 
 @Preview
 @Composable
 fun PreviewPost(){
     HartarteTheme {
-        Box(contentAlignment = Alignment.CenterStart) {
+        Box(
+            modifier = Modifier.padding(all = 10.dp)
+        ) {
             Post(
-                title = "Quesillo de turca",
-                description = "Quesillo de turca, hecho en mi Masayita querida <3.\n #CocinaMasayense #OrgulloMasaya\n#OrgulloGa...",
+                images = listOf
+                    (
+                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
+                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
+                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
+                    ),
+                username = "TheJosuep",
+                userPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                title = "Título de ejemplo",
+                description = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
                 isBookmarked = true,
                 isLiked = false,
-                likesCount = 0
+                likesCount = 40
             )
         }
     }
