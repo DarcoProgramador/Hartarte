@@ -23,6 +23,6 @@ object Constants {
 
     //FireBasePost
     const val POST_COLLECTION = "posts"
-    const val TIME_STAMP = "creation_time"
+    const val TIME_STAMP = "createdAt"
     const val PAGE_SIZE = 10L
 }
