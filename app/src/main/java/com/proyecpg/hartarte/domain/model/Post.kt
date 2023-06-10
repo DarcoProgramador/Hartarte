@@ -7,10 +7,14 @@ data class Post (
     val titulo: String = "",
     val descripcion: String = "",
     val imagen: String? = null,
-    val userUID: String? = "",
-    val userName: String? = "",
-    val userPhoto: String? = "",
     val likes: Long? = 0L,
+    val user: User? = User(),
     val createdAt: Timestamp? = null
+)
+
+data class User(
+    val uid: String = "",
+    val name: String = "",
+    val photo: String = ""
 )
 
