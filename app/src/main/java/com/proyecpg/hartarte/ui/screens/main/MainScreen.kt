@@ -1,6 +1,5 @@
 package com.proyecpg.hartarte.ui.screens.main
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -58,6 +56,7 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 fun MainScreen(
     state: MainState,
     onCreatePost: () -> Unit
+    //onPostClick
     //onHome ?
     //onBookmark ?
     //onUser ?
@@ -99,6 +98,7 @@ fun MainScreen(
                     }
                 )
                 SearchBar(lazyListState = lazyListState)
+                Spacer(modifier = Modifier.size(5.dp))
             }
         },
         bottomBar = {
@@ -154,14 +154,13 @@ fun MainScreen(
             "Título de ejemplo 3"
         )
 
-        SearchBar(LazyListState())
-
         LazyColumn(
             modifier = Modifier.padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             state = lazyListState
         ) {
+
             items(posts.size) { post ->
                 Post(
                     images = listOf
