@@ -71,7 +71,7 @@ class AuthViewModel @Inject constructor(
             _stateLogin.update { it.copy(isLoading = true) }
             val result = authRepository.login(email, password)
 
-            val campos = listOf(
+            listOf(
                 email to R.string.error_missing_email,
                 password to R.string.error_missing_password
             )

@@ -83,6 +83,14 @@
           }
         },
         {
+          "client_id": "977446594568-qk0jlm3makg7pe5qktdg2s885i3nvent.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.proyecpg.hartarte",
+            "certificate_hash": "c87fa29e544c96997ecd2828ebfa911b44ddf2f3"
+          }
+        },
+        {
           "client_id": "977446594568-4mfefmfj6kg4dpqqfnbi97apc093bo9n.apps.googleusercontent.com",
           "client_type": 3
         }
