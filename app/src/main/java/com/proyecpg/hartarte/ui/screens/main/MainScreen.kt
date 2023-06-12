@@ -55,7 +55,6 @@ import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.ui.components.Post
-import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
@@ -207,7 +206,12 @@ fun MainScreen(
             items(items = pagingPosts){ post ->
                 post?.let{
                     Post(
-                        images = it.imagen as List<String>,
+                        images =
+                        listOf(
+                            "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
+                            "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
+                            "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
+                        ),
                         username = it.user?.name ?: "",
                         userPic = it.user?.photo ?: "",
                         title = it.titulo,
@@ -251,9 +255,10 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
     }
 }
 
-//Revisa si está scrolleado para colapasar un elemento
+/*Revisa si está scrolleado para colapasar un elemento
 val LazyListState.isScrolled: Boolean
     get() = firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0
+*/
 
 @OptIn(ExperimentalPagerApi::class)
 @Preview(showBackground = true)

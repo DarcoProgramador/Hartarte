@@ -1,5 +1,7 @@
 package com.proyecpg.hartarte.ui.components
 
+/*
+
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -30,8 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.proyecpg.hartarte.ui.screens.main.isScrolled
+//import com.proyecpg.hartarte.ui.screens.main.isScrolled
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +48,7 @@ fun SearchBar(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize(animationSpec = tween(durationMillis = 300))
-            .height(if (lazyListState.isScrolled) 0.dp else 56.dp)
+            //.height(if (lazyListState.isScrolled) 0.dp else 56.dp)
             .clip(shape = RoundedCornerShape(30.dp))
             .background(color = MaterialTheme.colorScheme.primaryContainer)
     ) {
@@ -95,3 +98,4 @@ fun PreviewSearchBar(){
         }
     }
 }
+ */
