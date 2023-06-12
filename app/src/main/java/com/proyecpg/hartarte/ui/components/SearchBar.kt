@@ -76,7 +76,7 @@ fun SearchBar(
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    //textColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     focusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
                     unfocusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer
                 ),

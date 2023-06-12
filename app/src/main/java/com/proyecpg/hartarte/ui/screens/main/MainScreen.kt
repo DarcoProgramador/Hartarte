@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,18 +44,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
     state: MainState,
+    viewModel: MainViewModel = hiltViewModel(),
     onCreatePost: () -> Unit
     //onPostClick
     //onHome ?
@@ -75,7 +83,7 @@ fun MainScreen(
     Scaffold(
         modifier = Modifier.padding(all = 12.dp),
         topBar = {
-            Column() {
+            Column {
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
@@ -97,7 +105,7 @@ fun MainScreen(
                         }
                     }
                 )
-                SearchBar(lazyListState = lazyListState)
+                //SearchBar(lazyListState = lazyListState)
                 Spacer(modifier = Modifier.size(5.dp))
             }
         },
@@ -148,6 +156,8 @@ fun MainScreen(
             }
         }
     ){ innerPadding ->
+        innerPadding
+        /*
         val posts = listOf(
             "Título de ejemplo 1",
             "Título de ejemplo 2",
@@ -182,6 +192,45 @@ fun MainScreen(
                 CircularProgressIndicator()
             }
         }
+
+         */
+
+        val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
+        val refresh = pagingPosts.loadState.refresh
+        val append = pagingPosts.loadState.append
+
+        LazyColumn(
+            modifier = Modifier.padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            items(items = pagingPosts){ post ->
+                post?.let{
+                    Post(
+                        images = it.imagen as List<String>,
+                        username = it.user?.name ?: "",
+                        userPic = it.user?.photo ?: "",
+                        title = it.titulo,
+                        description = it.descripcion,
+                        isLiked = true,
+                        isBookmarked = false,
+                        likesCount = it.likes?.toInt() ?: 0
+                    )
+                }
+            }
+            pagingPosts.loadState.apply {
+                when {
+                    refresh is LoadState.Loading -> {
+
+                    }
+                    refresh is Error -> print(refresh)
+                    append is LoadState.Loading -> {
+
+                    }
+                    append is Error -> print(append)
+                }
+            }
+        }
     }
 }
 
@@ -197,6 +246,7 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
         indication = null,
         interactionSource = remember { MutableInteractionSource()}
     ){
+
         onClick()
     }
 }
@@ -205,6 +255,7 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
 val LazyListState.isScrolled: Boolean
     get() = firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0
 
+@OptIn(ExperimentalPagerApi::class)
 @Preview(showBackground = true)
 @Composable
 fun PreviewMainScreen(){

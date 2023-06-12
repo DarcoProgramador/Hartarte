@@ -17,11 +17,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
+import com.proyecpg.hartarte.ui.screens.main.MainScreen
+import com.proyecpg.hartarte.ui.screens.main.MainState
+import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import kotlinx.coroutines.coroutineScope
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HomeScreen(
     viewModel : AuthViewModel,
@@ -31,7 +37,15 @@ fun HomeScreen(
     val state by viewModel.logged.collectAsStateWithLifecycle()
     state.let {
         if (it){
-            HomeScreenContent()
+            MainScreen(
+                state = MainState(
+                    false
+                ),
+                viewModel = hiltViewModel(),
+                onCreatePost = {
+
+                }
+            )
         }else{
             LaunchedEffect(false) {
                 navigateToAuthScrens()
