@@ -1,33 +1,27 @@
 package com.proyecpg.hartarte.ui.screens.main
 
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LightMode
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,9 +29,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
@@ -52,22 +44,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import coil.compose.AsyncImage
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.components.Post
+import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.launch
 
@@ -85,10 +75,9 @@ fun MainScreen(
     //val lazyListState = rememberLazyListState()
 
     //Variables de estado
-    var drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var selectedNavigationIndex by remember { mutableStateOf(0) }
     val navigationBarItems = remember { NavigationBarItems.values() }
-    var darkThemeActive = false
 
     //Posts
     val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
@@ -97,85 +86,32 @@ fun MainScreen(
 
     val navigationTitle = listOf("Inicio", "Guardados", "Perfil")
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
     ModalNavigationDrawer(
         drawerContent = {
-            ModalDrawerSheet {
-                Spacer(Modifier.height(12.dp))
-
-                Card(
-                    modifier = Modifier
-                        .height(100.dp)
-                        .padding(all = 5.dp)
-                        .clickable {
-                            selectedNavigationIndex = 2
-                            scope.launch { drawerState.close() }
-                        },
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AsyncImage(
-                            model = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                            contentDescription = "Username",
-                            modifier = Modifier
-                                .size(85.dp, 85.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Spacer(Modifier.width(12.dp))
-
-                        Text(
-                            text = "Username",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
+            SideBar(
+                username = "Username",
+                "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                onUserCardClick = {
+                    selectedNavigationIndex = 2
+                    scope.launch { drawerState.close() }
+                },
+                onToggleThemeClick = {
+                    when (currentNightMode) {
+                        Configuration.UI_MODE_NIGHT_NO -> {
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        }
+                        Configuration.UI_MODE_NIGHT_YES -> {
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        }
+                        else -> {
+                            // No se realiza ningún cambio, ya que el modo actual es el modo del sistema
+                        }
                     }
                 }
-
-                Spacer(Modifier.height(12.dp))
-
-                if (darkThemeActive){
-                    NavigationDrawerItem(
-                        label = { Text(text = "Cambiar al modo claro") },
-                        selected = false,
-                        onClick = { darkThemeActive = !darkThemeActive },
-                        icon = { Icon(imageVector = Icons.Outlined.LightMode, contentDescription = "Light mode") }
-                    )
-                }
-                else{
-                    NavigationDrawerItem(
-                        label = { Text(text = "Cambiar al modo oscuro") },
-                        selected = false,
-                        onClick = { darkThemeActive = !darkThemeActive },
-                        icon = { Icon(imageVector = Icons.Outlined.DarkMode, contentDescription = "Dark mode") }
-                    )
-                }
-
-                Spacer(Modifier.height(12.dp))
-
-                NavigationDrawerItem(
-                    label = { Text(text = "Sobre la app") },
-                    selected = false,
-                    onClick = { /* TODO: Mostrar ventana de info */ },
-                    icon = { Icon(imageVector = Icons.Outlined.Info, contentDescription = "About us") }
-                )
-
-                Spacer(Modifier.height(12.dp))
-
-                NavigationDrawerItem(
-                    label = { Text(text = "Cerrar sesión") },
-                    selected = false,
-                    onClick = { /* TODO: Cerrar sesión */ },
-                    icon = { Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Log out") }
-                )
-            }
+            )
         },
         drawerState = drawerState
     ) {
@@ -245,6 +181,7 @@ fun MainScreen(
                     modifier = Modifier.size(60.dp),
                     shape = CircleShape,
                     onClick = {
+                        onCreatePost
                         /* TODO: Llamar a la screen para crear posts */
                     }
                 ) {
