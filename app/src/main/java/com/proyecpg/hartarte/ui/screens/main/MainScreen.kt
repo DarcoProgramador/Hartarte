@@ -190,8 +190,7 @@ fun MainScreen(
             LazyColumn(
                 modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                state = lazyListState
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(items = pagingPosts){ post ->
                     post?.let{
@@ -204,8 +203,8 @@ fun MainScreen(
                             ),
                             username = it.user?.name ?: "",
                             userPic = it.user?.photo ?: "",
-                            title = it.titulo,
-                            description = it.descripcion,
+                            title = it.titulo?:"",
+                            description = it.descripcion?:"",
                             isLiked = true,
                             isBookmarked = false,
                             likesCount = it.likes?.toInt() ?: 0
@@ -217,11 +216,15 @@ fun MainScreen(
                         refresh is LoadState.Loading -> {
 
                         }
-                        refresh is Error -> print(refresh)
+                        refresh is Error -> {
+
+                        }
                         append is LoadState.Loading -> {
 
                         }
-                        append is Error -> print(append)
+                        append is Error -> {
+
+                        }
                     }
                 }
             }

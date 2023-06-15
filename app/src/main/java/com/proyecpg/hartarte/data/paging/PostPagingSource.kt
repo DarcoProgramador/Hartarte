@@ -1,9 +1,11 @@
 package com.proyecpg.hartarte.data.paging
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.proyecpg.hartarte.domain.model.Post
+import com.proyecpg.hartarte.utils.Constants.TAG
 import kotlinx.coroutines.tasks.await
 
 
