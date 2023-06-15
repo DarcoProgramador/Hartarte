@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.ui.screens.main
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.core.tween
@@ -34,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,9 +58,11 @@ import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.proyecpg.hartarte.data.DataStoreUtil
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
+import com.proyecpg.hartarte.ui.theme.ThemeViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
@@ -66,7 +70,9 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     state: MainState,
     viewModel: MainViewModel = hiltViewModel(),
-    onCreatePost: () -> Unit
+    themeViewModel: ThemeViewModel,
+    onCreatePost: () -> Unit,
+    dataStoreUtil: DataStoreUtil
     //onPostClick
     //onHome ?
     //onBookmark ?
@@ -86,8 +92,7 @@ fun MainScreen(
 
     val navigationTitle = listOf("Inicio", "Guardados", "Perfil")
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    var currentNightMode = LocalContext.current.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -98,19 +103,8 @@ fun MainScreen(
                     selectedNavigationIndex = 2
                     scope.launch { drawerState.close() }
                 },
-                onToggleThemeClick = {
-                    when (currentNightMode) {
-                        Configuration.UI_MODE_NIGHT_NO -> {
-                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        }
-                        Configuration.UI_MODE_NIGHT_YES -> {
-                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        }
-                        else -> {
-                            // No se realiza ningún cambio, ya que el modo actual es el modo del sistema
-                        }
-                    }
-                }
+                dataStoreUtil = dataStoreUtil,
+                themeViewModel = themeViewModel
             )
         },
         drawerState = drawerState
@@ -301,7 +295,9 @@ fun PreviewMainScreen(){
     HartarteTheme {
         MainScreen(
             state = MainState(false),
-            onCreatePost = {}
+            onCreatePost = {},
+            themeViewModel = ThemeViewModel(),
+            dataStoreUtil = DataStoreUtil(context = LocalContext.current)
         )
     }
 }

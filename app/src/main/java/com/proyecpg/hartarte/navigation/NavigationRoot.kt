@@ -1,18 +1,21 @@
 package com.proyecpg.hartarte.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.proyecpg.hartarte.data.DataStoreUtil
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
+import com.proyecpg.hartarte.ui.theme.ThemeViewModel
 
 @Composable
 fun NavigationRoot(
     navController: NavHostController = rememberNavController(),
-    authViewModel: AuthViewModel
+    dataStoreUtil: DataStoreUtil,
+    authViewModel: AuthViewModel,
+    themeViewModel: ThemeViewModel
 ) {
     NavHost(
     navController = navController,
@@ -26,13 +29,15 @@ fun NavigationRoot(
         composable(Graph.HOME){
             HomeScreen(
                 viewModel = authViewModel,
-                navigateToAuthScrens = {
+                themeViewModel = themeViewModel,
+                navigateToAuthScreens = {
                     navController.navigate(Graph.AUTHENTICATION){
                         popUpTo(Graph.HOME){
                             inclusive = true
                         }
                     }
-                }
+                },
+                dataStoreUtil = dataStoreUtil
             )
         }
     }
