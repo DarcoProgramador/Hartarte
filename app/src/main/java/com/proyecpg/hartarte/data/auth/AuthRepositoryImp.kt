@@ -7,8 +7,16 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FieldValue.serverTimestamp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.proyecpg.hartarte.utils.Constants.CREATED_AT
+import com.proyecpg.hartarte.utils.Constants.DESCRIPCION
+import com.proyecpg.hartarte.utils.Constants.DISPLAY_NAME
+import com.proyecpg.hartarte.utils.Constants.EMAIL
+import com.proyecpg.hartarte.utils.Constants.PHOTO_URL
 import com.proyecpg.hartarte.utils.Constants.SIGN_IN_REQUEST
 import com.proyecpg.hartarte.utils.Constants.SIGN_UP_REQUEST
+import com.proyecpg.hartarte.utils.Constants.USERS
 import com.proyecpg.hartarte.utils.Resource
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -21,6 +29,7 @@ class AuthRepositoryImp @Inject constructor(
     private var signInRequest: BeginSignInRequest,
     @Named(SIGN_UP_REQUEST)
     private var signUpRequest: BeginSignInRequest,
+    private val db: FirebaseFirestore,
     ): AuthRepository {
     override val currentUser: FirebaseUser?
         get() = firebaseAuth.currentUser
@@ -43,6 +52,7 @@ class AuthRepositoryImp @Inject constructor(
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             result.user?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(name).build())?.await()
+            addUserToFirestore()
             return Resource.Success(result.user!!)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -55,7 +65,7 @@ class AuthRepositoryImp @Inject constructor(
             val result = firebaseAuth.signInWithCredential(credentials).await()
             val isNewUser = result.additionalUserInfo?.isNewUser ?: false
             if (isNewUser) {
-               // TODO("implement funtion addUserToFirestore() to add more data for the users")
+                addUserToFirestore()
             }
             return Resource.Success(result.user!!)
         } catch (e: Exception) {
@@ -79,7 +89,31 @@ class AuthRepositoryImp @Inject constructor(
         }
     }
 
-    override fun logout() {
-        firebaseAuth.signOut()
+    private suspend fun addUserToFirestore() {
+        firebaseAuth.currentUser?.apply {
+            val user = toUser()
+            db.collection(USERS).document(uid).set(user).await()
+        }
+    }
+
+    override suspend fun logout() {
+        try {
+            oneTapClient.signOut().await()
+            firebaseAuth.signOut()
+        } catch(e: Exception) {
+            try {
+                firebaseAuth.signOut()
+            }catch (e : Exception){
+                e.printStackTrace()
+            }
+        }
     }
 }
+
+fun FirebaseUser.toUser() = mapOf(
+    DISPLAY_NAME to displayName,
+    EMAIL to email,
+    PHOTO_URL to photoUrl?.toString(),
+    CREATED_AT to serverTimestamp(),
+    DESCRIPCION to ""
+)

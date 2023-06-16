@@ -9,6 +9,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.auth.AuthRepository
 import com.proyecpg.hartarte.data.auth.AuthRepositoryImp
@@ -25,8 +27,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class AuthModule {
+
     @Provides
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides
+    fun provideFirebaseFirestore() = Firebase.firestore
 
     @Singleton
     @Provides

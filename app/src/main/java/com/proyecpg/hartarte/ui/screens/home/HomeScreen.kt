@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,24 +16,42 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.data.DataStoreUtil
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
-import kotlinx.coroutines.coroutineScope
+import com.proyecpg.hartarte.ui.screens.main.MainScreen
+import com.proyecpg.hartarte.ui.screens.main.MainState
+import com.proyecpg.hartarte.ui.theme.ThemeViewModel
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HomeScreen(
     viewModel : AuthViewModel,
-    navigateToAuthScrens: () -> Unit
+    themeViewModel: ThemeViewModel,
+    navigateToAuthScreens: () -> Unit,
+    dataStoreUtil: DataStoreUtil
     //OnRegisterClick
 ) {
     val state by viewModel.logged.collectAsStateWithLifecycle()
     state.let {
         if (it){
-            HomeScreenContent()
+            MainScreen(
+                state = MainState(
+                    false
+                ),
+                viewModel = hiltViewModel(),
+                themeViewModel = themeViewModel,
+                onCreatePost = {
+
+                },
+                dataStoreUtil = dataStoreUtil
+            )
         }else{
             LaunchedEffect(false) {
-                navigateToAuthScrens()
+                navigateToAuthScreens()
             }
         }
     }
