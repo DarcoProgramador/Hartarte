@@ -207,16 +207,11 @@ fun MainScreenContent(
         modifier = Modifier.padding(innerPadding),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    ){
         items(items = pagingPosts){ post ->
             post?.let{
                 Post(
-                    images =
-                    listOf(
-                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
-                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
-                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
-                    ),
+                    images = listOf(it.imagen?:""),
                     username = it.user?.name ?: "",
                     userPic = it.user?.photo ?: "",
                     title = it.titulo?:"",
