@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -46,15 +47,15 @@ fun UserCard(
     userFollowers: Int,
     userFollows: Int,
     isFollowed: Boolean,
-    isOpened: Boolean
+    lazyListState: LazyListState
 ){
     var followed by remember { mutableStateOf(isFollowed) }
-    val animatedSize: Dp by animateDpAsState(targetValue = if (isOpened) 200.dp else 160.dp)
+    val animatedSize: Dp by animateDpAsState(targetValue = if (lazyListState.isScrolled) 200.dp else 160.dp)
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(if (isOpened) IntrinsicSize.Max else IntrinsicSize.Min),
+            .height(if (lazyListState.isScrolled) IntrinsicSize.Max else IntrinsicSize.Min),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         )
@@ -89,7 +90,7 @@ fun UserCard(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                if(isOpened){
+                if(lazyListState.isScrolled){
                     //Followers
                     Text(
                         text = "Seguidores",
@@ -124,8 +125,9 @@ fun UserCard(
                     Button(
                         onClick = {
                             followed = !followed
+                            //Actualizar seguidores
                         },
-                        modifier = Modifier.size(140.dp, 50.dp),
+                        modifier = Modifier.height(50.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
@@ -141,7 +143,7 @@ fun UserCard(
             }
         }
 
-        if(isOpened){
+        if(lazyListState.isScrolled){
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -165,8 +167,11 @@ fun UserCard(
                 Button(
                     onClick = {
                         followed = !followed
+                        //Actualizar seguidores
                     },
-                    modifier = Modifier.padding(start = 50.dp),
+                    modifier = Modifier
+                        .padding(start = 50.dp)
+                        .height(50.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(
@@ -195,7 +200,7 @@ fun PreviewUserCard(){
                 userFollowers = 100,
                 userFollows = 100,
                 isFollowed = false,
-                isOpened = false
+                lazyListState = LazyListState(0, 0)
             )
         }
     }
