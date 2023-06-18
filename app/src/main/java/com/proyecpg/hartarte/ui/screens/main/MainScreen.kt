@@ -1,8 +1,6 @@
 package com.proyecpg.hartarte.ui.screens.main
 
-import android.content.Context
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -35,7 +34,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +58,7 @@ import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.data.DataStoreUtil
 import com.proyecpg.hartarte.ui.components.Post
+import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import com.proyecpg.hartarte.ui.theme.ThemeViewModel
@@ -78,9 +77,8 @@ fun MainScreen(
     //onBookmark ?
     //onUser ?
 ){
-    //val lazyListState = rememberLazyListState()
-
     //Variables de estado
+    var lazyListState = rememberLazyListState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var selectedNavigationIndex by remember { mutableStateOf(0) }
     val navigationBarItems = remember { NavigationBarItems.values() }
@@ -134,7 +132,9 @@ fun MainScreen(
                             }
                         }
                     )
-                    //SearchBar(lazyListState = lazyListState)
+
+                    SearchBar(lazyListState)
+
                     Spacer(modifier = Modifier.size(5.dp))
                 }
             },
@@ -186,49 +186,12 @@ fun MainScreen(
                 }
             }
         ){ innerPadding ->
-            innerPadding
-            /*
-            val posts = listOf(
-                "Título de ejemplo 1",
-                "Título de ejemplo 2",
-                "Título de ejemplo 3"
-            )
 
             LazyColumn(
                 modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 state = lazyListState
-            ) {
-
-                items(posts.size) { post ->
-                    Post(
-                        images = listOf
-                            (
-                            "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
-                            "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
-                            "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
-                        ),
-                        username = "TheJosuep",
-                        userPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                        title = posts[post],
-                        description = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
-                        isBookmarked = true,
-                        isLiked = false,
-                        likesCount = 40
-                    )
-                }
-                item {
-                    CircularProgressIndicator()
-                }
-            }
-
-             */
-
-            LazyColumn(
-                modifier = Modifier.padding(innerPadding),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(items = pagingPosts){ post ->
                     post?.let{
@@ -278,7 +241,6 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
         indication = null,
         interactionSource = remember { MutableInteractionSource()}
     ){
-
         onClick()
     }
 }
@@ -295,6 +257,7 @@ fun PreviewMainScreen(){
     HartarteTheme {
         MainScreen(
             state = MainState(false),
+            viewModel = hiltViewModel(),
             onCreatePost = {},
             themeViewModel = ThemeViewModel(),
             dataStoreUtil = DataStoreUtil(context = LocalContext.current)

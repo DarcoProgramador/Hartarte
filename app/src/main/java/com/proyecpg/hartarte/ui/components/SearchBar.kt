@@ -1,38 +1,42 @@
 package com.proyecpg.hartarte.ui.components
 
-/*
-
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-//import com.proyecpg.hartarte.ui.screens.main.isScrolled
+import com.proyecpg.hartarte.ui.screens.user.isScrolled
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 
@@ -41,50 +45,76 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 fun SearchBar(
     lazyListState: LazyListState
 ){
-
     var text by remember{ mutableStateOf("") }
+    var active by remember{ mutableStateOf(false) }
+    var items = remember { mutableListOf<String>() }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize(animationSpec = tween(durationMillis = 300))
-            //.height(if (lazyListState.isScrolled) 0.dp else 56.dp)
-            .clip(shape = RoundedCornerShape(30.dp))
-            .background(color = MaterialTheme.colorScheme.primaryContainer)
+    AnimatedVisibility(
+        visible = !lazyListState.isScrolled,
+        enter = slideInVertically(),
+        exit = slideOutVertically()
     ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                modifier = Modifier.padding(start = 16.dp),
-                onClick = { /*TODO*/ }
-            ) {
+        androidx.compose.material3.SearchBar(
+            query = text,
+            onQueryChange = {
+                text = it
+            },
+            onSearch = {
+                items.add(text)
+                active = false
+                /* TODO: Buscar */
+            },
+            active = active,
+            onActiveChange = {
+                active = it
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(shape = RoundedCornerShape(30.dp)),
+            placeholder = {
+                Text(text = "Buscar publicación")
+            },
+            leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search icon",
                     tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-            }
-
-            TextField(
-                value = text,
-                onValueChange = {
-                    text = it
-                },
-                placeholder = {
-                    Text(
-                        text = "Buscar una publicación"
+            },
+            trailingIcon = {
+                if(active){
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close search bar",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.clickable {
+                            if (text.isNotEmpty()){
+                                text = ""
+                            }
+                            else{
+                                active = false
+                            }
+                        }
                     )
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    //textColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    focusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer
-                ),
-                singleLine = true
-            )
+                }
+            }
+        ) {
+            items.reversed().forEach {
+                Row(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .clickable {
+                            text = it
+                        },
+                    verticalAlignment = CenterVertically
+                ){
+                    Icon(imageVector = Icons.Default.History, contentDescription = "History icon")
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Text(text = it)
+                }
+            }
         }
     }
 }
@@ -94,8 +124,7 @@ fun SearchBar(
 fun PreviewSearchBar(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
-            SearchBar(LazyListState())
+            SearchBar(lazyListState = LazyListState(0, 0))
         }
     }
 }
- */
