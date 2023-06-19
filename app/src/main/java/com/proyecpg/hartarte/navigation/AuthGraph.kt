@@ -63,7 +63,7 @@ fun NavGraphBuilder.authNavGraph(
             SignInWithGoogle(
                 navigateToHomeScreen = { signedIn ->
                     if (signedIn) {
-                        navController.navigate(Graph.HOME){
+                        navController.navigate(Graph.MAIN){
                             popUpTo(AuthScreens.LoginScreen.route){
                                 inclusive = true
                             }
@@ -76,7 +76,7 @@ fun NavGraphBuilder.authNavGraph(
 
             LaunchedEffect(key1 = state.isLoginSuccessful) {
                 if (state.isLoginSuccessful){
-                    navController.navigate(Graph.HOME){
+                    navController.navigate(Graph.MAIN){
                         popUpTo(AuthScreens.LoginScreen.route){
                             inclusive = true
                         }
