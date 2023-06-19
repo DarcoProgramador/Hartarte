@@ -172,10 +172,7 @@ fun MainScreen(
                 FloatingActionButton(
                     modifier = Modifier.size(60.dp),
                     shape = CircleShape,
-                    onClick = {
-                        onCreatePost
-                        /* TODO: Llamar a la screen para crear posts */
-                    }
+                    onClick = onCreatePost
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
