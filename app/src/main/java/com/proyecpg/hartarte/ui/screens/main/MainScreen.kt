@@ -210,16 +210,19 @@ fun MainScreenContent(
     ){
         items(items = pagingPosts){ post ->
             post?.let{
+                val postId = it.postId?:""
+                val liked = it.liked?:false
                 Post(
+                    postId = postId,
                     images = listOf(it.imagen?:""),
                     username = it.user?.name ?: "",
                     userPic = it.user?.photo ?: "",
                     title = it.titulo?:"",
                     description = it.descripcion?:"",
-                    isLiked = it.liked?:false,
+                    isLiked = liked,
                     isBookmarked = it.bookmarked?:false,
                     likesCount = it.likes?.toInt() ?: 0,
-                    onLike = {},
+                    onLike = viewModel::doLike,
                     onBookmark = {}
                 )
             }

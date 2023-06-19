@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +52,7 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Post(
+    postId: String,
     images: List<String>,
     username: String,
     userPic: String,
@@ -59,14 +61,14 @@ fun Post(
     isLiked: Boolean,
     isBookmarked: Boolean,
     likesCount: Int,
-    onLike : () -> Unit,
+    onLike : (String, Boolean) -> Unit,
     onBookmark : () -> Unit
 ){
     val pagerState = rememberPagerState(initialPage = 0)
 
-    var liked by remember { mutableStateOf(isLiked) }
-    var bookmarked by remember { mutableStateOf(isBookmarked) }
-    var likeCount by remember { mutableStateOf(likesCount) }
+    var liked by rememberSaveable(key=postId){ mutableStateOf(isLiked) }
+    var bookmarked by rememberSaveable(key=postId){ mutableStateOf(isBookmarked) }
+    var likeCount by rememberSaveable(key=postId){ mutableStateOf(likesCount) }
 
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -195,7 +197,7 @@ fun Post(
 
                                 liked = !liked
 
-                                onLike() //TODO: Cambiar despues a event
+                                onLike(postId, liked) //TODO: Cambiar despues a event
                             }
                         ) {
                             if(liked){
@@ -250,6 +252,7 @@ fun PreviewPost(){
             modifier = Modifier.padding(all = 10.dp)
         ) {
             Post(
+                postId = "",
                 images = listOf
                     (
                         "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
@@ -263,7 +266,8 @@ fun PreviewPost(){
                 isBookmarked = true,
                 isLiked = false,
                 likesCount = 40,
-                onLike = {}
+                onLike = { _: String, _: Boolean -> run {} },
+                onBookmark = {}
             )
         }
     }
