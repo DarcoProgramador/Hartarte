@@ -33,9 +33,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,13 +53,13 @@ import coil.size.Scale
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.proyecpg.hartarte.ui.components.customTextField
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
-import org.checkerframework.checker.units.qual.Length
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
-fun CreatePostScreen(){
+fun CreatePostScreen(
+    onReturn: () -> Unit
+){
 
     var title by remember{ mutableStateOf("") }
     var description by remember{ mutableStateOf("") }
@@ -86,9 +86,7 @@ fun CreatePostScreen(){
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            /* TODO: Regresar a MainScreen() */
-                        }
+                        onClick = onReturn
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
@@ -284,7 +282,9 @@ fun customTextInputField(
 fun PreviewCreatePostScreen(){
     HartarteTheme {
         Box(modifier = Modifier.fillMaxSize()){
-            CreatePostScreen()
+            CreatePostScreen(
+                onReturn = {}
+            )
         }
     }
 }

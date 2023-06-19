@@ -14,6 +14,7 @@ import com.proyecpg.hartarte.data.DataStoreUtil
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainState
+import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.theme.ThemeViewModel
 
 @OptIn(ExperimentalPagerApi::class)
@@ -45,7 +46,9 @@ fun NavigationRoot(
                         viewModel = hiltViewModel(),
                         themeViewModel = themeViewModel,
                         onCreatePost = {
-                            navController.navigate(AppScreens.CreatePostScreen.route)
+                            navController.navigate(AppScreens.CreatePostScreen.route){
+
+                            }
                         },
                         dataStoreUtil = dataStoreUtil
                     )
@@ -59,6 +62,14 @@ fun NavigationRoot(
                     }
                 }
             }
+        }
+
+        composable(AppScreens.CreatePostScreen.route){
+            CreatePostScreen(
+                onReturn = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         /*

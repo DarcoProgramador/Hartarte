@@ -2,6 +2,7 @@ package com.proyecpg.hartarte.ui.screens.user
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -14,12 +15,12 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
 fun UserScreen(
-
+    paddingValues: PaddingValues
 ){
     val lazyListState = rememberLazyListState()
 
     Column(
-        modifier = Modifier
+        modifier = Modifier.padding(paddingValues)
     ){
         Box(modifier = Modifier){
             UserCard(
@@ -50,7 +51,7 @@ val LazyListState.isScrolled: Boolean
 fun PreviewUserScreen(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
-            UserScreen()
+            UserScreen(PaddingValues())
         }
     }
 }
