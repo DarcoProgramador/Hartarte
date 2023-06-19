@@ -7,6 +7,7 @@ data class Post (
     val titulo: String? = null,
     val descripcion: String? = null,
     val imagen: String? = null,
+    var liked: Boolean? = null,
     val likes: Long? = null,
     val user: User? = User(),
     val createdAt: Timestamp? = null

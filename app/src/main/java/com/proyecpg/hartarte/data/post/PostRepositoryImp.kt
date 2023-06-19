@@ -33,18 +33,6 @@ class PostRepositoryImp @Inject constructor(
         source
     }.flow
 
-    override suspend fun isPostLiked(postId: String): Resource<Boolean> {
-        return try {
-            val post = db.collection(POST_LIKES_COLLECTION).document(postId).get().await()
-            val user = firebaseAuth.currentUser!!.uid
-            if (!post.exists()) Resource.Success(false)
-            val likeArray: List<String> = post.get(LIKES) as List<String>
-            Resource.Success(likeArray.contains(user))
-        }catch (e : Exception){
-            Resource.Failure(e)
-        }
-    }
-
     override suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean> {
         return try {
             val increment = FieldValue.increment(1)

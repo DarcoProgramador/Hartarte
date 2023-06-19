@@ -27,6 +27,6 @@ object Constants {
     const val PAGE_SIZE = 10L
 
     //FireBasePostLikes
-    const val POST_LIKES_COLLECTION = "posts"
+    const val POST_LIKES_COLLECTION = "postsLikes"
     const val LIKES = "likes"
 }

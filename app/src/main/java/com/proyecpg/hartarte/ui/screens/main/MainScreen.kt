@@ -216,7 +216,7 @@ fun MainScreenContent(
                     userPic = it.user?.photo ?: "",
                     title = it.titulo?:"",
                     description = it.descripcion?:"",
-                    isLiked = true,
+                    isLiked = it.liked?:false,
                     isBookmarked = false,
                     likesCount = it.likes?.toInt() ?: 0
                 )
