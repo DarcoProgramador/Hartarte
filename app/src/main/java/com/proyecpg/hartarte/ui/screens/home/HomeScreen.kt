@@ -18,9 +18,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.DataStoreUtil
+import com.proyecpg.hartarte.navigation.Graph
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainState
@@ -29,13 +31,14 @@ import com.proyecpg.hartarte.ui.theme.ThemeViewModel
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HomeScreen(
-    viewModel : AuthViewModel,
+    /*viewModel : AuthViewModel,
     themeViewModel: ThemeViewModel,
     navigateToAuthScreens: () -> Unit,
-    dataStoreUtil: DataStoreUtil
-    //OnRegisterClick
+    dataStoreUtil: DataStoreUtil,
+    navController: NavHostController
+    //OnRegisterClick*/
 ) {
-    val state by viewModel.logged.collectAsStateWithLifecycle()
+    /*val state by viewModel.logged.collectAsStateWithLifecycle()
     state.let {
         if (it){
             MainScreen(
@@ -45,16 +48,20 @@ fun HomeScreen(
                 viewModel = hiltViewModel(),
                 themeViewModel = themeViewModel,
                 onCreatePost = {
-
+                    navController.navigate(AppScreens)
                 },
                 dataStoreUtil = dataStoreUtil
             )
         }else{
             LaunchedEffect(false) {
-                navigateToAuthScreens()
+                navController.navigate(Graph.AUTHENTICATION){
+                    popUpTo(Graph.MAIN){
+                        inclusive = true
+                    }
+                }
             }
         }
-    }
+    }*/
 }
 
 @Composable
