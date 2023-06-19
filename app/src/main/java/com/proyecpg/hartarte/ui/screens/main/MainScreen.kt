@@ -79,7 +79,7 @@ fun MainScreen(
     //onUser ?
 ){
     //Variables de estado
-    var lazyListState = rememberLazyListState()
+    val lazyListState = rememberLazyListState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var selectedNavigationIndex by remember { mutableStateOf(0) }
     val navigationBarItems = remember { NavigationBarItems.values() }
@@ -260,11 +260,6 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
         onClick()
     }
 }
-
-/*Revisa si está scrolleado para colapasar un elemento
-val LazyListState.isScrolled: Boolean
-    get() = firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0
-*/
 
 @OptIn(ExperimentalPagerApi::class)
 @Preview(showBackground = true)
