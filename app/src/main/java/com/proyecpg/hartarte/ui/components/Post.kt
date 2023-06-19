@@ -58,7 +58,9 @@ fun Post(
     description: String,
     isLiked: Boolean,
     isBookmarked: Boolean,
-    likesCount: Int
+    likesCount: Int,
+    onLike : () -> Unit,
+    onBookmark : () -> Unit
 ){
     val pagerState = rememberPagerState(initialPage = 0)
 
@@ -192,6 +194,8 @@ fun Post(
                                     likeCount++
 
                                 liked = !liked
+
+                                onLike() //TODO: Cambiar despues a event
                             }
                         ) {
                             if(liked){
@@ -215,6 +219,8 @@ fun Post(
                     IconButton(
                         onClick = {
                             bookmarked = !bookmarked
+
+                            onBookmark() //TODO: Cambiar despues a event
                         }
                     ) {
                         if(bookmarked){
@@ -256,7 +262,8 @@ fun PreviewPost(){
                 description = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
                 isBookmarked = true,
                 isLiked = false,
-                likesCount = 40
+                likesCount = 40,
+                onLike = {}
             )
         }
     }

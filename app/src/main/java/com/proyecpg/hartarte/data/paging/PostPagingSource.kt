@@ -1,20 +1,13 @@
 package com.proyecpg.hartarte.data.paging
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.ktx.toObjects
-import com.proyecpg.hartarte.data.post.PostRepository
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.Constants
-import com.proyecpg.hartarte.utils.Constants.TAG
-import com.proyecpg.hartarte.utils.Resource
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 
 class PostPagingSource (
@@ -42,9 +35,13 @@ class PostPagingSource (
         val postList = currentPage.toObjects(Post::class.java)
 
         postList.forEach {post ->
-            val result = isPostLiked(post.postId?:"")
+            val postId = post.postId?:""
 
-            post.liked = result
+            val resultLike = isPostLiked(postId)
+            val resultBookMark = isPostBookmarked(postId)
+
+            post.liked = resultLike
+            post.bookmarked = resultBookMark
         }
 
         return  postList
@@ -56,9 +53,20 @@ class PostPagingSource (
             val user = firebaseAuth.currentUser!!.uid
             if (!post.exists()) return false
             val likeArray: List<String> = post.get(Constants.LIKES) as List<String>
-            val likeContain = likeArray.contains(user)
-            return likeContain
-        }catch (e : Exception){
+            return likeArray.contains(user)
+        } catch (e: Exception) {
+            return false
+        }
+    }
+
+    private suspend fun isPostBookmarked(postId: String): Boolean {
+        try {
+            val post = db.collection(Constants.POST_BOOKMARKS_COLLECTION).document(postId).get().await()
+            val user = firebaseAuth.currentUser!!.uid
+            if (!post.exists()) return false
+            val bookmarkArray: List<String> = post.get(Constants.BOOKMARKS) as List<String>
+            return bookmarkArray.contains(user)
+        } catch (e: Exception) {
             return false
         }
     }

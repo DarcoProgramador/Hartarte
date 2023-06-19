@@ -29,4 +29,8 @@ object Constants {
     //FireBasePostLikes
     const val POST_LIKES_COLLECTION = "postsLikes"
     const val LIKES = "likes"
+
+    //FireBaseBookmarks
+    const val POST_BOOKMARKS_COLLECTION = "postsBookmarks"
+    const val BOOKMARKS = "bookmarks"
 }

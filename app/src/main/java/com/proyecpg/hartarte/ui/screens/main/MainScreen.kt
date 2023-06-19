@@ -217,8 +217,10 @@ fun MainScreenContent(
                     title = it.titulo?:"",
                     description = it.descripcion?:"",
                     isLiked = it.liked?:false,
-                    isBookmarked = false,
-                    likesCount = it.likes?.toInt() ?: 0
+                    isBookmarked = it.bookmarked?:false,
+                    likesCount = it.likes?.toInt() ?: 0,
+                    onLike = {},
+                    onBookmark = {}
                 )
             }
         }
