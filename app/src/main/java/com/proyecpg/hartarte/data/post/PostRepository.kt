@@ -9,4 +9,6 @@ interface PostRepository {
     fun getPosts(): Flow<PagingData<Post>>
 
     suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean>
+
+    suspend fun registerBookmark(postId: String, bookmarked: Boolean): Resource<Boolean>
 }

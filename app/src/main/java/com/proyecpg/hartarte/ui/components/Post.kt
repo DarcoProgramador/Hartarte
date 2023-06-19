@@ -62,7 +62,7 @@ fun Post(
     isBookmarked: Boolean,
     likesCount: Int,
     onLike : (String, Boolean) -> Unit,
-    onBookmark : () -> Unit
+    onBookmark : (String, Boolean) -> Unit
 ){
     val pagerState = rememberPagerState(initialPage = 0)
 
@@ -222,7 +222,7 @@ fun Post(
                         onClick = {
                             bookmarked = !bookmarked
 
-                            onBookmark() //TODO: Cambiar despues a event
+                            onBookmark(postId, bookmarked) //TODO: Cambiar despues a event
                         }
                     ) {
                         if(bookmarked){
@@ -267,7 +267,7 @@ fun PreviewPost(){
                 isLiked = false,
                 likesCount = 40,
                 onLike = { _: String, _: Boolean -> run {} },
-                onBookmark = {}
+                onBookmark = { _: String, _: Boolean -> run {} }
             )
         }
     }

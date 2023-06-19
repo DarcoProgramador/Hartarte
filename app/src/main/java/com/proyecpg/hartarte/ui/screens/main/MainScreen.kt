@@ -223,7 +223,7 @@ fun MainScreenContent(
                     isBookmarked = it.bookmarked?:false,
                     likesCount = it.likes?.toInt() ?: 0,
                     onLike = viewModel::doLike,
-                    onBookmark = {}
+                    onBookmark = viewModel::doBookmark
                 )
             }
         }

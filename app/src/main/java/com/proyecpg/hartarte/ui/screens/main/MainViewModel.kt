@@ -30,12 +30,29 @@ class MainViewModel @Inject constructor(
                 when(val resource = it){
                     is Resource.Success ->{
                         //TODO: Hacer un estado para cuando sea correcto
-                        Log.e(Constants.TAG,  "Resultado correcto: ${resource.result.toString()}")
                     }
                     is Resource.Failure ->{
                         //TODO: Hacer un estado para cuando falle
-                        Log.e(Constants.TAG, "Resultado fallido: ${resource.toString()}")
+                    }
+                    is Resource.Loading->{
+                        //TODO: Hacer un estado para cuando este cargando
+                    }
+                }
+            }
+        }
+    }
 
+    fun doBookmark(postId: String, bookmarked: Boolean){
+        viewModelScope.launch {
+            val result = repo.registerBookmark(postId, bookmarked)
+
+            result.let {
+                when(val resource = it){
+                    is Resource.Success ->{
+                        //TODO: Hacer un estado para cuando sea correcto
+                    }
+                    is Resource.Failure ->{
+                        //TODO: Hacer un estado para cuando falle
                     }
                     is Resource.Loading->{
                         //TODO: Hacer un estado para cuando este cargando
