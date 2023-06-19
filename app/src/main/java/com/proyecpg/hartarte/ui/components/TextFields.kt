@@ -36,8 +36,10 @@ fun customTextField(placeholder: String): String {
             .fillMaxWidth()
             .height(50.dp),
         shape = RoundedCornerShape(5.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         value = text,
         onValueChange = {text = it},
