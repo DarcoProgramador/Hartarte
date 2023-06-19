@@ -1,6 +1,8 @@
 package com.proyecpg.hartarte.di
 
 import androidx.paging.PagingConfig
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Query.Direction.DESCENDING
 import com.google.firebase.firestore.ktx.firestore
@@ -27,9 +29,13 @@ class AppModule {
 
     @Provides
     fun provideProductsPagingSource(
-        queryPostByCreationTime: Query
+        queryPostByCreationTime: Query,
+        providerFirebaseAuth : FirebaseAuth,
+        providerFirestore: FirebaseFirestore
     ) = PostPagingSource(
-        queryPostByCreationTime = queryPostByCreationTime
+        queryPostByCreationTime = queryPostByCreationTime,
+        firebaseAuth = providerFirebaseAuth,
+        db = providerFirestore
     )
 
     @Provides

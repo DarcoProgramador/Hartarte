@@ -9,13 +9,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.proyecpg.hartarte.data.paging.PostPagingSource
 import com.proyecpg.hartarte.domain.model.Post
+import com.proyecpg.hartarte.utils.Constants.BOOKMARKS
 import com.proyecpg.hartarte.utils.Constants.LIKES
+import com.proyecpg.hartarte.utils.Constants.POST_BOOKMARKS_COLLECTION
 import com.proyecpg.hartarte.utils.Constants.POST_COLLECTION
 import com.proyecpg.hartarte.utils.Constants.POST_LIKES_COLLECTION
 import com.proyecpg.hartarte.utils.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.tasks.await
-import java.security.KeyStore.TrustedCertificateEntry
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,18 +32,6 @@ class PostRepositoryImp @Inject constructor(
     ) {
         source
     }.flow
-
-    override suspend fun isPostLiked(postId: String): Resource<Boolean> {
-        return try {
-            val post = db.collection(POST_LIKES_COLLECTION).document(postId).get().await()
-            val user = firebaseAuth.currentUser!!.uid
-            if (!post.exists()) Resource.Success(false)
-            val likeArray: List<String> = post.get(LIKES) as List<String>
-            Resource.Success(likeArray.contains(user))
-        }catch (e : Exception){
-            Resource.Failure(e)
-        }
-    }
 
     override suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean> {
         return try {
@@ -75,6 +63,48 @@ class PostRepositoryImp @Inject constructor(
                     //si es un like ponlo
                     transaction.update(postLikesRef, LIKES, FieldValue.arrayUnion(user))
                     transaction.update(postRef, LIKES, increment)
+                }
+            }.addOnSuccessListener {
+                //TODO: EMIT Result when the transaccion is true
+            }.addOnFailureListener {
+                throw Exception(it.message)
+            }
+            Resource.Success(true)
+        } catch (e: Exception) {
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun registerBookmark(postId: String, bookmarked: Boolean): Resource<Boolean> {
+        return try {
+            val increment = FieldValue.increment(1)
+            val decrement = FieldValue.increment(-1)
+
+            val user = firebaseAuth.currentUser!!.uid
+
+            val postRef = db.collection(POST_COLLECTION).document(postId)
+            val postBookmarksRef = db.collection(POST_BOOKMARKS_COLLECTION).document(postId)
+
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(postRef)
+                val bookmarksCount = snapshot.getLong(BOOKMARKS)!!
+                //contador de bookmark mayor a -1
+                if (bookmarksCount >= 0){
+                    //si no existe crealo
+                    if (!transaction.get(postBookmarksRef).exists()){
+                        transaction.set(postBookmarksRef, hashMapOf(BOOKMARKS to arrayListOf(user)), SetOptions.merge())
+                        transaction.update(postRef, BOOKMARKS, increment)
+                        return@runTransaction
+                    }
+                    //si es un dislike ponlo
+                    if(!bookmarked){
+                        transaction.update(postRef, BOOKMARKS, decrement)
+                        transaction.update(postBookmarksRef, BOOKMARKS, FieldValue.arrayRemove(user))
+                        return@runTransaction
+                    }
+                    //si es un like ponlo
+                    transaction.update(postBookmarksRef, BOOKMARKS, FieldValue.arrayUnion(user))
+                    transaction.update(postRef, BOOKMARKS, increment)
                 }
             }.addOnSuccessListener {
                 //TODO: EMIT Result when the transaccion is true

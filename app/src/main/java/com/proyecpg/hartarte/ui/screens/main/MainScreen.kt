@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -78,15 +79,12 @@ fun MainScreen(
     //onUser ?
 ){
     //Variables de estado
-    var lazyListState = rememberLazyListState()
+    val lazyListState = rememberLazyListState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var selectedNavigationIndex by remember { mutableStateOf(0) }
     val navigationBarItems = remember { NavigationBarItems.values() }
 
-    //Posts
-    val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
-    val refresh = pagingPosts.loadState.refresh
-    val append = pagingPosts.loadState.append
+
 
     val navigationTitle = listOf("Inicio", "Guardados", "Perfil")
     val scope = rememberCoroutineScope()
@@ -186,49 +184,67 @@ fun MainScreen(
                 }
             }
         ){ innerPadding ->
+            MainScreenContent(
+                innerPadding = innerPadding,
+                viewModel = viewModel
+            )
+        }
+    }
+}
 
-            LazyColumn(
-                modifier = Modifier.padding(innerPadding),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                state = lazyListState
-            ) {
-                items(items = pagingPosts){ post ->
-                    post?.let{
-                        Post(
-                            images =
-                            listOf(
-                                "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
-                                "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
-                                "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
-                            ),
-                            username = it.user?.name ?: "",
-                            userPic = it.user?.photo ?: "",
-                            title = it.titulo,
-                            description = it.descripcion,
-                            isLiked = true,
-                            isBookmarked = false,
-                            likesCount = it.likes?.toInt() ?: 0
-                        )
-                    }
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun MainScreenContent(
+    innerPadding: PaddingValues,
+    viewModel: MainViewModel
+){
+    //Posts
+    val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
+    val refresh = pagingPosts.loadState.refresh
+    val append = pagingPosts.loadState.append
+
+    LazyColumn(
+        modifier = Modifier.padding(innerPadding),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        items(items = pagingPosts){ post ->
+            post?.let{
+                val postId = it.postId?:""
+                val liked = it.liked?:false
+                Post(
+                    postId = postId,
+                    images = listOf(it.imagen?:""),
+                    username = it.user?.name ?: "",
+                    userPic = it.user?.photo ?: "",
+                    title = it.titulo?:"",
+                    description = it.descripcion?:"",
+                    isLiked = liked,
+                    isBookmarked = it.bookmarked?:false,
+                    likesCount = it.likes?.toInt() ?: 0,
+                    onLike = viewModel::doLike,
+                    onBookmark = viewModel::doBookmark
+                )
+            }
+        }
+        pagingPosts.loadState.apply {
+            when {
+                refresh is LoadState.Loading -> {
+
                 }
-                pagingPosts.loadState.apply {
-                    when {
-                        refresh is LoadState.Loading -> {
+                refresh is Error -> {
 
-                        }
-                        refresh is Error -> print(refresh)
-                        append is LoadState.Loading -> {
+                }
+                append is LoadState.Loading -> {
 
-                        }
-                        append is Error -> print(append)
-                    }
+                }
+                append is Error -> {
+
                 }
             }
         }
     }
 }
-
 enum class NavigationBarItems(val icon: ImageVector){
     Home(icon = Icons.Default.Home),
     Bookmark(icon = Icons.Default.Bookmark),
@@ -244,11 +260,6 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
         onClick()
     }
 }
-
-/*Revisa si está scrolleado para colapasar un elemento
-val LazyListState.isScrolled: Boolean
-    get() = firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0
-*/
 
 @OptIn(ExperimentalPagerApi::class)
 @Preview(showBackground = true)

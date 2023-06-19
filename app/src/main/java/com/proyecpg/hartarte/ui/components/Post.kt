@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +52,7 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Post(
+    postId: String,
     images: List<String>,
     username: String,
     userPic: String,
@@ -58,13 +60,15 @@ fun Post(
     description: String,
     isLiked: Boolean,
     isBookmarked: Boolean,
-    likesCount: Int
+    likesCount: Int,
+    onLike : (String, Boolean) -> Unit,
+    onBookmark : (String, Boolean) -> Unit
 ){
     val pagerState = rememberPagerState(initialPage = 0)
 
-    var liked by remember { mutableStateOf(isLiked) }
-    var bookmarked by remember { mutableStateOf(isBookmarked) }
-    var likeCount by remember { mutableStateOf(likesCount) }
+    var liked by rememberSaveable(key=postId){ mutableStateOf(isLiked) }
+    var bookmarked by rememberSaveable(key=postId){ mutableStateOf(isBookmarked) }
+    var likeCount by rememberSaveable(key=postId){ mutableStateOf(likesCount) }
 
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -192,6 +196,8 @@ fun Post(
                                     likeCount++
 
                                 liked = !liked
+
+                                onLike(postId, liked) //TODO: Cambiar despues a event
                             }
                         ) {
                             if(liked){
@@ -215,6 +221,8 @@ fun Post(
                     IconButton(
                         onClick = {
                             bookmarked = !bookmarked
+
+                            onBookmark(postId, bookmarked) //TODO: Cambiar despues a event
                         }
                     ) {
                         if(bookmarked){
@@ -244,6 +252,7 @@ fun PreviewPost(){
             modifier = Modifier.padding(all = 10.dp)
         ) {
             Post(
+                postId = "",
                 images = listOf
                     (
                         "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
@@ -256,7 +265,9 @@ fun PreviewPost(){
                 description = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
                 isBookmarked = true,
                 isLiked = false,
-                likesCount = 40
+                likesCount = 40,
+                onLike = { _: String, _: Boolean -> run {} },
+                onBookmark = { _: String, _: Boolean -> run {} }
             )
         }
     }
