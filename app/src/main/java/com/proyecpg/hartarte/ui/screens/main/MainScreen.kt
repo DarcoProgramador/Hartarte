@@ -1,6 +1,7 @@
 package com.proyecpg.hartarte.ui.screens.main
 
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -42,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,23 +51,19 @@ import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.proyecpg.hartarte.data.DataStoreUtil
+import com.proyecpg.hartarte.ui.Event
 import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 import com.proyecpg.hartarte.ui.screens.user.UserScreen
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
-import com.proyecpg.hartarte.ui.theme.ThemeViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
-    state: MainState,
-    viewModel: MainViewModel = hiltViewModel(),
-    themeViewModel: ThemeViewModel,
-    onCreatePost: () -> Unit,
-    dataStoreUtil: DataStoreUtil
+    viewModel: MainViewModel,
+    onCreatePost: () -> Unit
     //onPostClick
     //onHome ?
     //onBookmark ?
@@ -82,102 +78,114 @@ fun MainScreen(
     val navigationTitle = listOf("Inicio", "Guardados", "Perfil")
     val scope = rememberCoroutineScope()
 
-    ModalNavigationDrawer(
-        drawerContent = {
-            SideBar(
-                username = "Username",
-                "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                onUserCardClick = {
-                    selectedNavigationIndex = 2
-                    scope.launch { drawerState.close() }
-                },
-                dataStoreUtil = dataStoreUtil,
-                themeViewModel = themeViewModel
-            )
-        },
-        drawerState = drawerState
-    ) {
-        Scaffold(
-            modifier = Modifier.padding(all = 12.dp),
-            topBar = {
-                Column {
-                    CenterAlignedTopAppBar(
-                        title = {
-                            Text(
-                                text = navigationTitle[selectedNavigationIndex],
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        navigationIcon = {
-                            IconButton(
-                                onClick = {
-                                    scope.launch { drawerState.open() }
+    val state = viewModel.state
+
+    HartarteTheme(darkTheme = state.darkThemeValue) {
+        ModalNavigationDrawer(
+            drawerContent = {
+                SideBar(
+                    username = "Username",
+                    "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                    onUserCardClick = {
+                        selectedNavigationIndex = 2
+                        scope.launch { drawerState.close() }
+                    },
+                    onCheckedChange = {
+                        viewModel.onEvent(Event.SelectedDarkThemeValue(it))
+                    },
+                    saveDarkThemeValue = {
+                        viewModel.onEvent(Event.SaveDarkThemeValue(it))
+                    },
+                    viewModel = viewModel,
+                    switchState = state.darkThemeValue
+                )
+            },
+            drawerState = drawerState
+        ) {
+            Scaffold(
+                modifier = Modifier
+                    .padding(all = 12.dp)
+                    .background(color = MaterialTheme.colorScheme.background),
+                topBar = {
+                    Column {
+                        CenterAlignedTopAppBar(
+                            title = {
+                                Text(
+                                    text = navigationTitle[selectedNavigationIndex],
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            navigationIcon = {
+                                IconButton(
+                                    onClick = {
+                                        scope.launch { drawerState.open() }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Menu,
+                                        contentDescription = "Menu",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
-                            ) {
+                            }
+                        )
+
+                        SearchBar(lazyListState)
+
+                        Spacer(modifier = Modifier.size(5.dp))
+                    }
+                },
+                bottomBar = {
+                    AnimatedNavigationBar(
+                        modifier = Modifier.height(65.dp),
+                        selectedIndex = selectedNavigationIndex,
+                        barColor = MaterialTheme.colorScheme.primary,
+                        ballColor = MaterialTheme.colorScheme.primary,
+                        ballAnimation = Parabolic(tween(300)),
+                        indentAnimation = Height(tween(300)),
+                        cornerRadius = shapeCornerRadius(cornerRadius = 30.dp)
+                    ) {
+                        navigationBarItems.forEach { item ->
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(shape = RoundedCornerShape(30.dp))
+                                    .noRippleClickable {
+                                        selectedNavigationIndex = item.ordinal
+                                    }
+                            ){
                                 Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "Menu",
-                                    tint = MaterialTheme.colorScheme.primary
+                                    imageVector = item.icon,
+                                    contentDescription = null,
+                                    tint = if (selectedNavigationIndex == item.ordinal)
+                                        MaterialTheme.colorScheme.onPrimary
+                                    else
+                                        MaterialTheme.colorScheme.inversePrimary
                                 )
                             }
                         }
-                    )
-
-                    SearchBar(lazyListState)
-
-                    Spacer(modifier = Modifier.size(5.dp))
-                }
-            },
-            bottomBar = {
-                AnimatedNavigationBar(
-                    modifier = Modifier.height(65.dp),
-                    selectedIndex = selectedNavigationIndex,
-                    barColor = MaterialTheme.colorScheme.primary,
-                    ballColor = MaterialTheme.colorScheme.primary,
-                    ballAnimation = Parabolic(tween(300)),
-                    indentAnimation = Height(tween(300)),
-                    cornerRadius = shapeCornerRadius(cornerRadius = 30.dp)
-                ) {
-                    navigationBarItems.forEach { item ->
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(shape = RoundedCornerShape(30.dp))
-                                .noRippleClickable {
-                                    selectedNavigationIndex = item.ordinal
-                                }
-                        ){
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = null,
-                                tint = if (selectedNavigationIndex == item.ordinal)
-                                    MaterialTheme.colorScheme.onPrimary
-                                else
-                                    MaterialTheme.colorScheme.inversePrimary
-                            )
-                        }
+                    }
+                },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        modifier = Modifier.size(60.dp),
+                        shape = CircleShape,
+                        onClick = onCreatePost
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Write a post"
+                        )
                     }
                 }
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    modifier = Modifier.size(60.dp),
-                    shape = CircleShape,
-                    onClick = onCreatePost
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Write a post"
-                    )
-                }
-            }
-        ){ innerPadding ->
+            ){ innerPadding ->
 
-            when(selectedNavigationIndex){
-                0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel())
-                1 -> {  }
-                2 -> UserScreen(paddingValues = innerPadding)
+                when(selectedNavigationIndex){
+                    0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel())
+                    1 -> {  }
+                    2 -> UserScreen(paddingValues = innerPadding)
+                }
             }
         }
     }
@@ -205,11 +213,8 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
 fun PreviewMainScreen(){
     HartarteTheme {
         MainScreen(
-            state = MainState(false),
-            viewModel = hiltViewModel(),
-            onCreatePost = {},
-            themeViewModel = ThemeViewModel(),
-            dataStoreUtil = DataStoreUtil(context = LocalContext.current)
+            hiltViewModel(),
+            onCreatePost = {}
         )
     }
 }

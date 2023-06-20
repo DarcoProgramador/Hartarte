@@ -3,27 +3,23 @@ package com.proyecpg.hartarte.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.proyecpg.hartarte.data.DataStoreUtil
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
-import com.proyecpg.hartarte.ui.screens.main.MainState
+import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
-import com.proyecpg.hartarte.ui.theme.ThemeViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun NavigationRoot(
     navController: NavHostController = rememberNavController(),
-    dataStoreUtil: DataStoreUtil,
     authViewModel: AuthViewModel,
-    themeViewModel: ThemeViewModel
+    mainViewModel: MainViewModel
 ) {
     NavHost(
     navController = navController,
@@ -40,17 +36,12 @@ fun NavigationRoot(
             state.let {
                 if (it){
                     MainScreen(
-                        state = MainState(
-                            false
-                        ),
-                        viewModel = hiltViewModel(),
-                        themeViewModel = themeViewModel,
                         onCreatePost = {
                             navController.navigate(AppScreens.CreatePostScreen.route){
 
                             }
                         },
-                        dataStoreUtil = dataStoreUtil
+                        viewModel = mainViewModel
                     )
                 }else{
                     LaunchedEffect(false) {

@@ -33,4 +33,7 @@ object Constants {
     //FireBaseBookmarks
     const val POST_BOOKMARKS_COLLECTION = "postsBookmarks"
     const val BOOKMARKS = "bookmarks"
+
+    //DataStore
+    const val DARK_THEME_KEY = "dark_theme_value"
 }

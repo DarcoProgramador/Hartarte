@@ -30,10 +30,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,20 +38,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.proyecpg.hartarte.data.DataStoreUtil
-import com.proyecpg.hartarte.ui.theme.ThemeViewModel
-import kotlinx.coroutines.launch
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SideBar(
     username: String,
     imageURL: String,
     onUserCardClick: () -> Unit,
-    dataStoreUtil: DataStoreUtil,
-    themeViewModel: ThemeViewModel
+    onCheckedChange: (Boolean) -> Unit,
+    saveDarkThemeValue: (Boolean) -> Unit,
+    viewModel: MainViewModel,
+    switchState: Boolean
 ){
-    var switchState by remember { themeViewModel.isDarkThemeEnabled }
-    val coroutineScope = rememberCoroutineScope()
+    val state = viewModel.state
 
     ModalDrawerSheet {
         Spacer(Modifier.height(12.dp))
@@ -113,7 +110,7 @@ fun SideBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = if (switchState) Icons.Outlined.DarkMode else Icons.Outlined.LightMode,
+                    imageVector = if (state.darkThemeValue) Icons.Outlined.LightMode else Icons.Outlined.DarkMode,
                     contentDescription = "Theme icon",
                     modifier = Modifier.padding(start = 16.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -122,7 +119,7 @@ fun SideBar(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
-                    text = if (switchState) "Cambiar al modo claro" else "Cambiar al modo oscuro",
+                    text = if (state.darkThemeValue) "Cambiar al modo claro" else "Cambiar al modo oscuro",
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -130,11 +127,8 @@ fun SideBar(
             Switch(
                 checked = switchState,
                 onCheckedChange = {
-                    switchState = it
-
-                    coroutineScope.launch {
-                        dataStoreUtil.saveTheme(it)
-                    }
+                    onCheckedChange(it)
+                    saveDarkThemeValue(it)
                 },
                 modifier = Modifier.padding(end = 25.dp),
                 thumbContent = {
