@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 
 @OptIn(ExperimentalPagerApi::class)
@@ -48,6 +49,7 @@ fun SideBar(
     imageURL: String,
     onUserCardClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
+    onLogoutClick: (LoginEvent) -> Unit,
     saveDarkThemeValue: (Boolean) -> Unit,
     viewModel: MainViewModel,
     switchState: Boolean
@@ -160,7 +162,7 @@ fun SideBar(
         NavigationDrawerItem(
             label = { Text(text = "Cerrar sesión") },
             selected = false,
-            onClick = { /* TODO: Cerrar sesión */ },
+            onClick = { onLogoutClick(LoginEvent.LogoutClicked) },
             icon = { Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Log out") }
         )
     }

@@ -57,7 +57,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.Event
 import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.components.SideBar
+import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
+import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 import com.proyecpg.hartarte.ui.screens.user.UserScreen
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.launch
@@ -66,6 +68,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(
     viewModel: MainViewModel,
+    onLogoutClick: (LoginEvent) -> Unit,
     onCreatePost: () -> Unit
     //onPostClick
 ){
@@ -90,6 +93,7 @@ fun MainScreen(
                     onCheckedChange = {
                         viewModel.onEvent(Event.SelectedDarkThemeValue(it))
                     },
+                    onLogoutClick = onLogoutClick,
                     saveDarkThemeValue = {
                         viewModel.onEvent(Event.SaveDarkThemeValue(it))
                     },
@@ -272,7 +276,8 @@ fun PreviewMainScreen(){
     HartarteTheme {
         MainScreen(
             hiltViewModel(),
-            onCreatePost = {}
+            onCreatePost = {},
+            onLogoutClick = {}
         )
     }
 }
