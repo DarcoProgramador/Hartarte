@@ -1,19 +1,16 @@
 package com.proyecpg.hartarte.ui.screens.main
 
-import android.content.res.Configuration
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,40 +36,34 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.proyecpg.hartarte.data.DataStoreUtil
-import com.proyecpg.hartarte.ui.components.Post
+import com.proyecpg.hartarte.ui.Event
 import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.components.SideBar
+import com.proyecpg.hartarte.ui.screens.home.HomeScreen
+import com.proyecpg.hartarte.ui.screens.user.UserScreen
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
-import com.proyecpg.hartarte.ui.theme.ThemeViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
-    state: MainState,
-    viewModel: MainViewModel = hiltViewModel(),
-    themeViewModel: ThemeViewModel,
-    onCreatePost: () -> Unit,
-    dataStoreUtil: DataStoreUtil
+    viewModel: MainViewModel,
+    onCreatePost: () -> Unit
     //onPostClick
     //onHome ?
     //onBookmark ?
@@ -81,170 +72,125 @@ fun MainScreen(
     //Variables de estado
     val lazyListState = rememberLazyListState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    var selectedNavigationIndex by remember { mutableStateOf(0) }
+    var selectedNavigationIndex by rememberSaveable { mutableStateOf(0) }
     val navigationBarItems = remember { NavigationBarItems.values() }
-
-
 
     val navigationTitle = listOf("Inicio", "Guardados", "Perfil")
     val scope = rememberCoroutineScope()
-    var currentNightMode = LocalContext.current.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
-    ModalNavigationDrawer(
-        drawerContent = {
-            SideBar(
-                username = "Username",
-                "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                onUserCardClick = {
-                    selectedNavigationIndex = 2
-                    scope.launch { drawerState.close() }
-                },
-                dataStoreUtil = dataStoreUtil,
-                themeViewModel = themeViewModel
-            )
-        },
-        drawerState = drawerState
-    ) {
-        Scaffold(
-            modifier = Modifier.padding(all = 12.dp),
-            topBar = {
-                Column {
-                    CenterAlignedTopAppBar(
-                        title = {
-                            Text(
-                                text = navigationTitle[selectedNavigationIndex],
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        navigationIcon = {
-                            IconButton(
-                                onClick = {
-                                    scope.launch { drawerState.open() }
+    val state = viewModel.state
+
+    HartarteTheme(darkTheme = state.darkThemeValue) {
+        ModalNavigationDrawer(
+            drawerContent = {
+                SideBar(
+                    username = "Username",
+                    "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                    onUserCardClick = {
+                        selectedNavigationIndex = 2
+                        scope.launch { drawerState.close() }
+                    },
+                    onCheckedChange = {
+                        viewModel.onEvent(Event.SelectedDarkThemeValue(it))
+                    },
+                    saveDarkThemeValue = {
+                        viewModel.onEvent(Event.SaveDarkThemeValue(it))
+                    },
+                    viewModel = viewModel,
+                    switchState = state.darkThemeValue
+                )
+            },
+            drawerState = drawerState
+        ) {
+            Scaffold(
+                modifier = Modifier
+                    .padding(all = 12.dp)
+                    .background(color = MaterialTheme.colorScheme.background),
+                topBar = {
+                    Column {
+                        CenterAlignedTopAppBar(
+                            title = {
+                                Text(
+                                    text = navigationTitle[selectedNavigationIndex],
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            navigationIcon = {
+                                IconButton(
+                                    onClick = {
+                                        scope.launch { drawerState.open() }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Menu,
+                                        contentDescription = "Menu",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
-                            ) {
+                            }
+                        )
+
+                        SearchBar(lazyListState)
+
+                        Spacer(modifier = Modifier.size(5.dp))
+                    }
+                },
+                bottomBar = {
+                    AnimatedNavigationBar(
+                        modifier = Modifier.height(65.dp),
+                        selectedIndex = selectedNavigationIndex,
+                        barColor = MaterialTheme.colorScheme.primary,
+                        ballColor = MaterialTheme.colorScheme.primary,
+                        ballAnimation = Parabolic(tween(300)),
+                        indentAnimation = Height(tween(300)),
+                        cornerRadius = shapeCornerRadius(cornerRadius = 30.dp)
+                    ) {
+                        navigationBarItems.forEach { item ->
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(shape = RoundedCornerShape(30.dp))
+                                    .noRippleClickable {
+                                        selectedNavigationIndex = item.ordinal
+                                    }
+                            ){
                                 Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "Menu",
-                                    tint = MaterialTheme.colorScheme.primary
+                                    imageVector = item.icon,
+                                    contentDescription = null,
+                                    tint = if (selectedNavigationIndex == item.ordinal)
+                                        MaterialTheme.colorScheme.onPrimary
+                                    else
+                                        MaterialTheme.colorScheme.inversePrimary
                                 )
                             }
                         }
-                    )
-
-                    SearchBar(lazyListState)
-
-                    Spacer(modifier = Modifier.size(5.dp))
-                }
-            },
-            bottomBar = {
-                AnimatedNavigationBar(
-                    modifier = Modifier.height(65.dp),
-                    selectedIndex = selectedNavigationIndex,
-                    barColor = MaterialTheme.colorScheme.primary,
-                    ballColor = MaterialTheme.colorScheme.primary,
-                    ballAnimation = Parabolic(tween(300)),
-                    indentAnimation = Height(tween(300)),
-                    cornerRadius = shapeCornerRadius(cornerRadius = 30.dp)
-                ) {
-                    navigationBarItems.forEach { item ->
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(shape = RoundedCornerShape(30.dp))
-                                .noRippleClickable {
-                                    selectedNavigationIndex = item.ordinal
-                                }
-                        ){
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = null,
-                                tint = if (selectedNavigationIndex == item.ordinal)
-                                    MaterialTheme.colorScheme.onPrimary
-                                else
-                                    MaterialTheme.colorScheme.inversePrimary
-                            )
-                        }
+                    }
+                },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        modifier = Modifier.size(60.dp),
+                        shape = CircleShape,
+                        onClick = onCreatePost
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Write a post"
+                        )
                     }
                 }
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    modifier = Modifier.size(60.dp),
-                    shape = CircleShape,
-                    onClick = {
-                        onCreatePost
-                        /* TODO: Llamar a la screen para crear posts */
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Write a post"
-                    )
-                }
-            }
-        ){ innerPadding ->
-            MainScreenContent(
-                innerPadding = innerPadding,
-                viewModel = viewModel
-            )
-        }
-    }
-}
+            ){ innerPadding ->
 
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-fun MainScreenContent(
-    innerPadding: PaddingValues,
-    viewModel: MainViewModel
-){
-    //Posts
-    val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
-    val refresh = pagingPosts.loadState.refresh
-    val append = pagingPosts.loadState.append
-
-    LazyColumn(
-        modifier = Modifier.padding(innerPadding),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        items(items = pagingPosts){ post ->
-            post?.let{
-                val postId = it.postId?:""
-                val liked = it.liked?:false
-                Post(
-                    postId = postId,
-                    images = listOf(it.imagen?:""),
-                    username = it.user?.name ?: "",
-                    userPic = it.user?.photo ?: "",
-                    title = it.titulo?:"",
-                    description = it.descripcion?:"",
-                    isLiked = liked,
-                    isBookmarked = it.bookmarked?:false,
-                    likesCount = it.likes?.toInt() ?: 0,
-                    onLike = viewModel::doLike,
-                    onBookmark = viewModel::doBookmark
-                )
-            }
-        }
-        pagingPosts.loadState.apply {
-            when {
-                refresh is LoadState.Loading -> {
-
-                }
-                refresh is Error -> {
-
-                }
-                append is LoadState.Loading -> {
-
-                }
-                append is Error -> {
-
+                when(selectedNavigationIndex){
+                    0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel())
+                    1 -> {  }
+                    2 -> UserScreen(paddingValues = innerPadding)
                 }
             }
         }
     }
 }
+
 enum class NavigationBarItems(val icon: ImageVector){
     Home(icon = Icons.Default.Home),
     Bookmark(icon = Icons.Default.Bookmark),
@@ -267,11 +213,8 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
 fun PreviewMainScreen(){
     HartarteTheme {
         MainScreen(
-            state = MainState(false),
-            viewModel = hiltViewModel(),
-            onCreatePost = {},
-            themeViewModel = ThemeViewModel(),
-            dataStoreUtil = DataStoreUtil(context = LocalContext.current)
+            hiltViewModel(),
+            onCreatePost = {}
         )
     }
 }
