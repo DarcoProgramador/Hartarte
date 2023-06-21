@@ -32,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,26 +60,20 @@ import com.proyecpg.hartarte.ui.screens.user.UserScreen
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
     viewModel: MainViewModel,
     onCreatePost: () -> Unit
     //onPostClick
-    //onHome ?
-    //onBookmark ?
-    //onUser ?
 ){
     //Variables de estado
     val lazyListState = rememberLazyListState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    var selectedNavigationIndex by rememberSaveable { mutableStateOf(0) }
-    val navigationBarItems = remember { NavigationBarItems.values() }
-
-    val navigationTitle = listOf("Inicio", "Guardados", "Perfil")
-    val scope = rememberCoroutineScope()
-
     val state = viewModel.state
+
+    var selectedNavigationIndex by rememberSaveable { mutableStateOf(0) }
+    val scope = rememberCoroutineScope()
 
     HartarteTheme(darkTheme = state.darkThemeValue) {
         ModalNavigationDrawer(
@@ -108,25 +103,10 @@ fun MainScreen(
                     .background(color = MaterialTheme.colorScheme.background),
                 topBar = {
                     Column {
-                        CenterAlignedTopAppBar(
-                            title = {
-                                Text(
-                                    text = navigationTitle[selectedNavigationIndex],
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            },
-                            navigationIcon = {
-                                IconButton(
-                                    onClick = {
-                                        scope.launch { drawerState.open() }
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Menu,
-                                        contentDescription = "Menu",
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
+                        TopBar(
+                            selectedNavigationIndex = selectedNavigationIndex,
+                            onClick = {
+                                scope.launch { drawerState.open() }
                             }
                         )
 
@@ -136,36 +116,7 @@ fun MainScreen(
                     }
                 },
                 bottomBar = {
-                    AnimatedNavigationBar(
-                        modifier = Modifier.height(65.dp),
-                        selectedIndex = selectedNavigationIndex,
-                        barColor = MaterialTheme.colorScheme.primary,
-                        ballColor = MaterialTheme.colorScheme.primary,
-                        ballAnimation = Parabolic(tween(300)),
-                        indentAnimation = Height(tween(300)),
-                        cornerRadius = shapeCornerRadius(cornerRadius = 30.dp)
-                    ) {
-                        navigationBarItems.forEach { item ->
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(shape = RoundedCornerShape(30.dp))
-                                    .noRippleClickable {
-                                        selectedNavigationIndex = item.ordinal
-                                    }
-                            ){
-                                Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = null,
-                                    tint = if (selectedNavigationIndex == item.ordinal)
-                                        MaterialTheme.colorScheme.onPrimary
-                                    else
-                                        MaterialTheme.colorScheme.inversePrimary
-                                )
-                            }
-                        }
-                    }
+                    selectedNavigationIndex = navBar(selectedNavigationIndex)
                 },
                 floatingActionButton = {
                     FloatingActionButton(
@@ -189,6 +140,82 @@ fun MainScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(
+    selectedNavigationIndex: Int,
+    onClick: () -> Unit
+){
+    val navigationTitle = listOf("Inicio", "Guardados", "Perfil")
+
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = navigationTitle[selectedNavigationIndex],
+                color = MaterialTheme.colorScheme.primary
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = onClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Menu",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun navBar(
+    selectedNavigationIndex: Int
+): Int {
+
+    val navigationBarItems = remember { NavigationBarItems.values() }
+    var selectedNavIndex by remember { mutableStateOf(selectedNavigationIndex) }
+
+    //Mantiene la variable actualizada con respecto a la original
+    LaunchedEffect(selectedNavigationIndex){
+        selectedNavIndex = selectedNavigationIndex
+    }
+
+    AnimatedNavigationBar(
+        modifier = Modifier.height(65.dp),
+        selectedIndex = selectedNavigationIndex,
+        barColor = MaterialTheme.colorScheme.primary,
+        ballColor = MaterialTheme.colorScheme.primary,
+        ballAnimation = Parabolic(tween(300)),
+        indentAnimation = Height(tween(300)),
+        cornerRadius = shapeCornerRadius(cornerRadius = 30.dp)
+    ) {
+        navigationBarItems.forEach { item ->
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(shape = RoundedCornerShape(30.dp))
+                    .noRippleClickable {
+                        selectedNavIndex = item.ordinal
+                    }
+            ){
+                Icon(
+                    imageVector = item.icon,
+                    contentDescription = null,
+                    tint = if (selectedNavIndex == item.ordinal)
+                        MaterialTheme.colorScheme.onPrimary
+                    else
+                        MaterialTheme.colorScheme.inversePrimary
+                )
+            }
+        }
+    }
+
+    return selectedNavIndex
 }
 
 enum class NavigationBarItems(val icon: ImageVector){
