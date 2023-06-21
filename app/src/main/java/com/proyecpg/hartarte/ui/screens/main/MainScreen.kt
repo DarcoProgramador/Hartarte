@@ -17,9 +17,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,12 +70,12 @@ fun MainScreen(
     //onPostClick
 ){
     //Variables de estado
-    val lazyListState = rememberLazyListState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
     val state = viewModel.state
 
-    var selectedNavigationIndex by rememberSaveable { mutableStateOf(0) }
-    val scope = rememberCoroutineScope()
+    var selectedNavigationIndex by rememberSaveable(key = "navIndex") { mutableStateOf(0) }
+    var isSearchOpened by rememberSaveable(key = "Search") { mutableStateOf(false) }
 
     HartarteTheme(darkTheme = state.darkThemeValue) {
         ModalNavigationDrawer(
@@ -103,14 +105,18 @@ fun MainScreen(
                     .background(color = MaterialTheme.colorScheme.background),
                 topBar = {
                     Column {
-                        TopBar(
+                        topBar(
                             selectedNavigationIndex = selectedNavigationIndex,
+                            isSearchOpened = isSearchOpened,
                             onClick = {
                                 scope.launch { drawerState.open() }
+                            },
+                            onSearch = {
+                                isSearchOpened = !isSearchOpened
                             }
                         )
 
-                        SearchBar(lazyListState)
+                        SearchBar(isSearchOpened)
 
                         Spacer(modifier = Modifier.size(5.dp))
                     }
@@ -144,10 +150,13 @@ fun MainScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(
+fun topBar(
     selectedNavigationIndex: Int,
-    onClick: () -> Unit
-){
+    isSearchOpened: Boolean,
+    onClick: () -> Unit,
+    onSearch: () -> Unit
+): Boolean {
+
     val navigationTitle = listOf("Inicio", "Guardados", "Perfil")
 
     CenterAlignedTopAppBar(
@@ -167,8 +176,30 @@ fun TopBar(
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
+        },
+        actions = {
+            IconButton(
+                onClick = onSearch
+            ) {
+                if (isSearchOpened){
+                    Icon(
+                        imageVector = Icons.Default.ExpandLess,
+                        contentDescription = "Expand less icon",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                else {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search icon",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
         }
     )
+
+    return isSearchOpened
 }
 
 @Composable
