@@ -1,21 +1,15 @@
 package com.proyecpg.hartarte.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -26,33 +20,31 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.proyecpg.hartarte.ui.screens.user.isScrolled
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
-    lazyListState: LazyListState
+    isOpened: Boolean
 ){
     var text by remember{ mutableStateOf("") }
     var active by remember{ mutableStateOf(false) }
-    var items = remember { mutableListOf<String>() }
+    val items = remember { mutableListOf<String>() }
 
     AnimatedVisibility(
-        visible = !lazyListState.isScrolled,
-        enter = slideInVertically(),
-        exit = slideOutVertically()
+        visible = isOpened,
+        enter = expandVertically(),
+        exit = shrinkVertically()
     ) {
         androidx.compose.material3.SearchBar(
             query = text,
@@ -60,9 +52,16 @@ fun SearchBar(
                 text = it
             },
             onSearch = {
-                items.add(text)
-                active = false
-                /* TODO: Buscar */
+                val request = text.trim()
+
+                if (request.isNotEmpty()){
+                    if (!items.contains(request)){
+                        items.add(request)
+                    }
+                    active = false
+
+                    /* TODO: Buscar */
+                }
             },
             active = active,
             onActiveChange = {
@@ -124,7 +123,7 @@ fun SearchBar(
 fun PreviewSearchBar(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
-            SearchBar(lazyListState = LazyListState(0, 0))
+            SearchBar(isOpened = true)
         }
     }
 }
