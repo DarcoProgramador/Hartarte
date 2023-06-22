@@ -30,7 +30,6 @@ class MainViewModel @Inject constructor(
     private val getDarkThemeValue: GetDarkThemeValue,
     private val putDarkThemeValue: PutDarkThemeValue
 ): ViewModel() {
-    val posts = repo.getPosts().cachedIn(viewModelScope)
     var state by mutableStateOf(UiState())
         private set
 
@@ -56,46 +55,6 @@ class MainViewModel @Inject constructor(
     private fun saveDarkThemeValue(value: Boolean){
         viewModelScope.launch {
             putDarkThemeValue(DARK_THEME_KEY, value)
-        }
-    }
-
-    fun doLike(postId: String, liked: Boolean){
-        viewModelScope.launch {
-            val result = repo.registerLike(postId, liked)
-
-            result.let {
-                when(val resource = it){
-                    is Resource.Success ->{
-                        //TODO: Hacer un estado para cuando sea correcto
-                    }
-                    is Resource.Failure ->{
-                        //TODO: Hacer un estado para cuando falle
-                    }
-                    is Resource.Loading->{
-                        //TODO: Hacer un estado para cuando este cargando
-                    }
-                }
-            }
-        }
-    }
-
-    fun doBookmark(postId: String, bookmarked: Boolean){
-        viewModelScope.launch {
-            val result = repo.registerBookmark(postId, bookmarked)
-
-            result.let {
-                when(val resource = it){
-                    is Resource.Success ->{
-                        //TODO: Hacer un estado para cuando sea correcto
-                    }
-                    is Resource.Failure ->{
-                        //TODO: Hacer un estado para cuando falle
-                    }
-                    is Resource.Loading->{
-                        //TODO: Hacer un estado para cuando este cargando
-                    }
-                }
-            }
         }
     }
 }

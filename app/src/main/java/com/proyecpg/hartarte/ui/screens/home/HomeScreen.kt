@@ -21,7 +21,7 @@ import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    viewModel: MainViewModel
+    viewModel: HomeViewModel
 ) {
     HomeScreenContent(paddingValues, viewModel)
 }
@@ -30,7 +30,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     innerPadding: PaddingValues,
-    viewModel: MainViewModel
+    viewModel: HomeViewModel
 ){
     //Posts
     val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
