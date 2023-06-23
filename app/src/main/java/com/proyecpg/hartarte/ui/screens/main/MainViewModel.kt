@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.data.model.toUserUI
-import com.proyecpg.hartarte.data.post.PostRepository
 import com.proyecpg.hartarte.data.user.UserRepository
 import com.proyecpg.hartarte.domain.GetDarkThemeValue
 import com.proyecpg.hartarte.domain.PutDarkThemeValue

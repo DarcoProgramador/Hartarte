@@ -15,7 +15,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.components.Post
-import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
