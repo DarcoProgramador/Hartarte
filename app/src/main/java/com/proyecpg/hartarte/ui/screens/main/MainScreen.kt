@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
@@ -74,6 +75,7 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val state = viewModel.state
+    val userState = viewModel.userState.collectAsStateWithLifecycle()
 
     var selectedNavigationIndex by rememberSaveable(key = "navIndex") { mutableStateOf(0) }
     var isSearchOpened by rememberSaveable(key = "Search") { mutableStateOf(false) }
@@ -82,8 +84,8 @@ fun MainScreen(
         ModalNavigationDrawer(
             drawerContent = {
                 SideBar(
-                    username = "Username",
-                    "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                    username = userState.value.username.toString(),
+                    imageURL = userState.value.photo.toString(),
                     onUserCardClick = {
                         selectedNavigationIndex = 2
                         scope.launch { drawerState.close() }
@@ -95,7 +97,7 @@ fun MainScreen(
                     saveDarkThemeValue = {
                         viewModel.onEvent(Event.SaveDarkThemeValue(it))
                     },
-                    viewModel = viewModel,
+                    state = state,
                     switchState = state.darkThemeValue
                 )
             },

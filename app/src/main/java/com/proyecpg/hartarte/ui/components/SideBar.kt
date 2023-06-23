@@ -38,11 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.google.accompanist.pager.ExperimentalPagerApi
+import com.proyecpg.hartarte.ui.UiState
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
-import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SideBar(
     username: String,
@@ -51,11 +49,9 @@ fun SideBar(
     onCheckedChange: (Boolean) -> Unit,
     onLogoutClick: (LoginEvent) -> Unit,
     saveDarkThemeValue: (Boolean) -> Unit,
-    viewModel: MainViewModel,
+    state: UiState,
     switchState: Boolean
 ){
-    val state = viewModel.state
-
     ModalDrawerSheet {
         Spacer(Modifier.height(12.dp))
 
@@ -87,7 +83,7 @@ fun SideBar(
                 Spacer(Modifier.width(12.dp))
 
                 Text(
-                    text = "Username",
+                    text = username,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
