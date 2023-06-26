@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
@@ -27,14 +29,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,9 +83,11 @@ fun OpenPostScreen(
     onImageClick: () -> Unit,
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
-    onBookmark : (String, Boolean) -> Unit
+    onBookmark : (String, Boolean) -> Unit,
+    onSendComment: () -> Unit
 ){
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    var comment by remember{ mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier,
@@ -91,7 +99,8 @@ fun OpenPostScreen(
             )
         }
     ) { innerPadding ->
-        OpenPostScreenContent(
+
+        comment = openPostScreenContent(
             paddingValues = innerPadding,
             postId = postId,
             postImages = postImages,
@@ -99,10 +108,12 @@ fun OpenPostScreen(
             postInfo = Pair(title, description),
             postStatistics = Triple(isLiked, likesCount, isBookmarked),
             username = username,
+            comment = comment,
             onImageClick = onImageClick,
             onPostUserClick = onPostUserClick,
             onLike = onLike,
-            onBookmark = onBookmark
+            onBookmark = onBookmark,
+            onSendComment = onSendComment
         )
     }
 }
@@ -138,7 +149,7 @@ fun OpenPostTopAppBar(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun OpenPostScreenContent(
+fun openPostScreenContent(
     paddingValues: PaddingValues,
     postId: String,
     postImages: List<String>,
@@ -146,18 +157,19 @@ fun OpenPostScreenContent(
     postInfo: Pair<String, String>, //First: title, second: description
     postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: followers, isBookmarked
     username: String,
+    comment: String,
     onImageClick: () -> Unit,
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
-    onBookmark : (String, Boolean) -> Unit
-){
+    onBookmark : (String, Boolean) -> Unit,
+    onSendComment: () -> Unit
+): String {
     var isScrolled = false
     val pagerState = rememberPagerState(initialPage = 0)
     val animatedHeight: Dp by animateDpAsState(targetValue = if (isScrolled) 220.dp else 110.dp)
+    var commentText by remember{ mutableStateOf(comment) }
 
-    LazyColumn(
-        modifier = Modifier.padding(paddingValues)
-    ){
+    LazyColumn(modifier = Modifier.padding(paddingValues)){
         item {
             Card(
                 modifier = Modifier
@@ -220,25 +232,48 @@ fun OpenPostScreenContent(
 
         item {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 17.dp, vertical = 5.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 5.dp),
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 PostUserInfo(postUser = postUser, onPostUserClick = onPostUserClick)
             }
         }
 
         item {
-            PostInfo(
-                postId = postId,
-                postInfo = postInfo,
-                postStatistics = postStatistics,
-                onLike = onLike,
-                onBookmark = onBookmark
-            )
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 25.dp)
+            ) {
+                PostInfo(
+                    postId = postId,
+                    postInfo = postInfo,
+                    postStatistics = postStatistics,
+                    onLike = onLike,
+                    onBookmark = onBookmark
+                )
+            }
+        }
+
+        item {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 25.dp)
+            ) {
+                commentText = customTextInputField(username = username, comment = commentText, onSendComment = onSendComment)
+            }
+        }
+
+        item {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 25.dp)
+            ) {
+                Comments()
+            }
         }
     }
+
+    return commentText
 }
 
 @Composable
@@ -249,6 +284,7 @@ fun PostUserInfo(
     Row(
         modifier = Modifier
             .height(IntrinsicSize.Min)
+            .fillMaxWidth()
             .clickable {
                 onPostUserClick()
             },
@@ -295,12 +331,12 @@ fun PostInfo(
     var likeCount by rememberSaveable(key=postId){ mutableStateOf(postStatistics.second) }
     var bookmarked by rememberSaveable(key=postId){ mutableStateOf(postStatistics.third) }
 
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = postInfo.first,
             fontSize = 19.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         )
 
         Divider(modifier = Modifier.padding(vertical = 10.dp), color = MaterialTheme.colorScheme.outline)
@@ -358,21 +394,21 @@ fun PostInfo(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_favorite),
                             contentDescription = "Favorite",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                     else{
                         Icon(
                             painter = painterResource(id = R.drawable.ic_favorite_border),
                             contentDescription = "Favorite",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.size(5.dp))
 
-                Text(text = likeCount.toString(), color = MaterialTheme.colorScheme.primary)
+                Text(text = likeCount.toString(), color = MaterialTheme.colorScheme.onPrimaryContainer)
             }
             IconButton(
                 onClick = {
@@ -385,14 +421,14 @@ fun PostInfo(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_bookmark),
                         contentDescription = "Bookmark",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
                 else{
                     Icon(
                         painter = painterResource(id = R.drawable.ic_bookmark_border),
                         contentDescription = "Bookmark",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
@@ -403,22 +439,105 @@ fun PostInfo(
 }
 
 @Composable
-fun Comments(){
+fun customTextInputField(
+    username: String,
+    comment: String,
+    onSendComment: () -> Unit
+): String {
 
+    var text by remember { (mutableStateOf(comment)) }
+
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        shape = RoundedCornerShape(5.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
+        value = text,
+        onValueChange = {
+            if (it.length <= 500){
+                text = it
+            }
+        },
+        textStyle = TextStyle(
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            fontSize = 16.sp
+        ),
+        placeholder = {
+            Text(
+                text = "Escribe un comentario..."
+            )
+        },
+        trailingIcon = {
+            if (text.isNotEmpty()){
+                IconButton(
+                    onClick = onSendComment
+                ){
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = "Enviar comentario",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+        },
+        supportingText = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = "Estás comentando como $username"
+                )
+
+                Text(
+                    text = text.length.toString() + "/500"
+                )
+            }
+        },
+        maxLines = 10
+    )
+
+    return text
 }
 
-/*@Preview
 @Composable
-fun PreviewOpenPostScreen(){
-    HartarteTheme {
-        Box(modifier = Modifier.fillMaxSize()){
-            OpenPostScreen(
-                onReturn = {},
-                onImageClick = {}
-            )
+fun Comments(){
+
+    /*val pagingComments = viewModel.comments.collectAsLazyPagingItems()
+    val refresh = pagingComments.loadState.refresh
+    val append = pagingComments.loadState.append*/
+
+    LazyColumn(modifier = Modifier.fillMaxWidth()){
+        /*items(items = pagingComments){ comment ->
+            comment?.let{
+                val postId = it.postId?:""
+                val liked = it.liked?:false
+                Comment()
+            }
         }
+        pagingComments.loadState.apply {
+            when {
+                refresh is LoadState.Loading -> {
+
+                }
+                refresh is Error -> {
+
+                }
+                append is LoadState.Loading -> {
+
+                }
+                append is Error -> {
+
+                }
+            }
+        }*/
     }
-}*/
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -462,14 +581,32 @@ fun PreviewPostInfo(){
     }
 }
 
+@Preview
 @Composable
-fun PreviewComments(){
+fun PreviewCustomTextInputField(){
     HartarteTheme {
         Box(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 25.dp, vertical = 10.dp)
+            .padding(10.dp)
         ){
-            Comments()
+            customTextInputField(
+                username = "User",
+                comment = "Comment attempt",
+                onSendComment = {}
+            )
         }
     }
 }
+
+/*@Preview
+@Composable
+fun PreviewOpenPostScreen(){
+    HartarteTheme {
+        Box(modifier = Modifier.fillMaxSize()){
+            OpenPostScreen(
+                onReturn = {},
+                onImageClick = {}
+            )
+        }
+    }
+}*/

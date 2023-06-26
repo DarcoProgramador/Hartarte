@@ -233,7 +233,7 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
         item{
             title = customTextInputField(
                 placeholder = "Descipción de la publicación",
-                height = 50,
+                height = 56,
                 maxLength = 50,
                 maxLines = 1
             )
@@ -245,7 +245,7 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
             description = customTextInputField(
                 placeholder = "Descipción de la publicación",
                 height = 280,
-                maxLength = 700,
+                maxLength = 2000,
                 maxLines = null
             )
         }
