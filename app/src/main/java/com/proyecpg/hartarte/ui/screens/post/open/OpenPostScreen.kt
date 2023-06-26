@@ -73,8 +73,9 @@ fun OpenPostScreen(
     postUsername: String,
     postUserPic: String,
     postUserFollowers: Int,
-    title: String,
-    description: String,
+    postTitle: String,
+    postDescription: String,
+    postDate: String,
     isLiked: Boolean,
     isBookmarked: Boolean,
     likesCount: Int,
@@ -93,7 +94,7 @@ fun OpenPostScreen(
         modifier = Modifier,
         topBar = {
             OpenPostTopAppBar(
-                userName = postUsername,
+                username = postUsername,
                 scrollBehavior= scrollBehavior,
                 onClick = onReturn
             )
@@ -105,7 +106,7 @@ fun OpenPostScreen(
             postId = postId,
             postImages = postImages,
             postUser = Triple(postUserPic, postUserPic, postUserFollowers), //Firs: URL, second: name
-            postInfo = Pair(title, description),
+            postInfo = Triple(postTitle, postDescription, postDate),
             postStatistics = Triple(isLiked, likesCount, isBookmarked),
             username = username,
             comment = comment,
@@ -121,17 +122,20 @@ fun OpenPostScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpenPostTopAppBar(
-    userName: String,
+    username: String,
     scrollBehavior: TopAppBarScrollBehavior,
     onClick: () -> Unit
 ){
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = "Publicación de $userName",
+                text = "Publicación de $username",
                 color = MaterialTheme.colorScheme.primary
             )
         },
+        modifier = Modifier
+            .padding(horizontal = 12.dp)
+            .padding(top = 12.dp),
         navigationIcon = {
             IconButton(
                 onClick = onClick
@@ -154,7 +158,7 @@ fun openPostScreenContent(
     postId: String,
     postImages: List<String>,
     postUser: Triple<String, String, Int>, //First: URL, second: name
-    postInfo: Pair<String, String>, //First: title, second: description
+    postInfo: Triple<String, String, String>, //First: title, second: description
     postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: followers, isBookmarked
     username: String,
     comment: String,
@@ -322,7 +326,7 @@ fun PostUserInfo(
 @Composable
 fun PostInfo(
     postId: String,
-    postInfo: Pair<String, String>, //First: title, second: description
+    postInfo: Triple<String, String, String>, //First: title, second: description
     postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: followers, isBookmarked
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit
@@ -362,7 +366,7 @@ fun PostInfo(
             horizontalArrangement = Arrangement.End
         ) {
             Text(
-                text = "11 de mayo del 2020, 11:30 a.m.",
+                text = postInfo.third,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp
             )
@@ -569,9 +573,10 @@ fun PreviewPostInfo(){
         ){
             PostInfo(
                 postId = "postInfo",
-                postInfo = Pair(
+                postInfo = Triple(
                     "Post title",
-                    "Description description description description description description description description description description description description description description description description description description description description description description description description description description description description description."
+                    "Description description description description description description description description description description description description description description description description description description description description description description description description description description description description description.",
+                    "11 de mayo del 2020, 11:30 a.m."
                 ),
                 postStatistics = Triple(true, 15, false),
                 onLike = { _, _ -> },
