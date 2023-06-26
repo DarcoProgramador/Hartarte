@@ -196,7 +196,7 @@ fun Post(
 
                                 liked = !liked
 
-                                onLike(postId, liked) //TODO: Cambiar despues a event
+                                onLike(postId, liked) /* TODO: Cambiar despues a event */
                             }
                         ) {
                             if(liked){
@@ -227,13 +227,13 @@ fun Post(
                         if(bookmarked){
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_bookmark),
-                                contentDescription = "Favorite"
+                                contentDescription = "Bookmark"
                             )
                         }
                         else{
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_bookmark_border),
-                                contentDescription = "Favorite"
+                                contentDescription = "Bookmark"
                             )
                         }
                     }

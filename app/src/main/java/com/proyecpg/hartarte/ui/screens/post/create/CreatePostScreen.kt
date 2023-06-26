@@ -72,7 +72,6 @@ fun CreatePostScreen(
             .padding(top = 12.dp),
         topBar = {
             CreatePostTopAppBar(
-                title = "Crear publicación",
                 onClick = onReturn
             )
         },
@@ -106,13 +105,12 @@ fun CreatePostScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePostTopAppBar(
-    title: String,
     onClick: () -> Unit
 ){
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = title,
+                text = "Crear publicación",
                 color = MaterialTheme.colorScheme.primary
             )
         },
