@@ -10,6 +10,8 @@ import com.google.firebase.ktx.Firebase
 import com.proyecpg.hartarte.data.paging.PostPagingSource
 import com.proyecpg.hartarte.data.post.PostRepository
 import com.proyecpg.hartarte.data.post.PostRepositoryImp
+import com.proyecpg.hartarte.data.user.UserRepository
+import com.proyecpg.hartarte.data.user.UserRepositoryImp
 import com.proyecpg.hartarte.utils.Constants.PAGE_SIZE
 import com.proyecpg.hartarte.utils.Constants.POST_COLLECTION
 import com.proyecpg.hartarte.utils.Constants.TIME_STAMP
@@ -45,4 +47,7 @@ class AppModule {
 
     @Provides
     fun providePostsRepository(impl : PostRepositoryImp): PostRepository = impl
+
+    @Provides
+    fun provideUserRepository(imp : UserRepositoryImp): UserRepository = imp
 }

@@ -41,7 +41,8 @@ fun NavigationRoot(
 
                             }
                         },
-                        viewModel = mainViewModel
+                        viewModel = mainViewModel,
+                        onLogoutClick = authViewModel::process
                     )
                 }else{
                     LaunchedEffect(false) {

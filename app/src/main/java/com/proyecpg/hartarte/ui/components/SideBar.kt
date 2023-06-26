@@ -38,22 +38,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.proyecpg.hartarte.ui.screens.main.MainViewModel
+import com.proyecpg.hartarte.ui.UiState
+import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SideBar(
     username: String,
     imageURL: String,
     onUserCardClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
+    onLogoutClick: (LoginEvent) -> Unit,
     saveDarkThemeValue: (Boolean) -> Unit,
-    viewModel: MainViewModel,
+    state: UiState,
     switchState: Boolean
 ){
-    val state = viewModel.state
-
     ModalDrawerSheet {
         Spacer(Modifier.height(12.dp))
 
@@ -85,7 +83,7 @@ fun SideBar(
                 Spacer(Modifier.width(12.dp))
 
                 Text(
-                    text = "Username",
+                    text = username,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -160,7 +158,7 @@ fun SideBar(
         NavigationDrawerItem(
             label = { Text(text = "Cerrar sesión") },
             selected = false,
-            onClick = { /* TODO: Cerrar sesión */ },
+            onClick = { onLogoutClick(LoginEvent.LogoutClicked) },
             icon = { Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Log out") }
         )
     }

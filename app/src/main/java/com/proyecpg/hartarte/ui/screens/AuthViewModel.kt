@@ -51,6 +51,8 @@ class AuthViewModel @Inject constructor(
     fun process(event : LoginEvent){
         when(event){
             is LoginEvent.LoginClicked -> login(event.email, event.password)
+
+            is LoginEvent.LogoutClicked -> onLogout()
         }
     }
 
@@ -139,6 +141,13 @@ class AuthViewModel @Inject constructor(
             oneTapSignInResponse = Resource.Loading
 
             oneTapSignInResponse = authRepository.oneTapSignInWithGoogle()
+        }
+    }
+
+    private fun onLogout(){
+        viewModelScope.launch {
+            authRepository.logout()
+            isLogged()
         }
     }
 

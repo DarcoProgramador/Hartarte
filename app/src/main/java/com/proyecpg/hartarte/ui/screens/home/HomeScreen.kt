@@ -15,13 +15,12 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.components.Post
-import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    viewModel: MainViewModel
+    viewModel: HomeViewModel
 ) {
     HomeScreenContent(paddingValues, viewModel)
 }
@@ -30,7 +29,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     innerPadding: PaddingValues,
-    viewModel: MainViewModel
+    viewModel: HomeViewModel
 ){
     //Posts
     val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
