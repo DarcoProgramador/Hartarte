@@ -36,4 +36,7 @@ object Constants {
 
     //DataStore
     const val DARK_THEME_KEY = "dark_theme_value"
+
+    //Posts
+    const val POST_IMAGES_MAX_SIZE = 3
 }

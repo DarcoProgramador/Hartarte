@@ -54,6 +54,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
+import com.proyecpg.hartarte.utils.Constants.POST_IMAGES_MAX_SIZE
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
@@ -64,7 +65,7 @@ fun CreatePostScreen(
     var title by remember{ mutableStateOf("") }
     var description by remember{ mutableStateOf("") }
     val pagerState = rememberPagerState(initialPage = 0)
-    var images = listOf(
+    val images = listOf(
         "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
         "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
         "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
@@ -134,7 +135,7 @@ fun CreatePostScreen(
                             .clip(shape = RoundedCornerShape(12.dp))
                             .background(MaterialTheme.colorScheme.primaryContainer)
                             .clickable {
-                                if (images.size < 3) {
+                                if (images.size < POST_IMAGES_MAX_SIZE) {
                                     /* TODO: Seleccionar imágenes desde la galería */
                                 } else {
                                     Toast
@@ -207,10 +208,11 @@ fun CreatePostScreen(
             }
             
             item{
-                description = customTextInputField(
+                title = customTextInputField(
                     placeholder = "Descipción de la publicación",
                     height = 50,
-                    maxLength = 50
+                    maxLength = 50,
+                    maxLines = 1
                 )
 
                 Spacer(modifier = Modifier.height(15.dp))
@@ -220,7 +222,8 @@ fun CreatePostScreen(
                 description = customTextInputField(
                     placeholder = "Descipción de la publicación",
                     height = 280,
-                    maxLength = 700
+                    maxLength = 700,
+                    maxLines = null
                 )
             }
         }
@@ -231,7 +234,8 @@ fun CreatePostScreen(
 fun customTextInputField(
     placeholder: String,
     height: Int,
-    maxLength: Int
+    maxLength: Int,
+    maxLines: Int?
 ): String {
 
     var text by remember { (mutableStateOf("")) }
@@ -271,7 +275,7 @@ fun customTextInputField(
                 )
             }
         },
-        maxLines = 30
+        maxLines = maxLines ?: 50
     )
 
     return text
