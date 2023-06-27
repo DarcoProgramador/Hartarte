@@ -1,6 +1,5 @@
 package com.proyecpg.hartarte.ui.screens.post.open
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -33,9 +32,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +49,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -63,9 +58,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.ui.components.Comment
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpenPostScreen(
     postId: String,
@@ -87,15 +82,13 @@ fun OpenPostScreen(
     onBookmark : (String, Boolean) -> Unit,
     onSendComment: () -> Unit
 ){
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     var comment by remember{ mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier,
         topBar = {
             OpenPostTopAppBar(
-                username = postUsername,
-                scrollBehavior= scrollBehavior,
+                postTitle = postTitle,
                 onClick = onReturn
             )
         }
@@ -105,7 +98,7 @@ fun OpenPostScreen(
             paddingValues = innerPadding,
             postId = postId,
             postImages = postImages,
-            postUser = Triple(postUserPic, postUserPic, postUserFollowers), //Firs: URL, second: name
+            postUser = Triple(postUserPic, username, postUserFollowers), //Firs: URL, second: name
             postInfo = Triple(postTitle, postDescription, postDate),
             postStatistics = Triple(isLiked, likesCount, isBookmarked),
             username = username,
@@ -122,15 +115,15 @@ fun OpenPostScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpenPostTopAppBar(
-    username: String,
-    scrollBehavior: TopAppBarScrollBehavior,
+    postTitle: String,
     onClick: () -> Unit
 ){
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = "Publicación de $username",
-                color = MaterialTheme.colorScheme.primary
+                text = postTitle,
+                color = MaterialTheme.colorScheme.primary,
+                overflow = TextOverflow.Ellipsis
             )
         },
         modifier = Modifier
@@ -146,8 +139,7 @@ fun OpenPostTopAppBar(
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-        },
-        scrollBehavior = scrollBehavior
+        }
     )
 }
 
@@ -157,9 +149,9 @@ fun openPostScreenContent(
     paddingValues: PaddingValues,
     postId: String,
     postImages: List<String>,
-    postUser: Triple<String, String, Int>, //First: URL, second: name
+    postUser: Triple<String, String, Int>, //First: URL, second: name, third: followers
     postInfo: Triple<String, String, String>, //First: title, second: description
-    postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: followers, isBookmarked
+    postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: likes, isBookmarked
     username: String,
     comment: String,
     onImageClick: () -> Unit,
@@ -168,17 +160,19 @@ fun openPostScreenContent(
     onBookmark : (String, Boolean) -> Unit,
     onSendComment: () -> Unit
 ): String {
-    var isScrolled = false
     val pagerState = rememberPagerState(initialPage = 0)
-    val animatedHeight: Dp by animateDpAsState(targetValue = if (isScrolled) 220.dp else 110.dp)
     var commentText by remember{ mutableStateOf(comment) }
 
-    LazyColumn(modifier = Modifier.padding(paddingValues)){
+    LazyColumn(
+        modifier = Modifier
+            .padding(paddingValues)
+    ){
         item {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(animatedHeight)
+                    .height(300.dp),
+                shape = RoundedCornerShape(0.dp)
             ) {
                 HorizontalPager(
                     count = postImages.size,
@@ -202,15 +196,6 @@ fun openPostScreenContent(
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
-
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.TopEnd
-                    ){
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(imageVector = Icons.Default.Close, contentDescription = "Delete image")
-                        }
-                    }
                 }
             }
 
@@ -232,22 +217,17 @@ fun openPostScreenContent(
                     )
                 }
             }
-        }
 
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 5.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 25.dp, vertical = 5.dp),
+                verticalArrangement = Arrangement.Center
             ) {
                 PostUserInfo(postUser = postUser, onPostUserClick = onPostUserClick)
-            }
-        }
 
-        item {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 25.dp)
-            ) {
+                Spacer(modifier = Modifier.height(10.dp))
+
                 PostInfo(
                     postId = postId,
                     postInfo = postInfo,
@@ -255,24 +235,18 @@ fun openPostScreenContent(
                     onLike = onLike,
                     onBookmark = onBookmark
                 )
-            }
-        }
 
-        item {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 25.dp)
-            ) {
                 commentText = customTextInputField(username = username, comment = commentText, onSendComment = onSendComment)
             }
-        }
 
-        item {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 25.dp)
-            ) {
-                Comments()
+            for (x in 1 .. 5){
+                Comment(
+                    image = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                    username = "User",
+                    description = "Come comen comen comeno comeno comenio coo comeno comenta coio comeo comentar comenrio comtario mentario  comen comen comeno comeno comenta coio comeo comentar comenrio comtario.",
+                    date = "11 de mayo del 2020, 11:30 a.m.",
+                    onPostUserClick = {}
+                )
             }
         }
     }
@@ -347,7 +321,7 @@ fun PostInfo(
 
         LazyColumn(modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)
+            .heightIn(min = 0.dp, max = 250.dp)
         ){
             item {
                 Text(
@@ -489,22 +463,32 @@ fun customTextInputField(
                 }
             }
         },
-        supportingText = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Text(
-                    text = "Estás comentando como $username"
-                )
-
-                Text(
-                    text = text.length.toString() + "/500"
-                )
-            }
-        },
         maxLines = 10
     )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 5.dp)
+    ) {
+        Column(horizontalAlignment = Alignment.Start) {
+            Text(
+                text = "Estás comentando como $username",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 12.sp
+            )
+        }
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = text.length.toString() + "/500",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 12.sp
+            )
+        }
+    }
 
     return text
 }
@@ -603,15 +587,36 @@ fun PreviewCustomTextInputField(){
     }
 }
 
-/*@Preview
+@Preview
 @Composable
 fun PreviewOpenPostScreen(){
     HartarteTheme {
         Box(modifier = Modifier.fillMaxSize()){
             OpenPostScreen(
-                onReturn = {},
-                onImageClick = {}
+                postId = "01",
+                postImages = listOf
+                    (
+                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
+                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
+                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
+                ),
+                postUsername = "HartarteUser",
+                postUserPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                postUserFollowers = 150,
+                postTitle = "Título de ejemplo",
+                postDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut. Sed pellentesque egestas nisi, sed rutrum metus iaculis ultricies. Vivamus libero nunc, elementum eget massa faucibus, pretium mattis velit. Nullam varius maximus mauris. Nulla gravida quam et suscipit mollis. In tempor nisl sit amet gravida lacinia. Duis ut ipsum dictum, venenatis leo nec, volutpat turpis. Suspendisse vehicula libero at metus finibus porttitor. Fusce vehicula justo mi, auctor tristique enim fermentum sit amet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut.",
+                postDate = "11 de mayo del 2020, 11:30 a.m." ,
+                isLiked = true,
+                isBookmarked = false,
+                likesCount = 15,
+                username = "Username",
+                onReturn = { /*TODO*/ },
+                onImageClick = { /*TODO*/ },
+                onPostUserClick = { /*TODO*/ },
+                onLike = { _, _ -> },
+                onBookmark = { _, _ -> },
+                onSendComment = {}
             )
         }
     }
-}*/
+}
