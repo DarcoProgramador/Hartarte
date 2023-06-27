@@ -55,6 +55,7 @@ import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.Event
+import com.proyecpg.hartarte.ui.UiState
 import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
@@ -126,12 +127,14 @@ fun MainScreen(
                     }
                 },
                 bottomBar = {
-                    selectedNavigationIndex = navBar(selectedNavigationIndex)
+                    selectedNavigationIndex = navBar(selectedNavigationIndex, state)
                 },
                 floatingActionButton = {
                     FloatingActionButton(
                         modifier = Modifier.size(60.dp),
                         shape = CircleShape,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
                         onClick = onCreatePost
                     ) {
                         Icon(
@@ -208,7 +211,8 @@ fun topBar(
 
 @Composable
 fun navBar(
-    selectedNavigationIndex: Int
+    selectedNavigationIndex: Int,
+    state: UiState
 ): Int {
 
     val navigationBarItems = remember { NavigationBarItems.values() }
@@ -222,8 +226,8 @@ fun navBar(
     AnimatedNavigationBar(
         modifier = Modifier.height(65.dp),
         selectedIndex = selectedNavigationIndex,
-        barColor = MaterialTheme.colorScheme.primary,
-        ballColor = MaterialTheme.colorScheme.primary,
+        barColor = if (state.darkThemeValue) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary,
+        ballColor = if (state.darkThemeValue) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary,
         ballAnimation = Parabolic(tween(300)),
         indentAnimation = Height(tween(300)),
         cornerRadius = shapeCornerRadius(cornerRadius = 30.dp)
@@ -242,9 +246,9 @@ fun navBar(
                     imageVector = item.icon,
                     contentDescription = null,
                     tint = if (selectedNavIndex == item.ordinal)
-                        MaterialTheme.colorScheme.onPrimary
+                        if (state.darkThemeValue) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onPrimary
                     else
-                        MaterialTheme.colorScheme.inversePrimary
+                        if (state.darkThemeValue) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onPrimary
                 )
             }
         }

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -98,7 +97,7 @@ fun OpenPostScreen(
             paddingValues = innerPadding,
             postId = postId,
             postImages = postImages,
-            postUser = Triple(postUserPic, username, postUserFollowers), //Firs: URL, second: name
+            postUser = Triple(postUserPic, postUsername, postUserFollowers), //Firs: URL, second: name
             postInfo = Triple(postTitle, postDescription, postDate),
             postStatistics = Triple(isLiked, likesCount, isBookmarked),
             username = username,
@@ -248,6 +247,8 @@ fun openPostScreenContent(
                     onPostUserClick = {}
                 )
             }
+
+            Comments()
         }
     }
 
@@ -319,17 +320,12 @@ fun PostInfo(
 
         Divider(modifier = Modifier.padding(vertical = 10.dp), color = MaterialTheme.colorScheme.outline)
 
-        LazyColumn(modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 0.dp, max = 250.dp)
-        ){
-            item {
-                Text(
-                    text = postInfo.second,
-                    modifier = Modifier.fillMaxWidth(),
-                    fontSize = 16.sp
-                )
-            }
+        Column(modifier = Modifier.fillMaxWidth()){
+            Text(
+                text = postInfo.second,
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 16.sp
+            )
         }
 
         /* TODO: Hacer que muestre la fecha de publicación */
@@ -496,35 +492,6 @@ fun customTextInputField(
 @Composable
 fun Comments(){
 
-    /*val pagingComments = viewModel.comments.collectAsLazyPagingItems()
-    val refresh = pagingComments.loadState.refresh
-    val append = pagingComments.loadState.append*/
-
-    LazyColumn(modifier = Modifier.fillMaxWidth()){
-        /*items(items = pagingComments){ comment ->
-            comment?.let{
-                val postId = it.postId?:""
-                val liked = it.liked?:false
-                Comment()
-            }
-        }
-        pagingComments.loadState.apply {
-            when {
-                refresh is LoadState.Loading -> {
-
-                }
-                refresh is Error -> {
-
-                }
-                append is LoadState.Loading -> {
-
-                }
-                append is Error -> {
-
-                }
-            }
-        }*/
-    }
 }
 
 @Preview(showBackground = true)

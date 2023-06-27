@@ -62,9 +62,7 @@ fun CreatePostScreen(
     onReturn: () -> Unit
 ){
     //There'll be all the post info that the user provides
-    var postInfo: Triple<List<String>,
-            String,
-            String>
+    var postInfo: Triple<List<String>, String, String>
 
     Scaffold(
         modifier = Modifier
@@ -149,7 +147,7 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
+                    .height(320.dp)
             ) {
                 HorizontalPager(
                     count = images.size,
@@ -228,9 +226,7 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
             }
 
             Spacer(modifier = Modifier.height(15.dp))
-        }
 
-        item{
             title = customTextInputField(
                 placeholder = "Descipción de la publicación",
                 height = 56,
@@ -239,9 +235,7 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
             )
 
             Spacer(modifier = Modifier.height(15.dp))
-        }
 
-        item{
             description = customTextInputField(
                 placeholder = "Descipción de la publicación",
                 height = 280,
