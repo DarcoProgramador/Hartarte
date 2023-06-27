@@ -80,7 +80,7 @@ fun OpenPostScreen(
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
-    onSendComment: () -> Unit
+    onSendComment: () -> Unit,
 ){
     var comment by remember{ mutableStateOf("") }
 

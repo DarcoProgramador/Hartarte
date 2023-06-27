@@ -68,8 +68,8 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     viewModel: MainViewModel,
     onLogoutClick: (LoginEvent) -> Unit,
-    onCreatePost: () -> Unit
-    //onPostClick
+    onCreatePost: () -> Unit,
+    onPostClick: () -> Unit
 ){
     //Variables de estado
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -143,7 +143,7 @@ fun MainScreen(
             ){ innerPadding ->
 
                 when(selectedNavigationIndex){
-                    0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel())
+                    0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick)
                     1 -> {  }
                     2 -> UserScreen(paddingValues = innerPadding)
                 }
@@ -277,7 +277,8 @@ fun PreviewMainScreen(){
         MainScreen(
             hiltViewModel(),
             onCreatePost = {},
-            onLogoutClick = {}
+            onLogoutClick = {},
+            onPostClick = {}
         )
     }
 }
