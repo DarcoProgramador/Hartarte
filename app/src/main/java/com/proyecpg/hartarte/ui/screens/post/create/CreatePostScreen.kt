@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,52 +55,29 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
+import com.proyecpg.hartarte.utils.Constants.POST_IMAGES_MAX_SIZE
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun CreatePostScreen(
     onReturn: () -> Unit
 ){
-
-    var title by remember{ mutableStateOf("") }
-    var description by remember{ mutableStateOf("") }
-    val pagerState = rememberPagerState(initialPage = 0)
-    var images = listOf(
-        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
-        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
-        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
-    )
-
-    val context = LocalContext.current
+    //There'll be all the post info that the user provides
+    var postInfo: Triple<List<String>, String, String>
 
     Scaffold(
         modifier = Modifier
             .padding(horizontal = 12.dp)
             .padding(top = 12.dp),
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Crear publicación",
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onReturn
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Return icon",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
+            CreatePostTopAppBar(
+                onClick = onReturn
             )
         },
         floatingActionButton = {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    /* TODO: Use postInfo data */
+                },
                 enabled = true,
                 shape = RoundedCornerShape(30.dp),
                 modifier = Modifier
@@ -118,120 +96,164 @@ fun CreatePostScreen(
         },
         floatingActionButtonPosition = FabPosition.Center
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding)
-        ){
-            item {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                ) {
-                    HorizontalPager(
-                        count = images.size,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(shape = RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer)
-                            .clickable {
-                                if (images.size < 3) {
-                                    /* TODO: Seleccionar imágenes desde la galería */
-                                } else {
-                                    Toast
-                                        .makeText(
-                                            context,
-                                            "Límite de imágenes alcanzado",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                        .show()
-                                }
-                            },
-                        state = pagerState,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) { page ->
+        postInfo = createPostScreenContent(innerPadding)
+    }
+}
 
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(images[page])
-                                .crossfade(true)
-                                .scale(Scale.FILL)
-                                .build(),
-                            contentDescription = "Carousel image",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.TopEnd
-                        ){
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(imageVector = Icons.Default.Close, contentDescription = "Delete image")
-                            }
-                        }
-                    }
-                }
-
-                //Current image
-                Row(
-                    modifier = Modifier
-                        .height(IntrinsicSize.Min)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    repeat(images.size){
-                        Box(
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .clip(shape = CircleShape)
-                                .size(5.dp)
-                                .background(if (pagerState.currentPage == it) Color.DarkGray else Color.LightGray)
-                        )
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 10.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Text(
-                        text = "Seleccione hasta tres imágenes",
-                        fontSize = 12.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(15.dp))
-            }
-            
-            item{
-                description = customTextInputField(
-                    placeholder = "Descipción de la publicación",
-                    height = 50,
-                    maxLength = 50
-                )
-
-                Spacer(modifier = Modifier.height(15.dp))
-            }
-
-            item{
-                description = customTextInputField(
-                    placeholder = "Descipción de la publicación",
-                    height = 280,
-                    maxLength = 700
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreatePostTopAppBar(
+    onClick: () -> Unit
+){
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = "Crear publicación",
+                color = MaterialTheme.colorScheme.primary
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = onClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Return icon",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
+    )
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>, String, String> {
+    var title by remember{ mutableStateOf("") }
+    var description by remember{ mutableStateOf("") }
+    val pagerState = rememberPagerState(initialPage = 0)
+    val images = listOf(
+        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
+        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
+        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
+    )
+
+    val context = LocalContext.current
+
+    LazyColumn(
+        modifier = Modifier.padding(paddingValues)
+    ){
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp)
+            ) {
+                HorizontalPager(
+                    count = images.size,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(shape = RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .clickable {
+                            if (images.size < POST_IMAGES_MAX_SIZE) {
+                                /* TODO: Seleccionar imágenes desde la galería */
+                            } else {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Límite de imágenes alcanzado",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
+                            }
+                        },
+                    state = pagerState,
+                    verticalAlignment = Alignment.CenterVertically
+                ) { page ->
+
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(images[page])
+                            .crossfade(true)
+                            .scale(Scale.FILL)
+                            .build(),
+                        contentDescription = "Carousel image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopEnd
+                    ){
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "Delete image")
+                        }
+                    }
+                }
+            }
+
+            //Current image
+            Row(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(images.size){
+                    Box(
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clip(shape = CircleShape)
+                            .size(5.dp)
+                            .background(if (pagerState.currentPage == it) Color.DarkGray else Color.LightGray)
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 10.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "Seleccione hasta tres imágenes",
+                    fontSize = 12.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            title = customTextInputField(
+                placeholder = "Descipción de la publicación",
+                height = 56,
+                maxLength = 50,
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            description = customTextInputField(
+                placeholder = "Descipción de la publicación",
+                height = 280,
+                maxLength = 2000,
+                maxLines = null
+            )
+        }
     }
+
+    return Triple(images, title, description)
 }
 
 @Composable
 fun customTextInputField(
     placeholder: String,
     height: Int,
-    maxLength: Int
+    maxLength: Int,
+    maxLines: Int?
 ): String {
 
     var text by remember { (mutableStateOf("")) }
@@ -271,7 +293,7 @@ fun customTextInputField(
                 )
             }
         },
-        maxLines = 30
+        maxLines = maxLines ?: 50
     )
 
     return text

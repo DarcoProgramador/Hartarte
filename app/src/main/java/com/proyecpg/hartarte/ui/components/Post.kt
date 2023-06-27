@@ -61,7 +61,8 @@ fun Post(
     isBookmarked: Boolean,
     likesCount: Int,
     onLike : (String, Boolean) -> Unit,
-    onBookmark : (String, Boolean) -> Unit
+    onBookmark : (String, Boolean) -> Unit,
+    onPostClick: () -> Unit
 ){
     val pagerState = rememberPagerState(initialPage = 0)
 
@@ -122,7 +123,7 @@ fun Post(
 
             Column(modifier = Modifier
                 .clickable {
-                    /* TODO: Navigate to post creation screen */
+                    onPostClick()
                 }
             ){
                 //User
@@ -196,7 +197,7 @@ fun Post(
 
                                 liked = !liked
 
-                                onLike(postId, liked) //TODO: Cambiar despues a event
+                                onLike(postId, liked) /* TODO: Cambiar despues a event */
                             }
                         ) {
                             if(liked){
@@ -227,13 +228,13 @@ fun Post(
                         if(bookmarked){
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_bookmark),
-                                contentDescription = "Favorite"
+                                contentDescription = "Bookmark"
                             )
                         }
                         else{
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_bookmark_border),
-                                contentDescription = "Favorite"
+                                contentDescription = "Bookmark"
                             )
                         }
                     }
@@ -266,7 +267,8 @@ fun PreviewPost(){
                 isLiked = false,
                 likesCount = 40,
                 onLike = { _: String, _: Boolean -> run {} },
-                onBookmark = { _: String, _: Boolean -> run {} }
+                onBookmark = { _: String, _: Boolean -> run {} },
+                onPostClick = {}
             )
         }
     }

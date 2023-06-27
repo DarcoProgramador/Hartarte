@@ -20,16 +20,18 @@ import com.proyecpg.hartarte.ui.components.Post
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    onPostClick: () -> Unit
 ) {
-    HomeScreenContent(paddingValues, viewModel)
+    HomeScreenContent(paddingValues, viewModel, onPostClick)
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HomeScreenContent(
     innerPadding: PaddingValues,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    onPostClick: () -> Unit
 ){
     //Posts
     val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
@@ -56,7 +58,8 @@ fun HomeScreenContent(
                     isBookmarked = it.bookmarked?:false,
                     likesCount = it.likes?.toInt() ?: 0,
                     onLike = viewModel::doLike,
-                    onBookmark = viewModel::doBookmark
+                    onBookmark = viewModel::doBookmark,
+                    onPostClick = onPostClick
                 )
             }
         }
@@ -85,6 +88,7 @@ fun HomeScreenContent(
 fun PreviewLoginScreen(){
     HomeScreen(
         paddingValues = PaddingValues(),
-        viewModel = hiltViewModel()
+        viewModel = hiltViewModel(),
+        onPostClick = {}
     )
 }
