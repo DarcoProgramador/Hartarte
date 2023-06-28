@@ -32,13 +32,11 @@ fun UserScreen(
     ){
         Box(modifier = Modifier){
             UserCard(
-                image = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                username = "Username",
+                userImage = null,
+                username = "Usuario",
                 userDescription = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
-                userFollowers = 100,
-                userFollows = 100,
-                isFollowed = false,
-                lazyListState = lazyListState
+                lazyListState = lazyListState,
+                onSendDescription = {}
             )
         }
 
@@ -52,7 +50,7 @@ fun UserScreen(
             state = lazyListState
         ){
             item {
-                /*for(x in 1 .. 20){
+                for(x in 1 .. 20){
                     Post(
                         postId = x.toString(),
                         images = listOf
@@ -74,7 +72,7 @@ fun UserScreen(
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))
-                }*/
+                }
             }
         }
     }
@@ -89,7 +87,7 @@ val LazyListState.isScrolled: Boolean
 fun PreviewUserScreen(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
-            UserScreen(PaddingValues())
+            UserScreen(paddingValues = PaddingValues())
         }
     }
 }

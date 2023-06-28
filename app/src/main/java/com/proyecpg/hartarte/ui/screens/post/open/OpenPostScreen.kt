@@ -66,7 +66,6 @@ fun OpenPostScreen(
     postImages: List<String>,
     postUsername: String,
     postUserPic: String,
-    postUserFollowers: Int,
     postTitle: String,
     postDescription: String,
     postDate: String,
@@ -97,7 +96,7 @@ fun OpenPostScreen(
             paddingValues = innerPadding,
             postId = postId,
             postImages = postImages,
-            postUser = Triple(postUserPic, postUsername, postUserFollowers), //Firs: URL, second: name
+            postUser = Pair(postUserPic, postUsername), //Firs: URL, second: name
             postInfo = Triple(postTitle, postDescription, postDate),
             postStatistics = Triple(isLiked, likesCount, isBookmarked),
             username = username,
@@ -148,7 +147,7 @@ fun openPostScreenContent(
     paddingValues: PaddingValues,
     postId: String,
     postImages: List<String>,
-    postUser: Triple<String, String, Int>, //First: URL, second: name, third: followers
+    postUser: Pair<String, String>, //First: URL, second: name, third: followers
     postInfo: Triple<String, String, String>, //First: title, second: description
     postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: likes, isBookmarked
     username: String,
@@ -257,7 +256,7 @@ fun openPostScreenContent(
 
 @Composable
 fun PostUserInfo(
-    postUser: Triple<String, String, Int>,
+    postUser: Pair<String, String>,
     onPostUserClick: () -> Unit
 ){
     Row(
@@ -283,18 +282,6 @@ fun PostUserInfo(
         Text(
             text = postUser.second
         )
-
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ){
-            Text(
-                text = "${postUser.third} seguidores",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
     }
 }
 
@@ -503,10 +490,9 @@ fun PreviewPostUserInfo(){
             .padding(5.dp)
         ){
             PostUserInfo(
-                postUser = Triple(
+                postUser = Pair(
                 "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                "User",
-                155
+                "User"
                 ),
                 onPostUserClick = {}
             )
@@ -569,7 +555,6 @@ fun PreviewOpenPostScreen(){
                 ),
                 postUsername = "HartarteUser",
                 postUserPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                postUserFollowers = 150,
                 postTitle = "Título de ejemplo",
                 postDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut. Sed pellentesque egestas nisi, sed rutrum metus iaculis ultricies. Vivamus libero nunc, elementum eget massa faucibus, pretium mattis velit. Nullam varius maximus mauris. Nulla gravida quam et suscipit mollis. In tempor nisl sit amet gravida lacinia. Duis ut ipsum dictum, venenatis leo nec, volutpat turpis. Suspendisse vehicula libero at metus finibus porttitor. Fusce vehicula justo mi, auctor tristique enim fermentum sit amet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut.",
                 postDate = "11 de mayo del 2020, 11:30 a.m." ,

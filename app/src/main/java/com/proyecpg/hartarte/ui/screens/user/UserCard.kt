@@ -16,45 +16,58 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.launch
 
 @Composable
 fun UserCard(
-    image: String,
+    userImage: String?,
     username: String,
-    userDescription: String,
-    userFollowers: Int,
-    userFollows: Int,
-    isFollowed: Boolean,
-    lazyListState: LazyListState
+    userDescription: String?,
+    lazyListState: LazyListState,
+    onSendDescription: () -> Unit
 ){
-    var followed by remember { mutableStateOf(isFollowed) }
-    val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 200.dp else 160.dp)
+    val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 230.dp else 170.dp)
     val scope = rememberCoroutineScope()
+
+    var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"") }
+    var isEditEnabled by rememberSaveable(key = "edit") { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -72,12 +85,12 @@ fun UserCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(220.dp)
-                .padding(10.dp),
+                .height(230.dp)
+                .padding(if (!lazyListState.isScrolled) 10.dp else 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ){
             AsyncImage(
-                model = image,
+                model = userImage?:"https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541",
                 contentDescription = "User image",
                 modifier = Modifier
                     .size(animatedSize)
@@ -99,55 +112,47 @@ fun UserCard(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                if(!lazyListState.isScrolled){
-                    //Followers
-                    Text(
-                        text = "Seguidores",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-
-                    Text(
-                        text = userFollowers.toString(),
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    //Follows
-                    Text(
-                        text = "Seguidos",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-
-                    Text(
-                        text = userFollows.toString(),
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-                else{
+                if(lazyListState.isScrolled){
                     Button(
                         onClick = {
-                            followed = !followed
-                            //Actualizar seguidores
+                            isEditEnabled = !isEditEnabled
                         },
-                        modifier = Modifier.height(50.dp),
+                        modifier = Modifier
+                            .height(50.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
-                            painter = if (followed) painterResource(id = R.drawable.ic_favorite) else painterResource(id = R.drawable.ic_favorite_border),
-                            contentDescription = "Follow button"
+                            imageVector = if(isEditEnabled) Icons.Default.Close else Icons.Default.Edit,
+                            contentDescription = "Edit icon"
                         )
 
                         Spacer(modifier = Modifier.width(5.dp))
 
-                        Text(text = if(followed) "Dejar de seguir" else "Seguir" )
+                        Text(text = if(isEditEnabled) "Cerrar" else "Editar" )
                     }
+                }
+            }
+        }
+
+        if(!lazyListState.isScrolled || isEditEnabled ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                if(isEditEnabled){
+                    val descInfo: Pair<String, Boolean> = customTextInputField(description, onSendDescription)
+                    description = descInfo.first
+                    isEditEnabled = descInfo.second
+                }
+                else{
+                    Text(
+                        text = description?: "¡Hola! Soy un usuario nuevo",
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 }
             }
         }
@@ -156,45 +161,110 @@ fun UserCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                    .padding(vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = userDescription,
-                    fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
             ){
                 Button(
                     onClick = {
-                        followed = !followed
-                        //Actualizar seguidores
+                        isEditEnabled = !isEditEnabled
                     },
                     modifier = Modifier
-                        .padding(start = 50.dp)
                         .height(50.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(
-                        painter = if (followed) painterResource(id = R.drawable.ic_favorite) else painterResource(id = R.drawable.ic_favorite_border),
-                        contentDescription = "Follow button"
+                        imageVector = if(isEditEnabled) Icons.Default.Close else Icons.Default.Edit,
+                        contentDescription = "Edit icon"
                     )
 
                     Spacer(modifier = Modifier.width(5.dp))
 
-                    Text(text = if(followed) "Dejar de seguir" else "Seguir" )
+                    Text(text = if(isEditEnabled) "Cerrar" else "Editar" )
                 }
             }
         }
     }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun customTextInputField(
+    description: String?,
+    onSendDescription: () -> Unit
+): Pair<String, Boolean> {
+
+    var text by remember { (mutableStateOf(description?:"")) }
+    var editEnabled by remember { mutableStateOf(true) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(112.dp),
+        shape = RoundedCornerShape(5.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
+        value = text,
+        onValueChange = {
+            if (it.length <= 400){
+                text = it
+            }
+        },
+        textStyle = TextStyle(
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            fontSize = 16.sp
+        ),
+        placeholder = {
+            Text(
+                text = "Escribe una descipción..."
+            )
+        },
+        trailingIcon = {
+            if (text.isNotEmpty()){
+                IconButton(
+                    onClick = {
+                        focusManager?.clearFocus()
+                        keyboardController?.hide()
+                        onSendDescription()
+                        editEnabled = !editEnabled
+                    }
+                ){
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = "Send description",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+        },
+        supportingText = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = text.length.toString() + "/400"
+                )
+            }
+        },
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                focusManager?.clearFocus()
+                keyboardController?.hide()
+            }
+        ),
+        maxLines = 3
+    )
+
+    return Pair(text, editEnabled)
 }
 
 @Preview
@@ -203,13 +273,11 @@ fun PreviewUserCard(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
             UserCard(
-                image = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                userImage = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
                 username = "Username",
                 userDescription = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
-                userFollowers = 100,
-                userFollows = 100,
-                isFollowed = false,
-                lazyListState = LazyListState(0, 0)
+                lazyListState = LazyListState(6, 6),
+                onSendDescription = {}
             )
         }
     }
