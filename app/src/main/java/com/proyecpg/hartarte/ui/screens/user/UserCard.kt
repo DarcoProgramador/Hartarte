@@ -66,7 +66,7 @@ fun UserCard(
     val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 230.dp else 170.dp)
     val scope = rememberCoroutineScope()
 
-    var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"") }
+    var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"¡Hola, soy un nuevo usuario!") }
     var isEditEnabled by rememberSaveable(key = "edit") { mutableStateOf(false) }
 
     Card(
@@ -85,7 +85,7 @@ fun UserCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(230.dp)
+                .height(IntrinsicSize.Min)
                 .padding(if (!lazyListState.isScrolled) 10.dp else 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -149,7 +149,7 @@ fun UserCard(
                 }
                 else{
                     Text(
-                        text = description?: "¡Hola! Soy un usuario nuevo",
+                        text = description,
                         fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -228,7 +228,7 @@ fun customTextInputField(
             if (text.isNotEmpty()){
                 IconButton(
                     onClick = {
-                        focusManager?.clearFocus()
+                        focusManager.clearFocus()
                         keyboardController?.hide()
                         onSendDescription()
                         editEnabled = !editEnabled
@@ -257,7 +257,7 @@ fun customTextInputField(
         ),
         keyboardActions = KeyboardActions(
             onDone = {
-                focusManager?.clearFocus()
+                focusManager.clearFocus()
                 keyboardController?.hide()
             }
         ),
