@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -44,65 +46,67 @@ fun LoginScreen(
         showDialog = state.loginError != null
     )
 
-    Column(
+    LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            modifier = Modifier.size(150.dp),
-            painter = painterResource(id = R.drawable.img_logo),
-            contentDescription = stringResource(R.string.app_name)
-        )
+        item {
+            Image(
+                modifier = Modifier.size(150.dp),
+                painter = painterResource(id = R.drawable.img_logo),
+                contentDescription = stringResource(R.string.app_name)
+            )
 
-        Spacer(modifier = Modifier.size(50.dp))
-        
-        Column(
-            modifier = Modifier.padding(horizontal = 40.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            email = customTextField( stringResource(id = R.string.email) )
+            Spacer(modifier = Modifier.size(50.dp))
 
-            Spacer(modifier = Modifier.size(30.dp))
+            Column(
+                modifier = Modifier.padding(horizontal = 40.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Column {
+                    val focusManager = LocalFocusManager.current
 
-            password = customPasswordField( stringResource(id = R.string.password) )
+                    email = customTextField( stringResource(id = R.string.email), focusManager )
 
-            Spacer(modifier = Modifier.size(30.dp))
-            
-            ProgressButton(
-                stringResource(id = R.string.login),
-                state.isLoading,
-                onEventClick = {
-                    onEventLogin(
-                        LoginEvent.LoginClicked(
-                                email = email,
-                                password = password
-                        )
+                    Spacer(modifier = Modifier.size(30.dp))
+
+                    password = customPasswordField( stringResource(id = R.string.password), focusManager, true )
+
+                    Spacer(modifier = Modifier.size(30.dp))
+
+                    ProgressButton(
+                        stringResource(id = R.string.login),
+                        state.isLoading,
+                        onEventClick = {
+                            onEventLogin(
+                                LoginEvent.LoginClicked(
+                                    email = email,
+                                    password = password
+                                )
+                            )
+                        }
                     )
                 }
-            )
 
-            Spacer(modifier = Modifier.size(10.dp))
+                Spacer(modifier = Modifier.size(10.dp))
 
-            Text(
-                text = stringResource(id = R.string.no_account),
-                style = TextStyle(
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                ),
-                modifier = Modifier.clickable {
-                    navigateToRegister()
-                }
-            )
+                Text(
+                    text = stringResource(id = R.string.no_account),
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
+                    modifier = Modifier.clickable {
+                        navigateToRegister()
+                    }
+                )
 
-            Spacer(modifier = Modifier.size(60.dp))
+                Spacer(modifier = Modifier.size(60.dp))
 
-            GoogleLoginButton(onSignInGoogleClick)
-
-            /*Spacer(modifier = Modifier.size(30.dp))
-
-            FacebookLoginButton()*/
+                GoogleLoginButton(onSignInGoogleClick)
+            }
         }
     }
 }
