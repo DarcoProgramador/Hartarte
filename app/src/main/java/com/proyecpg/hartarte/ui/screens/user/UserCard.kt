@@ -1,6 +1,7 @@
 package com.proyecpg.hartarte.ui.screens.user
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,9 +23,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserCard(
@@ -50,12 +53,18 @@ fun UserCard(
     lazyListState: LazyListState
 ){
     var followed by remember { mutableStateOf(isFollowed) }
-    val animatedSize: Dp by animateDpAsState(targetValue = if (lazyListState.isScrolled) 200.dp else 160.dp)
+    val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 200.dp else 160.dp)
+    val scope = rememberCoroutineScope()
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(if (lazyListState.isScrolled) IntrinsicSize.Max else IntrinsicSize.Min),
+            .height(if (!lazyListState.isScrolled) IntrinsicSize.Max else IntrinsicSize.Min)
+            .clickable {
+                scope.launch {
+                    lazyListState.animateScrollToItem(0, 0)
+                }
+            },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         )
@@ -90,7 +99,7 @@ fun UserCard(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                if(lazyListState.isScrolled){
+                if(!lazyListState.isScrolled){
                     //Followers
                     Text(
                         text = "Seguidores",
@@ -143,7 +152,7 @@ fun UserCard(
             }
         }
 
-        if(lazyListState.isScrolled){
+        if(!lazyListState.isScrolled){
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
