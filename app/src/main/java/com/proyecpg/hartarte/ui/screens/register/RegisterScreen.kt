@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -40,6 +41,8 @@ fun RegisterScreen(
     var email: String
     var password: String
     var passwordConfirmation: String
+
+    val focusManager = LocalFocusManager.current
 
     EventDialog(
         errorMessage = state.registerError.toString(),
@@ -81,25 +84,25 @@ fun RegisterScreen(
             item {
                 TitleText( stringResource(id = R.string.title_user) )
 
-                username = customTextField( stringResource(id = R.string.username))
+                username = customTextField( stringResource(id = R.string.username), focusManager )
 
                 Spacer(modifier = Modifier.size(30.dp))
 
                 TitleText( stringResource(id = R.string.title_email) )
 
-                email = customTextField( stringResource(id = R.string.email) )
+                email = customTextField( stringResource(id = R.string.email), focusManager )
 
                 Spacer(modifier = Modifier.size(30.dp))
 
                 TitleText( stringResource(id = R.string.title_password) )
 
-                password = customPasswordField( stringResource(id = R.string.password) )
+                password = customPasswordField( stringResource(id = R.string.password), focusManager, false )
 
                 Spacer(modifier = Modifier.size(30.dp))
 
                 TitleText( stringResource(id = R.string.title_password_confirm) )
 
-                passwordConfirmation = customPasswordField( stringResource(id = R.string.password_confirm) )
+                passwordConfirmation = customPasswordField( stringResource(id = R.string.password_confirm), focusManager, true )
 
                 Spacer(modifier = Modifier.size(35.dp))
 

@@ -79,7 +79,6 @@ fun NavigationRoot(
                 ),
                 postUsername = "HartarteUser",
                 postUserPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                postUserFollowers = 150,
                 postTitle = "Título de ejemplo",
                 postDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut. Sed pellentesque egestas nisi, sed rutrum metus iaculis ultricies. Vivamus libero nunc, elementum eget massa faucibus, pretium mattis velit. Nullam varius maximus mauris. Nulla gravida quam et suscipit mollis. In tempor nisl sit amet gravida lacinia. Duis ut ipsum dictum, venenatis leo nec, volutpat turpis. Suspendisse vehicula libero at metus finibus porttitor. Fusce vehicula justo mi, auctor tristique enim fermentum sit amet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut.",
                 postDate = "11 de mayo del 2020, 11:30 a.m." ,
