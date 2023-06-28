@@ -40,6 +40,8 @@ fun LoginScreen(
     var email: String
     var password: String
 
+    val focusManager = LocalFocusManager.current
+
     EventDialog(
         errorMessage = state.loginError.toString(),
         onDismiss = onDismissDialog,
@@ -65,8 +67,6 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column {
-                    val focusManager = LocalFocusManager.current
-
                     email = customTextField( stringResource(id = R.string.email), focusManager )
 
                     Spacer(modifier = Modifier.size(30.dp))

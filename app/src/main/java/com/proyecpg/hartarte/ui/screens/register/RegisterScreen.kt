@@ -42,6 +42,8 @@ fun RegisterScreen(
     var password: String
     var passwordConfirmation: String
 
+    val focusManager = LocalFocusManager.current
+
     EventDialog(
         errorMessage = state.registerError.toString(),
         onDismiss = onDismissDialog,
@@ -80,8 +82,6 @@ fun RegisterScreen(
         ) {
 
             item {
-                val focusManager = LocalFocusManager.current
-
                 TitleText( stringResource(id = R.string.title_user) )
 
                 username = customTextField( stringResource(id = R.string.username), focusManager )

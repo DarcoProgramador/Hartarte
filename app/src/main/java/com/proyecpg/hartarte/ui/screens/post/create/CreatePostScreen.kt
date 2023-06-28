@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -41,10 +43,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -139,6 +145,7 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
     )
 
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     LazyColumn(
         modifier = Modifier.padding(paddingValues)
@@ -231,7 +238,9 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                 placeholder = "Descipción de la publicación",
                 height = 56,
                 maxLength = 50,
-                maxLines = 1
+                maxLines = 1,
+                focusManager = focusManager,
+                isLastTextField = false
             )
 
             Spacer(modifier = Modifier.height(15.dp))
@@ -240,7 +249,9 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                 placeholder = "Descipción de la publicación",
                 height = 280,
                 maxLength = 2000,
-                maxLines = null
+                maxLines = null,
+                focusManager = focusManager,
+                isLastTextField = true
             )
         }
     }
@@ -253,7 +264,9 @@ fun customTextInputField(
     placeholder: String,
     height: Int,
     maxLength: Int,
-    maxLines: Int?
+    maxLines: Int?,
+    focusManager: FocusManager,
+    isLastTextField: Boolean
 ): String {
 
     var text by remember { (mutableStateOf("")) }
@@ -293,6 +306,12 @@ fun customTextInputField(
                 )
             }
         },
+        keyboardOptions = KeyboardOptions(
+            imeAction = if(isLastTextField) ImeAction.Default else ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = { if (text.isNotEmpty()) focusManager.moveFocus(FocusDirection.Down) }
+        ),
         maxLines = maxLines ?: 50
     )
 

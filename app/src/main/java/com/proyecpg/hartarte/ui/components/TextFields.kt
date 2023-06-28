@@ -62,7 +62,7 @@ fun customTextField(
             imeAction = ImeAction.Next
         ),
         keyboardActions = KeyboardActions(
-            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            onNext = { if (text.isNotEmpty()) focusManager.moveFocus(FocusDirection.Down) }
         ),
         maxLines = 1
     )
@@ -121,10 +121,12 @@ fun customPasswordField(
             imeAction = if (isLastField) ImeAction.Done else ImeAction.Next
         ),
         keyboardActions = KeyboardActions(
-            onNext = { focusManager.moveFocus(FocusDirection.Down) },
+            onNext = { if (password.isNotEmpty()) focusManager.moveFocus(FocusDirection.Down) },
             onDone = {
-                focusManager.clearFocus()
-                keyboardController?.hide()
+                if (password.isNotEmpty()){
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                }
             }
         ),
         maxLines = 1
