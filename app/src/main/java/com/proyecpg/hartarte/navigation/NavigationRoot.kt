@@ -14,6 +14,7 @@ import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
+import com.proyecpg.hartarte.ui.screens.search.SearchScreen
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -43,6 +44,11 @@ fun NavigationRoot(
                         },
                         viewModel = mainViewModel,
                         onLogoutClick = authViewModel::process,
+                        onSearchClick = {
+                            navController.navigate(AppScreens.SearchScreen.route){
+
+                            }
+                        },
                         onPostClick = {
                             navController.navigate(AppScreens.OpenPostScreen.route){
                             }
@@ -58,6 +64,14 @@ fun NavigationRoot(
                     }
                 }
             }
+        }
+
+        composable(AppScreens.SearchScreen.route){
+            SearchScreen(
+                onReturn = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(AppScreens.CreatePostScreen.route){
@@ -138,6 +152,7 @@ sealed class AppScreens(val route: String){
     object HomeScreen: AppScreens("home_screen")
     object BookmarkScreen: AppScreens("bookmarks_screen")
     object UserScreen: AppScreens("user_screen")
+    object SearchScreen: AppScreens("search_screen")
     object CreatePostScreen: AppScreens("create_post_screen")
     object OpenPostScreen: AppScreens("open_post_screen")
 }

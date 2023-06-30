@@ -253,6 +253,8 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                 focusManager = focusManager,
                 isLastTextField = true
             )
+
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
 
