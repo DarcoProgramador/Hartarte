@@ -279,6 +279,8 @@ fun createPostScreenContent(
                 focusManager = focusManager,
                 isLastTextField = true
             )
+
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
 
