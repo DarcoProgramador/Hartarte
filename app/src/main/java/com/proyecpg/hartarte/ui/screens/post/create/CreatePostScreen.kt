@@ -1,6 +1,10 @@
 package com.proyecpg.hartarte.ui.screens.post.create
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -138,6 +142,13 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
     var title by remember{ mutableStateOf("") }
     var description by remember{ mutableStateOf("") }
     val pagerState = rememberPagerState(initialPage = 0)
+    var selectedImageUris by remember {
+        mutableStateOf<List<Uri>>(emptyList())
+    }
+    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = {uris -> selectedImageUris = uris}
+    )
     val images = listOf(
         "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
         "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
@@ -157,13 +168,16 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                     .height(320.dp)
             ) {
                 HorizontalPager(
-                    count = images.size,
+                    count = selectedImageUris.size,
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(shape = RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .clickable {
-                            if (images.size < POST_IMAGES_MAX_SIZE) {
+                            if (selectedImageUris.size < POST_IMAGES_MAX_SIZE) {
+                                multiplePhotoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
                                 /* TODO: Seleccionar imágenes desde la galería */
                             } else {
                                 Toast
@@ -179,9 +193,19 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                     verticalAlignment = Alignment.CenterVertically
                 ) { page ->
 
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopEnd
+                    ){
+                        IconButton(onClick = {
+                        /*TODO*/ }) {
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "Delete image")
+                        }
+                    }
+
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(images[page])
+                            .data(selectedImageUris[page])
                             .crossfade(true)
                             .scale(Scale.FILL)
                             .build(),
@@ -190,14 +214,6 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                         contentScale = ContentScale.Crop
                     )
 
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.TopEnd
-                    ){
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(imageVector = Icons.Default.Close, contentDescription = "Delete image")
-                        }
-                    }
                 }
             }
 
@@ -209,7 +225,7 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                repeat(images.size){
+                repeat(selectedImageUris.size){
                     Box(
                         modifier = Modifier
                             .padding(2.dp)
