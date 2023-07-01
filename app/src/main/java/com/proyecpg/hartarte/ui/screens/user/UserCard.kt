@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.launch
 
@@ -90,7 +91,7 @@ fun UserCard(
             verticalAlignment = Alignment.CenterVertically
         ){
             AsyncImage(
-                model = userImage?:"https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541",
+                model = userImage?: R.drawable.user_placeholder,
                 contentDescription = "User image",
                 modifier = Modifier
                     .size(animatedSize)

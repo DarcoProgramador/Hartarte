@@ -34,17 +34,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.UiState
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 
 @Composable
 fun SideBar(
     username: String,
-    imageURL: String,
+    imageURL: String?,
     onUserCardClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
     onLogoutClick: (LoginEvent) -> Unit,
@@ -72,8 +74,10 @@ fun SideBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
-                    model = imageURL,
+                    model = imageURL?: R.drawable.user_placeholder,
                     contentDescription = username,
+                    placeholder = painterResource(id = R.drawable.user_placeholder),
+                    error = painterResource(id = R.drawable.user_placeholder),
                     modifier = Modifier
                         .size(85.dp, 85.dp)
                         .clip(CircleShape),

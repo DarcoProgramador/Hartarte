@@ -93,6 +93,8 @@ fun Post(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(images[page])
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.placeholder)
                         .crossfade(true)
                         .scale(Scale.FILL)
                         .build(),
@@ -146,6 +148,8 @@ fun Post(
                         AsyncImage(
                             model = userPic,
                             contentDescription = "User avatar",
+                            placeholder = painterResource(id = R.drawable.user_placeholder),
+                            error = painterResource(id = R.drawable.user_placeholder),
                             modifier = Modifier
                                 .size(30.dp)
                                 .clip(shape = CircleShape)
