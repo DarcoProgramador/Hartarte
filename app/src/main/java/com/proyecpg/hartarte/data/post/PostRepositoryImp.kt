@@ -16,7 +16,12 @@ import com.proyecpg.hartarte.utils.Constants.POST_BOOKMARKS_COLLECTION
 import com.proyecpg.hartarte.utils.Constants.POST_COLLECTION
 import com.proyecpg.hartarte.utils.Constants.POST_LIKES_COLLECTION
 import com.proyecpg.hartarte.utils.Resource
+import com.proyecpg.hartarte.data.model.PostEntity
+import com.proyecpg.hartarte.data.model.User
+import com.proyecpg.hartarte.data.model.UserHashmap
+import com.proyecpg.hartarte.utils.Constants
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -123,7 +128,27 @@ class PostRepositoryImp @Inject constructor(
         titulo: String,
         descripcion: String
     ): Resource<Boolean> {
-        TODO("Create Post implement")
+        return try {
+            val userUID = firebaseAuth.currentUser?.uid.toString()
+            val userRef = db.collection(Constants.USERS).document(userUID).get().await()
+            val user = userRef.toObject(User::class.java)
+
+            val newPost = PostEntity(
+                titulo = titulo,
+                descripcion = descripcion,
+                user = UserHashmap(
+                    uid = userUID,
+                    photo = user?.photoUrl,
+                    name = user?.username
+                )
+            )
+
+            val newPostRef = db.collection(POST_COLLECTION).add(newPost).await()
+            Resource.Success(true)
+            
+        } catch (e: Exception) {
+            Resource.Failure(e)
+        }
     }
 
 }
