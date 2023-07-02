@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.data.post
 
+import android.net.Uri
 import androidx.paging.PagingData
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.Resource
@@ -11,4 +12,9 @@ interface PostRepository {
     suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean>
 
     suspend fun registerBookmark(postId: String, bookmarked: Boolean): Resource<Boolean>
+
+    suspend fun createPost(images : List<Uri>,
+                           titulo: String,
+                           descripcion: String
+    ): Resource<Boolean>
 }

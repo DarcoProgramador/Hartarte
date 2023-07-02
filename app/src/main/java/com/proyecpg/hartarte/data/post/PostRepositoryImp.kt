@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.data.post
 
+import android.net.Uri
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -115,6 +116,14 @@ class PostRepositoryImp @Inject constructor(
         } catch (e: Exception) {
             Resource.Failure(e)
         }
+    }
+
+    override suspend fun createPost(
+        images: List<Uri>,
+        titulo: String,
+        descripcion: String
+    ): Resource<Boolean> {
+        TODO("Create Post implement")
     }
 
 }
