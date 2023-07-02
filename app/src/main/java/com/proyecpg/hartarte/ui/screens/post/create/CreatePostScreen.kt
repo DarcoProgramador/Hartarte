@@ -153,7 +153,7 @@ fun createPostScreenContent(
     //Images from gallery
     var selectedImageUris by rememberSaveable(key = "photos") { mutableStateOf<List<Uri>>(emptyList()) }
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        contract = ActivityResultContracts.PickMultipleVisualMedia(3),
         onResult = { uris -> selectedImageUris = uris }
     )
 
