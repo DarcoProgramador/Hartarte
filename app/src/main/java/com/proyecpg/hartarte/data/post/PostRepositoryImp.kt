@@ -145,7 +145,7 @@ class PostRepositoryImp @Inject constructor(
 
             val newPostRef = db.collection(POST_COLLECTION).add(newPost).await()
             Resource.Success(true)
-            
+
         } catch (e: Exception) {
             Resource.Failure(e)
         }
