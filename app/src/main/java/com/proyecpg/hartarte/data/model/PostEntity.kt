@@ -4,7 +4,7 @@ import com.google.firebase.Timestamp
 data class PostEntity(
     val titulo: String? = "",
     val descripcion: String? = "",
-    val imagen: String? = "",
+    val images: ArrayList<String>? = null,
     val likes: Long? = 0L,
     val bookmarks: Long? = 0L,
     val user: UserHashmap? = UserHashmap(),

@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
 import com.proyecpg.hartarte.data.paging.PostPagingSource
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.Constants.BOOKMARKS
@@ -20,6 +21,8 @@ import com.proyecpg.hartarte.data.model.PostEntity
 import com.proyecpg.hartarte.data.model.User
 import com.proyecpg.hartarte.data.model.UserHashmap
 import com.proyecpg.hartarte.utils.Constants
+import com.proyecpg.hartarte.utils.Constants.POST_IMAGES
+import com.proyecpg.hartarte.utils.Constants.POST_PATH
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -30,7 +33,8 @@ class PostRepositoryImp @Inject constructor(
     private val source: PostPagingSource,
     private val config: PagingConfig,
     private val firebaseAuth: FirebaseAuth,
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val storage : FirebaseStorage
 ): PostRepository {
 
     override fun getPosts(): Flow<PagingData<Post>> = Pager(
@@ -129,6 +133,8 @@ class PostRepositoryImp @Inject constructor(
         descripcion: String
     ): Resource<Boolean> {
         return try {
+            val storageRef = storage.reference
+
             val userUID = firebaseAuth.currentUser?.uid.toString()
             val userRef = db.collection(Constants.USERS).document(userUID).get().await()
             val user = userRef.toObject(User::class.java)
@@ -143,7 +149,23 @@ class PostRepositoryImp @Inject constructor(
                 )
             )
 
-            val newPostRef = db.collection(POST_COLLECTION).add(newPost).await()
+            val postRef =  db.collection(POST_COLLECTION)
+            //add post
+            val newPostRef = postRef.add(newPost).await()
+
+            for ((index, image) in images.withIndex()){
+                //Create Ref to storage
+                val pathImage = "${POST_PATH}photo${userUID}${newPostRef.id}_${index}"
+                val postImgRef = storageRef.child(pathImage)
+
+                //upload image
+                val imageStorageRef =postImgRef.putFile(image).await()
+                val imageURL = imageStorageRef.storage.downloadUrl
+
+                //update value of images
+                postRef.document(newPostRef.id).update(POST_IMAGES, FieldValue.arrayUnion(imageURL)).await()
+            }
+            
             Resource.Success(true)
 
         } catch (e: Exception) {

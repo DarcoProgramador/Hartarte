@@ -25,6 +25,7 @@ object Constants {
     const val POST_COLLECTION = "posts"
     const val TIME_STAMP = "createdAt"
     const val PAGE_SIZE = 10L
+    const val POST_IMAGES = "images"
 
     //FireBasePostLikes
     const val POST_LIKES_COLLECTION = "postsLikes"
@@ -39,4 +40,7 @@ object Constants {
 
     //Posts
     const val POST_IMAGES_MAX_SIZE = 3
+
+    //Storage Path
+    const val POST_PATH = "post/"
 }
