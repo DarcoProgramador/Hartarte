@@ -9,5 +9,5 @@ import javax.inject.Inject
 class CreatePostScreenViewModel @Inject constructor(
     private val postRepository: PostRepository
 ) : ViewModel() {
-    
+
 }
