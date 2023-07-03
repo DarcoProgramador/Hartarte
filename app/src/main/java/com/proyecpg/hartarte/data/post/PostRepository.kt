@@ -3,11 +3,12 @@ package com.proyecpg.hartarte.data.post
 import android.net.Uri
 import androidx.paging.PagingData
 import com.proyecpg.hartarte.domain.model.Post
+import com.proyecpg.hartarte.utils.QueryParams
 import com.proyecpg.hartarte.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
-    fun getPosts(): Flow<PagingData<Post>>
+    fun getPostsBy(query : QueryParams): Flow<PagingData<Post>>
 
     suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean>
 

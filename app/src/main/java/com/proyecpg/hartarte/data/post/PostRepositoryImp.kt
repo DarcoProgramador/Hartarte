@@ -37,11 +37,11 @@ class PostRepositoryImp @Inject constructor(
     private val storage : FirebaseStorage
 ): PostRepository {
 
-    override fun getPosts(): Flow<PagingData<Post>> = Pager(
+    override fun getPostsBy(queryParams: QueryParams): Flow<PagingData<Post>> = Pager(
         config = config
     ) {
         PostPagingSource(
-            queryPost = QueryParams.MOST_RECENT,
+            queryPost = queryParams,
             firebaseAuth = firebaseAuth,
             db = db
         )
