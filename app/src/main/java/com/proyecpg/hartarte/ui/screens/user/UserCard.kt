@@ -212,7 +212,7 @@ fun customTextInputField(
         ),
         value = text,
         onValueChange = {
-            if (it.length <= 400){
+            if (it.length <= 250){
                 text = it
             }
         },
@@ -249,7 +249,7 @@ fun customTextInputField(
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = text.length.toString() + "/400"
+                    text = text.length.toString() + "/250"
                 )
             }
         },
