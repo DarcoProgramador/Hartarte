@@ -1,6 +1,11 @@
 package com.proyecpg.hartarte.ui.screens.post.create
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,6 +67,7 @@ import coil.size.Scale
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import com.proyecpg.hartarte.utils.Constants.POST_IMAGES_MAX_SIZE
 
@@ -68,7 +76,7 @@ fun CreatePostScreen(
     onReturn: () -> Unit
 ){
     //There'll be all the post info that the user provides
-    var postInfo: Triple<List<String>, String, String>
+    var postInfo: Triple<List<Uri>, String, String>
 
     Scaffold(
         modifier = Modifier
@@ -134,14 +142,19 @@ fun CreatePostTopAppBar(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>, String, String> {
+fun createPostScreenContent(
+    paddingValues: PaddingValues
+): Triple<List<Uri>, String, String> {
+
     var title by remember{ mutableStateOf("") }
     var description by remember{ mutableStateOf("") }
     val pagerState = rememberPagerState(initialPage = 0)
-    val images = listOf(
-        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
-        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
-        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
+
+    //Images from gallery
+    var selectedImageUris by rememberSaveable(key = "photos") { mutableStateOf<List<Uri>>(emptyList()) }
+    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(3),
+        onResult = { uris -> selectedImageUris = uris }
     )
 
     val context = LocalContext.current
@@ -157,14 +170,16 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                     .height(320.dp)
             ) {
                 HorizontalPager(
-                    count = images.size,
+                    count = selectedImageUris.size.coerceAtLeast(1),
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(shape = RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .clickable {
-                            if (images.size < POST_IMAGES_MAX_SIZE) {
-                                /* TODO: Seleccionar imágenes desde la galería */
+                            if (selectedImageUris.size < POST_IMAGES_MAX_SIZE) {
+                                multiplePhotoPickerLauncher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
                             } else {
                                 Toast
                                     .makeText(
@@ -179,9 +194,13 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                     verticalAlignment = Alignment.CenterVertically
                 ) { page ->
 
+                    val imageUri = selectedImageUris.getOrNull(page)
+
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(images[page])
+                            .data(imageUri)
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder)
                             .crossfade(true)
                             .scale(Scale.FILL)
                             .build(),
@@ -190,12 +209,19 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                         contentScale = ContentScale.Crop
                     )
 
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.TopEnd
-                    ){
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(imageVector = Icons.Default.Close, contentDescription = "Delete image")
+                    // Delete image icon
+                    if (selectedImageUris.isNotEmpty()){
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.TopEnd
+                        ){
+                            IconButton(onClick = {
+                                selectedImageUris = selectedImageUris.toMutableList().apply {
+                                    removeAt(page)
+                                }
+                            }) {
+                                Icon(imageVector = Icons.Default.Close, contentDescription = "Delete image")
+                            }
                         }
                     }
                 }
@@ -209,7 +235,7 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                repeat(images.size){
+                repeat(selectedImageUris.size){
                     Box(
                         modifier = Modifier
                             .padding(2.dp)
@@ -256,7 +282,7 @@ fun createPostScreenContent( paddingValues: PaddingValues ): Triple<List<String>
         }
     }
 
-    return Triple(images, title, description)
+    return Triple(selectedImageUris, title, description)
 }
 
 @Composable

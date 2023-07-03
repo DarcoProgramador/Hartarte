@@ -55,9 +55,17 @@ fun LoginScreen(
     ) {
         item {
             Image(
-                modifier = Modifier.size(150.dp),
+                modifier = Modifier.size(180.dp),
                 painter = painterResource(id = R.drawable.img_logo),
                 contentDescription = stringResource(R.string.app_name)
+            )
+            Text(
+                text = "Hartarte",
+                style = TextStyle(
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
             )
 
             Spacer(modifier = Modifier.size(50.dp))

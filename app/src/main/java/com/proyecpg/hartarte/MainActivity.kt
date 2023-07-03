@@ -14,6 +14,7 @@ import com.proyecpg.hartarte.data.DataStoreUtil
 import com.proyecpg.hartarte.navigation.NavigationRoot
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
+import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
