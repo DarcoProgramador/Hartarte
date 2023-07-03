@@ -73,7 +73,9 @@ import com.proyecpg.hartarte.utils.Constants.POST_IMAGES_MAX_SIZE
 
 @Composable
 fun CreatePostScreen(
-    onReturn: () -> Unit
+    onReturn: () -> Unit,
+    onCreatePost: (CreatePostEvent) -> Unit,
+    state: CreatePostState
 ){
     //There'll be all the post info that the user provides
     var postInfo: Triple<List<Uri>, String, String>
@@ -350,7 +352,9 @@ fun PreviewCreatePostScreen(){
     HartarteTheme {
         Box(modifier = Modifier.fillMaxSize()){
             CreatePostScreen(
-                onReturn = {}
+                onReturn = {},
+                onCreatePost = {},
+                state = CreatePostState()
             )
         }
     }

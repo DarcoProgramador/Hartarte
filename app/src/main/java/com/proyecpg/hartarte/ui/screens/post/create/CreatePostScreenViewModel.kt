@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.post.PostRepository
+import com.proyecpg.hartarte.ui.screens.register.RegisterEvent
 import com.proyecpg.hartarte.utils.FirebaseErrors
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,9 +26,15 @@ class CreatePostScreenViewModel @Inject constructor(
         _stateCreatePost.update { CreatePostState() }
     }
 
-    fun addPost(images : List<Uri>,
-                titulo: String,
-                descripcion: String
+    fun process(event : CreatePostEvent){
+        when(event){
+            is CreatePostEvent.CreatePostClicked -> addPost(event.images, event.titulo, event.descripcion)
+        }
+    }
+
+    private fun addPost(images : List<Uri>,
+                        titulo: String,
+                        descripcion: String
     ){
         viewModelScope.launch {
             _stateCreatePost.update { it.copy(isLoading = true)}

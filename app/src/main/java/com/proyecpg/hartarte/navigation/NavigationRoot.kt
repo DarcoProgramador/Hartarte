@@ -3,6 +3,7 @@ package com.proyecpg.hartarte.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,7 +14,9 @@ import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
+import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
+import com.proyecpg.hartarte.ui.screens.register.RegisterViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -61,10 +64,22 @@ fun NavigationRoot(
         }
 
         composable(AppScreens.CreatePostScreen.route){
+            val createPostScreenViewModel  = hiltViewModel<CreatePostScreenViewModel>()
+            val stateCreatePost by createPostScreenViewModel.stateCreatePost.collectAsStateWithLifecycle()
+
+            LaunchedEffect(key1 = stateCreatePost.isCreatePostSuccessful) {
+                if (stateCreatePost.isCreatePostSuccessful){
+                    navController.popBackStack()
+                    createPostScreenViewModel.resetState()
+                }
+            }
+
             CreatePostScreen(
                 onReturn = {
                     navController.popBackStack()
-                }
+                },
+                onCreatePost = createPostScreenViewModel::process,
+                state = stateCreatePost
             )
         }
 
