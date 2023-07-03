@@ -155,15 +155,16 @@ class PostRepositoryImp @Inject constructor(
 
             for ((index, image) in images.withIndex()){
                 //Create Ref to storage
-                val pathImage = "${POST_PATH}photo${userUID}${newPostRef.id}_${index}"
+                val pathImage = "${POST_PATH}photo${userUID}${newPostRef.id}_${index}.jpg"
                 val postImgRef = storageRef.child(pathImage)
 
                 //upload image
-                val imageStorageRef =postImgRef.putFile(image).await()
-                val imageURL = imageStorageRef.storage.downloadUrl
+                val imageStorageRef = postImgRef.putFile(image).await()
+                val imageURL = imageStorageRef.storage.downloadUrl.await()
 
+                val url = imageURL.toString()
                 //update value of images
-                postRef.document(newPostRef.id).update(POST_IMAGES, FieldValue.arrayUnion(imageURL)).await()
+                postRef.document(newPostRef.id).update(POST_IMAGES, FieldValue.arrayUnion(url)).await()
             }
             
             Resource.Success(true)

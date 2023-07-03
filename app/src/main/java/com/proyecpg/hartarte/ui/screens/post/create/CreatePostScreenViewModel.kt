@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.post.PostRepository
-import com.proyecpg.hartarte.ui.screens.register.RegisterEvent
 import com.proyecpg.hartarte.utils.FirebaseErrors
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

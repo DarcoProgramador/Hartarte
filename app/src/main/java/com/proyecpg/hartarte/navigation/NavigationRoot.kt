@@ -16,7 +16,6 @@ import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
-import com.proyecpg.hartarte.ui.screens.register.RegisterViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -78,7 +77,7 @@ fun NavigationRoot(
                 onReturn = {
                     navController.popBackStack()
                 },
-                onCreatePost = createPostScreenViewModel::process,
+                onProcess = createPostScreenViewModel::process,
                 state = stateCreatePost
             )
         }
