@@ -47,6 +47,21 @@ class PostRepositoryImp @Inject constructor(
         )
     }.flow
 
+    override suspend fun getBookmarkPostsIds(): Resource<List<String>> {
+       return try {
+           val bookMarkRef = db.collection(Constants.POST_BOOKMARKS_COLLECTION)
+           val userUID = firebaseAuth.currentUser?.uid.toString()
+           val postIdsRef = bookMarkRef.whereArrayContains(Constants.BOOKMARKS, userUID).get().await()
+
+           val postIds = postIdsRef.map { it.id }
+
+           Resource.Success(postIds)
+       } catch (e: Exception) {
+           Resource.Failure(e)
+       }
+
+    }
+
     override suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean> {
         return try {
             val increment = FieldValue.increment(1)

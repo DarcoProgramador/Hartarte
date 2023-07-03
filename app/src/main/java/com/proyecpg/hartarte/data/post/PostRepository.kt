@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 interface PostRepository {
     fun getPostsBy(query : QueryParams): Flow<PagingData<Post>>
 
+    suspend fun getBookmarkPostsIds(): Resource<List<String>>
+
     suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean>
 
     suspend fun registerBookmark(postId: String, bookmarked: Boolean): Resource<Boolean>
