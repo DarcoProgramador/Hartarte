@@ -66,6 +66,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.ui.components.EventDialog
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import com.proyecpg.hartarte.utils.Constants.POST_IMAGES_MAX_SIZE
 
@@ -73,10 +74,17 @@ import com.proyecpg.hartarte.utils.Constants.POST_IMAGES_MAX_SIZE
 fun CreatePostScreen(
     onReturn: () -> Unit,
     onProcess: (CreatePostEvent) -> Unit,
-    state: CreatePostState
+    state: CreatePostState,
+    onDismissDialog: () -> Unit
 ){
     //There'll be all the post info that the user provides
     var postInfo: Triple<List<Uri>, String, String> = Triple(emptyList(), "", "")
+
+    EventDialog(
+        errorMessage = state.createPostError.toString(),
+        onDismiss = onDismissDialog,
+        showDialog = state.createPostError != null
+    )
 
     Scaffold(
         modifier = Modifier
@@ -356,7 +364,8 @@ fun PreviewCreatePostScreen(){
             CreatePostScreen(
                 onReturn = {},
                 onProcess = {},
-                state = CreatePostState()
+                state = CreatePostState(),
+                onDismissDialog = {}
             )
         }
     }

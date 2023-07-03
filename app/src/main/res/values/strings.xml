@@ -44,9 +44,9 @@
     <string name="error_password_weak">La contraseña es muy débil, ingrese números y caracteres especiales</string>
 
     //Errorres de crear post
-    <string name="error_missing_images">Faltan imagenes para mostrar</string>
-    <string name="error_missing_description">Ingrese una descripcion a su post</string>
-    <string name="error_missing_title">Ingrese un titulo a su post</string>
+    <string name="error_missing_images">Debe ingresar al menos una imagen</string>
+    <string name="error_missing_description">Ingrese una descripción para la publicación</string>
+    <string name="error_missing_title">Ingrese el título de la publicación</string>
 
 
     //Otros

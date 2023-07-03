@@ -38,11 +38,6 @@ class CreatePostScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _stateCreatePost.update { it.copy(isLoading = true)}
 
-            if (images.isEmpty()){
-                setError(R.string.error_missing_images.toString())
-                return@launch
-            }
-
             if (titulo.isBlank()){
                 setError(R.string.error_missing_title.toString())
                 return@launch
@@ -50,6 +45,11 @@ class CreatePostScreenViewModel @Inject constructor(
 
             if (descripcion.isBlank()){
                 setError(R.string.error_missing_description.toString())
+                return@launch
+            }
+
+            if (images.isEmpty()){
+                setError(R.string.error_missing_images.toString())
                 return@launch
             }
 
@@ -103,6 +103,14 @@ class CreatePostScreenViewModel @Inject constructor(
                 isLoading = false,
                 createPostError = error
             )
+        }
+    }
+
+    fun hideErrorDialog() {
+        viewModelScope.launch {
+                    createPostError = null
+                )
+            }
         }
     }
 }

@@ -78,7 +78,10 @@ fun NavigationRoot(
                     navController.popBackStack()
                 },
                 onProcess = createPostScreenViewModel::process,
-                state = stateCreatePost
+                state = stateCreatePost,
+                onDismissDialog = {
+                    createPostScreenViewModel.hideErrorDialog()
+                }
             )
         }
 
