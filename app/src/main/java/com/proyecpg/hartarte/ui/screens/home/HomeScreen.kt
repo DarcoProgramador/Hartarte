@@ -76,20 +76,22 @@ fun HomeScreenContent(
             post?.let{
                 val postId = it.postId?:""
                 val liked = it.liked?:false
-                Post(
-                    postId = postId,
-                    images = listOf(it.imagen?:""),
-                    username = it.user?.name ?: "",
-                    userPic = it.user?.photo ?: "",
-                    title = it.titulo?:"",
-                    description = it.descripcion?:"",
-                    isLiked = liked,
-                    isBookmarked = it.bookmarked?:false,
-                    likesCount = it.likes?.toInt() ?: 0,
-                    onLike = viewModel::doLike,
-                    onBookmark = viewModel::doBookmark,
-                    onPostClick = onPostClick
-                )
+                it.images?.let { it1 ->
+                    Post(
+                        postId = postId,
+                        images = it1.toList(),
+                        username = it.user?.name ?: "",
+                        userPic = it.user?.photo ?: "",
+                        title = it.titulo?:"",
+                        description = it.descripcion?:"",
+                        isLiked = liked,
+                        isBookmarked = it.bookmarked?:false,
+                        likesCount = it.likes?.toInt() ?: 0,
+                        onLike = viewModel::doLike,
+                        onBookmark = viewModel::doBookmark,
+                        onPostClick = onPostClick
+                    )
+                }
             }
         }
         pagingPosts.loadState.apply {
