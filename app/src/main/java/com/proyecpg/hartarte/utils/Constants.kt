@@ -24,6 +24,7 @@ object Constants {
     //FireBasePost
     const val POST_COLLECTION = "posts"
     const val TIME_STAMP = "createdAt"
+    const val POST_USER_UID = "user.uid"
     const val PAGE_SIZE = 5L
     const val POST_IMAGES = "images"
 
