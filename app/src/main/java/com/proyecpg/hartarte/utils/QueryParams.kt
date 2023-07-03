@@ -1,11 +1,9 @@
 package com.proyecpg.hartarte.utils
 
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.proyecpg.hartarte.utils.Constants.POST_USER_UID
-import kotlinx.coroutines.tasks.await
 
 
 sealed class QueryParams(val query: Query){

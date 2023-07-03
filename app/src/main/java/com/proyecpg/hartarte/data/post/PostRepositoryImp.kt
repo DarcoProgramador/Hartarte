@@ -37,11 +37,11 @@ class PostRepositoryImp @Inject constructor(
     private val storage : FirebaseStorage
 ): PostRepository {
 
-    override fun getPostsBy(queryParams: QueryParams): Flow<PagingData<Post>> = Pager(
+    override fun getPostsBy(query: QueryParams): Flow<PagingData<Post>> = Pager(
         config = config
     ) {
         PostPagingSource(
-            queryPost = queryParams,
+            queryPost = query,
             firebaseAuth = firebaseAuth,
             db = db
         )
@@ -49,9 +49,9 @@ class PostRepositoryImp @Inject constructor(
 
     override suspend fun getBookmarkPostsIds(): Resource<List<String>> {
        return try {
-           val bookMarkRef = db.collection(Constants.POST_BOOKMARKS_COLLECTION)
+           val bookMarkRef = db.collection(POST_BOOKMARKS_COLLECTION)
            val userUID = firebaseAuth.currentUser?.uid.toString()
-           val postIdsRef = bookMarkRef.whereArrayContains(Constants.BOOKMARKS, userUID).get().await()
+           val postIdsRef = bookMarkRef.whereArrayContains(BOOKMARKS, userUID).get().await()
 
            val postIds = postIdsRef.map { it.id }
 
