@@ -5,8 +5,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.proyecpg.hartarte.data.paging.PostPagingSource
@@ -47,7 +49,7 @@ class PostRepositoryImp @Inject constructor(
         )
     }.flow
 
-    override suspend fun getBookmarkPostsIds(): Resource<List<String>> {
+    override suspend fun getPostBookmarkedQuery(): Resource<Query> {
        return try {
            val bookMarkRef = db.collection(POST_BOOKMARKS_COLLECTION)
            val userUID = firebaseAuth.currentUser?.uid.toString()
@@ -55,7 +57,13 @@ class PostRepositoryImp @Inject constructor(
 
            val postIds = postIdsRef.map { it.id }
 
-           Resource.Success(postIds)
+           val postRef = db.collection(Constants.POST_COLLECTION)
+
+           val query = postRef.whereIn(FieldPath.documentId(), postIds)
+               .orderBy(Constants.TIME_STAMP, Query.Direction.DESCENDING)
+               .limit(Constants.PAGE_SIZE)
+
+           Resource.Success(query)
        } catch (e: Exception) {
            Resource.Failure(e)
        }

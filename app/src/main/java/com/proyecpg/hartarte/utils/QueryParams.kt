@@ -35,20 +35,3 @@ sealed class QueryParams(val query: Query){
     class QUERY_SEARCH(query: Query) : QueryParams(query)
 
 }
-
-/* TODO : Añadir esta funcion a otro pager
-suspend fun queryBookmark(uid : String) : Query{
-    val db = Firebase.firestore
-
-    val bookMarkRef = db.collection(Constants.POST_BOOKMARKS_COLLECTION)
-    val postIdsRef = bookMarkRef.whereArrayContains(Constants.BOOKMARKS, uid).get().await()
-
-    val postIds = postIdsRef.map { it.id }
-
-    val postRef = db.collection(Constants.POST_COLLECTION)
-
-    return postRef.whereIn(FieldPath.documentId(), postIds)
-            .orderBy(Constants.TIME_STAMP, Query.Direction.DESCENDING)
-            .limit(Constants.PAGE_SIZE)
-}
-*/
