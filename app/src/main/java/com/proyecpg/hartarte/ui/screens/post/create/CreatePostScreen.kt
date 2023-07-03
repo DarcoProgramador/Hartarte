@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -55,7 +54,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,15 +66,25 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.ui.components.EventDialog
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import com.proyecpg.hartarte.utils.Constants.POST_IMAGES_MAX_SIZE
 
 @Composable
 fun CreatePostScreen(
-    onReturn: () -> Unit
+    onReturn: () -> Unit,
+    onProcess: (CreatePostEvent) -> Unit,
+    state: CreatePostState,
+    onDismissDialog: () -> Unit
 ){
     //There'll be all the post info that the user provides
-    var postInfo: Triple<List<Uri>, String, String>
+    var postInfo: Triple<List<Uri>, String, String> = Triple(emptyList(), "", "")
+
+    EventDialog(
+        errorMessage = state.createPostError.toString(),
+        onDismiss = onDismissDialog,
+        showDialog = state.createPostError != null
+    )
 
     Scaffold(
         modifier = Modifier
@@ -90,9 +98,13 @@ fun CreatePostScreen(
         floatingActionButton = {
             Button(
                 onClick = {
-                    /* TODO: Use postInfo data */
+                    onProcess(CreatePostEvent.CreatePostClicked(
+                        images = postInfo.first,
+                        titulo = postInfo.second,
+                        descripcion = postInfo.third
+                    ))
                 },
-                enabled = true,
+                enabled = !state.isLoading,
                 shape = RoundedCornerShape(30.dp),
                 modifier = Modifier
                     .height(67.dp)
@@ -350,7 +362,10 @@ fun PreviewCreatePostScreen(){
     HartarteTheme {
         Box(modifier = Modifier.fillMaxSize()){
             CreatePostScreen(
-                onReturn = {}
+                onReturn = {},
+                onProcess = {},
+                state = CreatePostState(),
+                onDismissDialog = {}
             )
         }
     }

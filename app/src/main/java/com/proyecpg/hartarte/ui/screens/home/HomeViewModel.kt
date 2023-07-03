@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.data.post.PostRepository
+import com.proyecpg.hartarte.utils.QueryParams
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ class HomeViewModel @Inject constructor(
     private val repo: PostRepository
 ): ViewModel() {
 
-    val posts = repo.getPosts().cachedIn(viewModelScope)
+    val posts = repo.getPostsBy(query = QueryParams.MOST_RECENT).cachedIn(viewModelScope)
 
     fun doLike(postId: String, liked: Boolean){
         viewModelScope.launch {

@@ -6,7 +6,7 @@ data class Post (
     @DocumentId val postId: String? = null,
     val titulo: String? = null,
     val descripcion: String? = null,
-    val imagen: String? = null,
+    val images : ArrayList<String>? = null,
     var liked: Boolean? = null,
     var bookmarked : Boolean? = null,
     val likes: Long? = null,

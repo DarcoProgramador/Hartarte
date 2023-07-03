@@ -43,6 +43,12 @@
     <string name="error_password_confirmation_match">Las contraseñas no coinciden</string>
     <string name="error_password_weak">La contraseña es muy débil, ingrese números y caracteres especiales</string>
 
+    //Errorres de crear post
+    <string name="error_missing_images">Debe ingresar al menos una imagen</string>
+    <string name="error_missing_description">Ingrese una descripción para la publicación</string>
+    <string name="error_missing_title">Ingrese el título de la publicación</string>
+
+
     //Otros
     <string name="web_client_id">977446594568-4mfefmfj6kg4dpqqfnbi97apc093bo9n.apps.googleusercontent.com</string>
 </resources>

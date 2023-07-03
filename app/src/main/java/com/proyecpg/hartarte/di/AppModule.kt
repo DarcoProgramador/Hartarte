@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Query.Direction.DESCENDING
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.proyecpg.hartarte.data.paging.PostPagingSource
 import com.proyecpg.hartarte.data.post.PostRepository
 import com.proyecpg.hartarte.data.post.PostRepositoryImp
@@ -23,22 +24,9 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 @Module
 class AppModule {
-    @Provides
-    fun providequeryPostByCreationTime(): Query = Firebase.firestore
-        .collection(POST_COLLECTION)
-        .orderBy(TIME_STAMP, DESCENDING)
-        .limit(PAGE_SIZE)
 
     @Provides
-    fun provideProductsPagingSource(
-        queryPostByCreationTime: Query,
-        providerFirebaseAuth : FirebaseAuth,
-        providerFirestore: FirebaseFirestore
-    ) = PostPagingSource(
-        queryPostByCreationTime = queryPostByCreationTime,
-        firebaseAuth = providerFirebaseAuth,
-        db = providerFirestore
-    )
+    fun provideFirebaseStorage() = Firebase.storage
 
     @Provides
     fun providePagingConfig() = PagingConfig(
