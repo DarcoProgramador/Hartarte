@@ -3,24 +3,24 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.Constants
+import com.proyecpg.hartarte.utils.QueryParams
 import kotlinx.coroutines.tasks.await
 
 
 class PostPagingSource (
-    private val queryPostByCreationTime: Query,
+    private val queryPost: QueryParams,
     private val firebaseAuth: FirebaseAuth,
     private val db: FirebaseFirestore
 ) : PagingSource<QuerySnapshot, Post>() {
     override fun getRefreshKey(state: PagingState<QuerySnapshot, Post>): QuerySnapshot? = null
 
     override suspend fun load(params: LoadParams<QuerySnapshot>): LoadResult<QuerySnapshot, Post> = try {
-        val currentPage = params.key ?: queryPostByCreationTime.get().await()
+        val currentPage = params.key ?: queryPost.query.get().await()
         val lastVisiblePost = currentPage.documents[currentPage.size() - 1]
-        val nextPage = queryPostByCreationTime.startAfter(lastVisiblePost).get().await()
+        val nextPage = queryPost.query.startAfter(lastVisiblePost).get().await()
 
         LoadResult.Page(
             data = getPost(currentPage),

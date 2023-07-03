@@ -29,23 +29,6 @@ class AppModule {
     fun provideFirebaseStorage() = Firebase.storage
 
     @Provides
-    fun providequeryPostByCreationTime(): Query = Firebase.firestore
-        .collection(POST_COLLECTION)
-        .orderBy(TIME_STAMP, DESCENDING)
-        .limit(PAGE_SIZE)
-
-    @Provides
-    fun provideProductsPagingSource(
-        queryPostByCreationTime: Query,
-        providerFirebaseAuth : FirebaseAuth,
-        providerFirestore: FirebaseFirestore
-    ) = PostPagingSource(
-        queryPostByCreationTime = queryPostByCreationTime,
-        firebaseAuth = providerFirebaseAuth,
-        db = providerFirestore
-    )
-
-    @Provides
     fun providePagingConfig() = PagingConfig(
         pageSize = PAGE_SIZE.toInt()
     )

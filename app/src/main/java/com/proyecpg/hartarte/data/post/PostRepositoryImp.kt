@@ -23,6 +23,7 @@ import com.proyecpg.hartarte.data.model.UserHashmap
 import com.proyecpg.hartarte.utils.Constants
 import com.proyecpg.hartarte.utils.Constants.POST_IMAGES
 import com.proyecpg.hartarte.utils.Constants.POST_PATH
+import com.proyecpg.hartarte.utils.QueryParams
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -30,7 +31,6 @@ import javax.inject.Singleton
 
 @Singleton
 class PostRepositoryImp @Inject constructor(
-    private val source: PostPagingSource,
     private val config: PagingConfig,
     private val firebaseAuth: FirebaseAuth,
     private val db: FirebaseFirestore,
@@ -40,7 +40,11 @@ class PostRepositoryImp @Inject constructor(
     override fun getPosts(): Flow<PagingData<Post>> = Pager(
         config = config
     ) {
-        source
+        PostPagingSource(
+            queryPost = QueryParams.MOST_RECENT,
+            firebaseAuth = firebaseAuth,
+            db = db
+        )
     }.flow
 
     override suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean> {
