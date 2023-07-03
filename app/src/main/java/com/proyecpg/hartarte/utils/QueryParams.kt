@@ -33,6 +33,9 @@ sealed class QueryParams(val query: Query){
             .orderBy(Constants.TIME_STAMP, Query.Direction.DESCENDING)
             .limit(Constants.PAGE_SIZE)
     )
+
+    class QUERY_SEARCH(query: Query) : QueryParams(query)
+
 }
 
 /* TODO : Añadir esta funcion a otro pager
