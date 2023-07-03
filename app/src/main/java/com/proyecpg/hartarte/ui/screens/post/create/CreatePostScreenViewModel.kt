@@ -108,6 +108,8 @@ class CreatePostScreenViewModel @Inject constructor(
 
     fun hideErrorDialog() {
         viewModelScope.launch {
+            _stateCreatePost.update {
+                it.copy(
                     createPostError = null
                 )
             }
