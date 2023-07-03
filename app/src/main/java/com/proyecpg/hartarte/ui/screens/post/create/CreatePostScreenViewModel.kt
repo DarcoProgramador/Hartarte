@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.data.post.PostRepository
+import com.proyecpg.hartarte.utils.FirebaseErrors
+import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,6 +47,46 @@ class CreatePostScreenViewModel @Inject constructor(
                 return@launch
             }
 
+            val result = postRepository.createPost(images, titulo, descripcion)
+
+            result.let {
+                when(val resource = it){
+                    is Resource.Success -> {
+                        _stateCreatePost.update { state ->
+                            state.copy(
+                                isCreatePostSuccessful = true,
+                                isLoading = false
+                            )
+                        }
+                    }
+                    is Resource.Failure -> {
+
+                        val error = FirebaseErrors.handleFirebaseError(resource.exception)
+
+                        if (error != 0){
+                            _stateCreatePost.update { state ->
+                                state.copy(
+                                    createPostError = error.toString(),
+                                    isLoading = false
+                                )
+                            }
+                            return@launch
+                        }
+
+                        _stateCreatePost.update {state ->
+                            state.copy(
+                                createPostError = resource.exception.toString(),
+                                isLoading = false
+                            )
+                        }
+                    }
+                    is Resource.Loading -> {
+                        _stateCreatePost.update {state ->
+                            state.copy(isLoading = true)
+                        }
+                    }
+                }
+            }
 
         }
     }
