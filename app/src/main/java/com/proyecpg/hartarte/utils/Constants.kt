@@ -18,12 +18,10 @@ object Constants {
     const val SIGN_IN_REQUEST = "signInRequest"
     const val SIGN_UP_REQUEST = "signUpRequest"
 
-    //FireBaseUser
-    const val USERS_COLLECTION = "users"
-
     //FireBasePost
     const val POST_COLLECTION = "posts"
     const val TIME_STAMP = "createdAt"
+    const val POST_USER_UID = "user.uid"
     const val PAGE_SIZE = 5L
     const val POST_IMAGES = "images"
 

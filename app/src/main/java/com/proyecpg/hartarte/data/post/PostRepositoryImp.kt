@@ -5,8 +5,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.proyecpg.hartarte.data.paging.PostPagingSource
@@ -37,15 +39,36 @@ class PostRepositoryImp @Inject constructor(
     private val storage : FirebaseStorage
 ): PostRepository {
 
-    override fun getPostsBy(queryParams: QueryParams): Flow<PagingData<Post>> = Pager(
+    override fun getPostsBy(query: QueryParams): Flow<PagingData<Post>> = Pager(
         config = config
     ) {
         PostPagingSource(
-            queryPost = queryParams,
+            queryPost = query,
             firebaseAuth = firebaseAuth,
             db = db
         )
     }.flow
+
+    override suspend fun getPostBookmarkedQuery(): Resource<Query> {
+       return try {
+           val bookMarkRef = db.collection(POST_BOOKMARKS_COLLECTION)
+           val userUID = firebaseAuth.currentUser?.uid.toString()
+           val postIdsRef = bookMarkRef.whereArrayContains(BOOKMARKS, userUID).get().await()
+
+           val postIds = postIdsRef.map { it.id }
+
+           val postRef = db.collection(Constants.POST_COLLECTION)
+
+           val query = postRef.whereIn(FieldPath.documentId(), postIds)
+               .orderBy(Constants.TIME_STAMP, Query.Direction.DESCENDING)
+               .limit(Constants.PAGE_SIZE)
+
+           Resource.Success(query)
+       } catch (e: Exception) {
+           Resource.Failure(e)
+       }
+
+    }
 
     override suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean> {
         return try {

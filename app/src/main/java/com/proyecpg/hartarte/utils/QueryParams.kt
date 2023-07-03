@@ -3,6 +3,7 @@ package com.proyecpg.hartarte.utils
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.proyecpg.hartarte.utils.Constants.POST_USER_UID
 
 
 sealed class QueryParams(val query: Query){
@@ -22,4 +23,15 @@ sealed class QueryParams(val query: Query){
         .orderBy(Constants.BOOKMARKS, Query.Direction.DESCENDING)
         .limit(Constants.PAGE_SIZE)
     )
+
+    class USER_POST(uid : String) : QueryParams(
+        Firebase.firestore
+            .collection(Constants.POST_COLLECTION)
+            .whereEqualTo(POST_USER_UID, uid)
+            .orderBy(Constants.TIME_STAMP, Query.Direction.DESCENDING)
+            .limit(Constants.PAGE_SIZE)
+    )
+
+    class QUERY_SEARCH(query: Query) : QueryParams(query)
+
 }
