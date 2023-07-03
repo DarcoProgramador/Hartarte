@@ -24,7 +24,7 @@ object Constants {
     //FireBasePost
     const val POST_COLLECTION = "posts"
     const val TIME_STAMP = "createdAt"
-    const val PAGE_SIZE = 10L
+    const val PAGE_SIZE = 5L
     const val POST_IMAGES = "images"
 
     //FireBasePostLikes
