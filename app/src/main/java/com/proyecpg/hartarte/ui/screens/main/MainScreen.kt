@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
@@ -56,7 +55,6 @@ import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.Event
 import com.proyecpg.hartarte.ui.UiState
-import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
@@ -69,6 +67,7 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     viewModel: MainViewModel,
     onLogoutClick: (LoginEvent) -> Unit,
+    onSearchClick: () -> Unit,
     onCreatePost: () -> Unit,
     onPostClick: () -> Unit
 ){
@@ -79,7 +78,6 @@ fun MainScreen(
     val userState = viewModel.userState.collectAsStateWithLifecycle()
 
     var selectedNavigationIndex by rememberSaveable(key = "navIndex") { mutableStateOf(0) }
-    var isSearchOpened by rememberSaveable(key = "Search") { mutableStateOf(false) }
 
     HartarteTheme(darkTheme = state.darkThemeValue) {
         ModalNavigationDrawer(
@@ -110,18 +108,13 @@ fun MainScreen(
                     .background(color = MaterialTheme.colorScheme.background),
                 topBar = {
                     Column {
-                        topBar(
+                        TopBar(
                             selectedNavigationIndex = selectedNavigationIndex,
-                            isSearchOpened = isSearchOpened,
                             onClick = {
                                 scope.launch { drawerState.open() }
                             },
-                            onSearch = {
-                                isSearchOpened = !isSearchOpened
-                            }
+                            onSearch = onSearchClick
                         )
-
-                        SearchBar(isSearchOpened)
 
                         Spacer(modifier = Modifier.size(5.dp))
                     }
@@ -157,12 +150,11 @@ fun MainScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun topBar(
+fun TopBar(
     selectedNavigationIndex: Int,
-    isSearchOpened: Boolean,
     onClick: () -> Unit,
     onSearch: () -> Unit
-): Boolean {
+) {
 
     val navigationTitle = listOf("Inicio", "Guardados", "Perfil")
 
@@ -188,25 +180,14 @@ fun topBar(
             IconButton(
                 onClick = onSearch
             ) {
-                if (isSearchOpened){
-                    Icon(
-                        imageVector = Icons.Default.ExpandLess,
-                        contentDescription = "Expand less icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                else {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search icon",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
     )
-
-    return isSearchOpened
 }
 
 @Composable
@@ -282,6 +263,7 @@ fun PreviewMainScreen(){
             hiltViewModel(),
             onCreatePost = {},
             onLogoutClick = {},
+            onSearchClick = {},
             onPostClick = {}
         )
     }
