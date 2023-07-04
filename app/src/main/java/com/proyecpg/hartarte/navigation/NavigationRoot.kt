@@ -55,6 +55,9 @@ fun NavigationRoot(
             state.let {
                 if (it){
                     val userViewModel = hiltViewModel<UserViewModel>()
+                    val userState by userViewModel.userState.collectAsStateWithLifecycle()
+                    val userEditState by userViewModel.editUserState.collectAsStateWithLifecycle()
+
                     MainScreen(
                         onCreatePost = {
                             navController.navigate(AppScreens.CreatePostScreen.route){
@@ -85,7 +88,9 @@ fun NavigationRoot(
                             navController.navigate(AppScreens.OpenPostScreen.route){
                             }
                         },
-                        onProcessUser = userViewModel::processUser
+                        onProcessUser = userViewModel::processUser,
+                        userState = userState,
+                        userEditState = userEditState
                     )
                 }else{
                     LaunchedEffect(false) {

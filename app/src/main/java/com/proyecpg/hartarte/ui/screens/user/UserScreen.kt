@@ -17,12 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.proyecpg.hartarte.ui.components.Post
+import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
 fun UserScreen(
     paddingValues: PaddingValues,
-    onProcessUSer : (UserEvent) -> Unit
+    onProcessUSer : (UserEvent) -> Unit,
+    userEditState : UserState,
+    userState : UserUI
 ){
     val lazyListState = rememberLazyListState()
 
@@ -33,11 +36,12 @@ fun UserScreen(
     ){
         Box(modifier = Modifier){
             UserCard(
-                userImage = null,
-                username = "Usuario",
-                userDescription = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo. Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se.",
+                userImage = userState.photo,
+                username = userState.username?:"User",
+                userDescription = userState.descripcion,
+                userEditState = userEditState,
                 lazyListState = lazyListState,
-                onSendDescription = {}
+                onSendDescription = onProcessUSer
             )
         }
 
@@ -90,7 +94,9 @@ fun PreviewUserScreen(){
         Box(modifier = Modifier.padding(all = 10.dp)){
             UserScreen(
                 paddingValues = PaddingValues(),
-                onProcessUSer = {}
+                onProcessUSer = {},
+                userEditState = UserState(),
+                userState = UserUI(username = "Prueba", descripcion = "descipcion")
             )
         }
     }

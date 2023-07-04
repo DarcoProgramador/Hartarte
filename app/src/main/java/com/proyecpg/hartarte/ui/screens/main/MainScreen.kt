@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
@@ -56,11 +55,13 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.Event
 import com.proyecpg.hartarte.ui.UiState
 import com.proyecpg.hartarte.ui.components.SideBar
+import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.user.UserEvent
 import com.proyecpg.hartarte.ui.screens.user.UserScreen
+import com.proyecpg.hartarte.ui.screens.user.UserState
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.launch
 
@@ -72,14 +73,15 @@ fun MainScreen(
     onSearchClick: () -> Unit,
     onCreatePost: () -> Unit,
     onPostClick: (OpenPostArgs) -> Unit,
-    onProcessUser: (UserEvent) -> Unit
-
+    onProcessUser: (UserEvent) -> Unit,
+    userState : UserUI,
+    userEditState : UserState
 ){
     //Variables de estado
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val state = viewModel.state
-    val userState = viewModel.userState.collectAsStateWithLifecycle()
+    //val userState = viewModel.userState.collectAsStateWithLifecycle()
 
     var selectedNavigationIndex by rememberSaveable(key = "navIndex") { mutableStateOf(0) }
 
@@ -87,8 +89,8 @@ fun MainScreen(
         ModalNavigationDrawer(
             drawerContent = {
                 SideBar(
-                    username = userState.value.username.toString(),
-                    imageURL = userState.value.photo.toString(),
+                    username = userState.username.toString(),
+                    imageURL = userState.photo,
                     onUserCardClick = {
                         selectedNavigationIndex = 2
                         scope.launch { drawerState.close() }
@@ -145,7 +147,7 @@ fun MainScreen(
                 when(selectedNavigationIndex){
                     0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick)
                     1 -> {  }
-                    2 -> UserScreen(paddingValues = innerPadding, onProcessUSer = onProcessUser)
+                    2 -> UserScreen(paddingValues = innerPadding, onProcessUSer = onProcessUser, userState = userState, userEditState = userEditState)
                 }
             }
         }
@@ -269,7 +271,9 @@ fun PreviewMainScreen(){
             onLogoutClick = {},
             onSearchClick = {},
             onPostClick = {},
-            onProcessUser = {}
+            onProcessUser = {},
+            userEditState = UserState(),
+            userState = UserUI(username = "Prueba", descripcion = "descipcion")
         )
     }
 }

@@ -61,11 +61,13 @@ fun UserCard(
     userImage: String?,
     username: String,
     userDescription: String?,
+    userEditState: UserState,
     lazyListState: LazyListState,
-    onSendDescription: () -> Unit
+    onSendDescription: (UserEvent) -> Unit
 ){
     val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 230.dp else 170.dp)
     val scope = rememberCoroutineScope()
+
 
     var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"¡Hola, soy un nuevo usuario!") }
     var isEditEnabled by rememberSaveable(key = "edit") { mutableStateOf(false) }
@@ -144,13 +146,18 @@ fun UserCard(
                 horizontalArrangement = Arrangement.Center
             ) {
                 if(isEditEnabled){
-                    val descInfo: Pair<String, Boolean> = customTextInputField(description, onSendDescription)
+                    val descInfo: Pair<String, Boolean> = customTextInputField(
+                        description = description,
+                        onSendDescription = onSendDescription,
+                        username = username
+                    )
                     description = descInfo.first
                     isEditEnabled = descInfo.second
+                    onSendDescription(UserEvent.UserOnLoadUser)
                 }
                 else{
                     Text(
-                        text = description,
+                        text = userDescription?:"¡Hola, soy un nuevo usuario!",
                         fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -192,10 +199,11 @@ fun UserCard(
 @Composable
 fun customTextInputField(
     description: String?,
-    onSendDescription: () -> Unit
+    username: String,
+    onSendDescription: (UserEvent) -> Unit
 ): Pair<String, Boolean> {
 
-    var text by remember { (mutableStateOf(description?:"")) }
+    var desciptionEditText by remember { (mutableStateOf(description?:"")) }
     var editEnabled by remember { mutableStateOf(true) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -210,10 +218,10 @@ fun customTextInputField(
             unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
-        value = text,
+        value = desciptionEditText,
         onValueChange = {
             if (it.length <= 250){
-                text = it
+                desciptionEditText = it
             }
         },
         textStyle = TextStyle(
@@ -226,12 +234,15 @@ fun customTextInputField(
             )
         },
         trailingIcon = {
-            if (text.isNotEmpty()){
+            if (desciptionEditText.isNotEmpty()){
                 IconButton(
                     onClick = {
                         focusManager.clearFocus()
                         keyboardController?.hide()
-                        onSendDescription()
+                        onSendDescription(UserEvent.UserEditClicked(
+                            descipcion = desciptionEditText,
+                            username = username
+                        ))
                         editEnabled = !editEnabled
                     }
                 ){
@@ -249,7 +260,7 @@ fun customTextInputField(
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = text.length.toString() + "/250"
+                    text = desciptionEditText.length.toString() + "/250"
                 )
             }
         },
@@ -265,7 +276,7 @@ fun customTextInputField(
         maxLines = 3
     )
 
-    return Pair(text, editEnabled)
+    return Pair(desciptionEditText, editEnabled)
 }
 
 @Preview
@@ -278,7 +289,8 @@ fun PreviewUserCard(){
                 username = "Username",
                 userDescription = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
                 lazyListState = LazyListState(6, 6),
-                onSendDescription = {}
+                onSendDescription = {},
+                userEditState = UserState()
             )
         }
     }
