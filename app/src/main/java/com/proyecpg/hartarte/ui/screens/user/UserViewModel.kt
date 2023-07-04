@@ -3,10 +3,13 @@ package com.proyecpg.hartarte.ui.screens.user
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.proyecpg.hartarte.data.model.toUserUI
+import com.proyecpg.hartarte.data.post.PostRepository
 import com.proyecpg.hartarte.data.user.UserRepository
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.utils.FirebaseErrors
+import com.proyecpg.hartarte.utils.QueryParams
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userRepo: UserRepository
+    private val userRepo: UserRepository,
+    private val postRepository: PostRepository
+
 ): ViewModel() {
     
     private val _userState = MutableStateFlow(UserUI())
@@ -26,6 +31,8 @@ class UserViewModel @Inject constructor(
 
     private val _editUserState = MutableStateFlow(UserState())
     val editUserState = _editUserState.asStateFlow()
+
+    val postsUser = postRepository.getPostsBy(query = QueryParams.USER_POST(userRepo.currentUser?.uid.toString())).cachedIn(viewModelScope)
 
     init{
         viewModelScope.launch {
@@ -44,6 +51,10 @@ class UserViewModel @Inject constructor(
                     getUser()
                 }
             }
+
+            is UserEvent.UserPostLikeClicked -> doLike(event.postId, event.Liked)
+
+            is UserEvent.UserPostBookmarkCliked -> doBookmark(event.postId, event.Bookmarked)
         }
     }
     private suspend fun getUser(){
@@ -151,4 +162,45 @@ class UserViewModel @Inject constructor(
             }
         }
     }
+
+    private fun doLike(postId: String, liked: Boolean){
+        viewModelScope.launch {
+            val result = postRepository.registerLike(postId, liked)
+
+            result.let {
+                when(val resource = it){
+                    is Resource.Success ->{
+                        //TODO: Hacer un estado para cuando sea correcto
+                    }
+                    is Resource.Failure ->{
+                        //TODO: Hacer un estado para cuando falle
+                    }
+                    is Resource.Loading->{
+                        //TODO: Hacer un estado para cuando este cargando
+                    }
+                }
+            }
+        }
+    }
+
+    private fun doBookmark(postId: String, bookmarked: Boolean){
+        viewModelScope.launch {
+            val result = postRepository.registerBookmark(postId, bookmarked)
+
+            result.let {
+                when(val resource = it){
+                    is Resource.Success ->{
+                        //TODO: Hacer un estado para cuando sea correcto
+                    }
+                    is Resource.Failure ->{
+                        //TODO: Hacer un estado para cuando falle
+                    }
+                    is Resource.Loading->{
+                        //TODO: Hacer un estado para cuando este cargando
+                    }
+                }
+            }
+        }
+    }
+
 }

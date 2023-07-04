@@ -8,4 +8,8 @@ sealed class UserEvent {
     class UserEditPhotoClicked(val photo : Uri) : UserEvent()
 
     object UserOnLoadUser : UserEvent()
+
+    class  UserPostLikeClicked(val postId : String, val Liked : Boolean ): UserEvent()
+
+    class  UserPostBookmarkCliked(val postId : String, val Bookmarked : Boolean ): UserEvent()
 }
