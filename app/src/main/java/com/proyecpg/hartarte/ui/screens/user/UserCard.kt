@@ -1,5 +1,9 @@
 package com.proyecpg.hartarte.ui.screens.user
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -68,6 +72,16 @@ fun UserCard(
     val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 230.dp else 170.dp)
     val scope = rememberCoroutineScope()
 
+    var selectedImageUri : Uri? by rememberSaveable(key = "photo_edit") { mutableStateOf(null) }
+
+    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ){ uri ->
+        if (uri != null){
+            selectedImageUri = uri
+            onSendDescription(UserEvent.UserEditPhotoClicked(selectedImageUri!!))
+        }
+    }
 
     var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"¡Hola, soy un nuevo usuario!") }
     var isEditEnabled by rememberSaveable(key = "edit") { mutableStateOf(false) }
@@ -97,7 +111,13 @@ fun UserCard(
                 contentDescription = "User image",
                 modifier = Modifier
                     .size(animatedSize)
-                    .clip(CircleShape)
+                    .clip(CircleShape).clickable {
+                        if (isEditEnabled){
+                            multiplePhotoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
+                    }
             )
 
             Column(
