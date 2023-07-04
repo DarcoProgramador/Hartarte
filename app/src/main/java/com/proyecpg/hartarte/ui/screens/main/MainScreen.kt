@@ -58,6 +58,7 @@ import com.proyecpg.hartarte.ui.Event
 import com.proyecpg.hartarte.ui.UiState
 import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.model.UserUI
+import com.proyecpg.hartarte.ui.screens.bookmark.BookmarkScreen
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
@@ -150,7 +151,7 @@ fun MainScreen(
 
                 when(selectedNavigationIndex){
                     0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick)
-                    1 -> {  }
+                    1 -> BookmarkScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick)
                     2 -> UserScreen(
                         paddingValues = innerPadding, onProcessUSer = onProcessUser,
                         userState = userState, userEditState = userEditState,
