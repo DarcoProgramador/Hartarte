@@ -43,14 +43,16 @@ import androidx.paging.compose.items
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.components.Post
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
+import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
     viewModel: HomeViewModel,
-    onPostClick: () -> Unit
+    onPostClick: (OpenPostArgs) -> Unit
 ) {
     HomeScreenContent(paddingValues, viewModel, onPostClick)
 }
@@ -60,12 +62,13 @@ fun HomeScreen(
 fun HomeScreenContent(
     innerPadding: PaddingValues,
     viewModel: HomeViewModel,
-    onPostClick: () -> Unit
+    onPostClick: (OpenPostArgs) -> Unit
 ){
     //Posts
     val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
+    val dateFormater  = SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm:ss")
 
     LazyColumn(
         modifier = Modifier.padding(innerPadding),
@@ -76,6 +79,11 @@ fun HomeScreenContent(
             post?.let{
                 val postId = it.postId?:""
                 val liked = it.liked?:false
+                var date = "10 de mayo del 2023, 10:23:11"
+                it.createdAt?.let { dateFirebase ->
+                    date = dateFormater.format(dateFirebase.toDate())
+                }
+
                 it.images?.let { it1 ->
                     Post(
                         postId = postId,
@@ -89,7 +97,22 @@ fun HomeScreenContent(
                         likesCount = it.likes?.toInt() ?: 0,
                         onLike = viewModel::doLike,
                         onBookmark = viewModel::doBookmark,
-                        onPostClick = onPostClick
+                        onPostClick = {
+                            val params = OpenPostArgs(
+                                postId,
+                                it1.toList(),
+                                it.user?.name ?: "",
+                                it.user?.photo ?: "",
+                                it.titulo?: "",
+                                it.descripcion?:"",
+                                date,
+                                liked,
+                                it.bookmarked?:false,
+                                it.likes?.toInt() ?: 0
+                            )
+
+                            onPostClick(params)
+                        }
                     )
                 }
             }
