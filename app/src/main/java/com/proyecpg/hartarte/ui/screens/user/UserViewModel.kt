@@ -52,9 +52,9 @@ class UserViewModel @Inject constructor(
                 }
             }
 
-            is UserEvent.UserPostLikeClicked -> doLike(event.postId, event.Liked)
+            is UserEvent.UserPostLikeClicked -> doLike(event.postId, event.liked)
 
-            is UserEvent.UserPostBookmarkCliked -> doBookmark(event.postId, event.Bookmarked)
+            is UserEvent.UserPostBookmarkCliked -> doBookmark(event.postId, event.bookmarked)
         }
     }
     private suspend fun getUser(){

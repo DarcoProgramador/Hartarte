@@ -3,9 +3,7 @@ package com.proyecpg.hartarte.ui.screens.user
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -13,21 +11,39 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
+import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.UserUI
+import com.proyecpg.hartarte.ui.screens.home.ErrorItem
+import com.proyecpg.hartarte.ui.screens.home.LoadingItem
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun UserScreen(
     paddingValues: PaddingValues,
     onProcessUSer : (UserEvent) -> Unit,
     userEditState : UserState,
-    userState : UserUI
+    userState : UserUI,
+    postUser : Flow<PagingData<Post>>,
+    onPostClick: () -> Unit
 ){
     val lazyListState = rememberLazyListState()
+
+    //Posts
+    val pagingPosts = postUser.collectAsLazyPagingItems()
+    val refresh = pagingPosts.loadState.refresh
+    val append = pagingPosts.loadState.append
 
     Column(
         modifier = Modifier
@@ -54,29 +70,63 @@ fun UserScreen(
             modifier = Modifier,
             state = lazyListState
         ){
-            item {
-                for(x in 1 .. 20){
-                    Post(
-                        postId = x.toString(),
-                        images = listOf
-                            (
-                            "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
-                            "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
-                            "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
-                        ),
-                        username = "TheJosuep",
-                        userPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                        title = "Título de ejemplo",
-                        description = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
-                        isBookmarked = true,
-                        isLiked = false,
-                        likesCount = 40,
-                        onLike = { _: String, _: Boolean -> run {} },
-                        onBookmark = { _: String, _: Boolean -> run {} },
-                        onPostClick = {}
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
+            items(items = pagingPosts){ post ->
+                post?.let{
+                    val postId = it.postId?:""
+                    val liked = it.liked?:false
+                    it.images?.let { it1 ->
+                        Post(
+                            postId = postId,
+                            images = it1.toList(),
+                            username = it.user?.name ?: "",
+                            userPic = it.user?.photo ?: "",
+                            title = it.titulo?:"",
+                            description = it.descripcion?:"",
+                            isLiked = liked,
+                            isBookmarked = it.bookmarked?:false,
+                            likesCount = it.likes?.toInt() ?: 0,
+                            onLike = {id : String, like: Boolean ->
+                                onProcessUSer(UserEvent.UserPostLikeClicked(
+                                    postId = id,
+                                    liked = like
+                                ))},
+                            onBookmark = {id : String, bookmark: Boolean ->
+                                onProcessUSer(UserEvent.UserPostBookmarkCliked(
+                                    postId = id,
+                                    bookmarked = bookmark
+                                ))},
+                            onPostClick = onPostClick
+                        )
+                    }
+                }
+            }
+            pagingPosts.loadState.apply {
+                when {
+                    refresh is LoadState.Loading -> {
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ){
+                                LoadingItem()
+                            }
+                        }
+                    }
+                    refresh is Error -> {
+                        item {
+                            ErrorItem()
+                        }
+                    }
+                    append is LoadState.Loading -> {
+                        item {
+                            LoadingItem()
+                        }
+                    }
+                    append is Error -> {
+                        item {
+                            ErrorItem()
+                        }
+                    }
                 }
             }
         }
@@ -91,12 +141,15 @@ val LazyListState.isScrolled: Boolean
 @Composable
 fun PreviewUserScreen(){
     HartarteTheme {
+        val emptyPost = flowOf(PagingData.empty<Post>())
         Box(modifier = Modifier.padding(all = 10.dp)){
             UserScreen(
                 paddingValues = PaddingValues(),
                 onProcessUSer = {},
                 userEditState = UserState(),
-                userState = UserUI(username = "Prueba", descripcion = "descipcion")
+                userState = UserUI(username = "Prueba", descripcion = "descipcion"),
+                onPostClick = {},
+                postUser = emptyPost
             )
         }
     }

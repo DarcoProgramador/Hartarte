@@ -90,7 +90,8 @@ fun NavigationRoot(
                         },
                         onProcessUser = userViewModel::processUser,
                         userState = userState,
-                        userEditState = userEditState
+                        userEditState = userEditState,
+                        postUser = userViewModel.postsUser
                     )
                 }else{
                     LaunchedEffect(false) {

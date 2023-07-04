@@ -9,7 +9,7 @@ sealed class UserEvent {
 
     object UserOnLoadUser : UserEvent()
 
-    class  UserPostLikeClicked(val postId : String, val Liked : Boolean ): UserEvent()
+    class  UserPostLikeClicked(val postId : String, val liked : Boolean ): UserEvent()
 
-    class  UserPostBookmarkCliked(val postId : String, val Bookmarked : Boolean ): UserEvent()
+    class  UserPostBookmarkCliked(val postId : String, val bookmarked : Boolean ): UserEvent()
 }
