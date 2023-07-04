@@ -6,10 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.data.model.toUserUI
 import com.proyecpg.hartarte.data.user.UserRepository
 import com.proyecpg.hartarte.ui.model.UserUI
+import com.proyecpg.hartarte.utils.FirebaseErrors
+import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,13 +52,103 @@ class UserViewModel @Inject constructor(
 
     private fun updateUsernameAndDescription(username : String, descripcion : String){
         viewModelScope.launch {
-            /*TODO: HAcer la actualizacion*/
+
+            _editUserState.update { it.copy(isLoading = true) }
+
+            val result = userRepo.editUser(username, descripcion)
+
+            result.let {
+                when(val resource = it){
+                    is Resource.Success -> {
+                        _editUserState.update {state ->
+                            state.copy(
+                                isUserEditSuccessful = true,
+                                isLoading = false
+                            )
+                        }
+                    }
+
+                    is Resource.Failure -> {
+                        val error = FirebaseErrors.handleFirebaseError(resource.exception)
+
+                        if (error != 0){
+                            _editUserState.update { state ->
+                                state.copy(
+                                    userEditError = error.toString(),
+                                    isLoading = false
+                                )
+                            }
+                            return@launch
+                        }
+
+                        _editUserState.update {state ->
+                            state.copy(
+                                userEditError = resource.exception.toString(),
+                                isLoading = false
+                            )
+                        }
+                    }
+
+                    is Resource.Loading -> {
+                        _editUserState.update {state ->
+                            state.copy(
+                                isLoading = false
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
     private fun updateUserPhoto(photo : Uri){
         viewModelScope.launch {
-            /*TODO: HAcer la actualizacion*/
+
+            _editUserState.update { it.copy(isLoading = true) }
+
+            val result = userRepo.updateUserPhoto(photo)
+
+            result.let {
+                when(val resource = it){
+                    is Resource.Success -> {
+                        _editUserState.update {state ->
+                            state.copy(
+                                isUserEditSuccessful = true,
+                                isLoading = false
+                            )
+                        }
+                    }
+
+                    is Resource.Failure -> {
+                        val error = FirebaseErrors.handleFirebaseError(resource.exception)
+
+                        if (error != 0){
+                            _editUserState.update { state ->
+                                state.copy(
+                                    userEditError = error.toString(),
+                                    isLoading = false
+                                )
+                            }
+                            return@launch
+                        }
+
+                        _editUserState.update {state ->
+                            state.copy(
+                                userEditError = resource.exception.toString(),
+                                isLoading = false
+                            )
+                        }
+                    }
+
+                    is Resource.Loading -> {
+                        _editUserState.update {state ->
+                            state.copy(
+                                isLoading = false
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
