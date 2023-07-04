@@ -6,11 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
@@ -145,34 +143,6 @@ fun NavigationRoot(
                 onSendComment = {}
             )
         }
-
-        /*
-        navigation(
-            startDestination = AppScreens.MainScreen.route,
-            route = Graph.MAIN
-        ) {
-            composable(AppScreens.MainScreen.route) {
-                HomeScreen(
-                    /*viewModel = authViewModel,
-                    themeViewModel = themeViewModel,
-                    navigateToAuthScreens = {
-                        navController.navigate(Graph.AUTHENTICATION){
-                            popUpTo(Graph.MAIN){
-                                inclusive = true
-                            }
-                        }
-                    },
-                    dataStoreUtil = dataStoreUtil,
-                    navController = navController*/
-                )
-            }
-            composable(AppScreens.BookmarkScreen.route) {
-
-            }
-            composable(AppScreens.UserScreen.route) {
-                UserScreen()
-            }
-        }*/
     }
 }
 

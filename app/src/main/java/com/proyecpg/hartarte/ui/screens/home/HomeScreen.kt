@@ -45,6 +45,7 @@ import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
+import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -67,6 +68,7 @@ fun HomeScreenContent(
     val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
+    val dateFormater  = SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm:ss")
 
     LazyColumn(
         modifier = Modifier.padding(innerPadding),
@@ -77,6 +79,11 @@ fun HomeScreenContent(
             post?.let{
                 val postId = it.postId?:""
                 val liked = it.liked?:false
+                var date = "10 de mayo del 2023, 10:23:11"
+                it.createdAt?.let { dateFirebase ->
+                    date = dateFormater.format(dateFirebase.toDate())
+                }
+
                 it.images?.let { it1 ->
                     Post(
                         postId = postId,
@@ -98,7 +105,7 @@ fun HomeScreenContent(
                                 it.user?.photo ?: "",
                                 it.titulo?: "",
                                 it.descripcion?:"",
-                                "04 de julio del 2023, 20:23 p.m.",
+                                date,
                                 liked,
                                 it.bookmarked?:false,
                                 it.likes?.toInt() ?: 0
