@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.proyecpg.hartarte.data.model.User
 import com.proyecpg.hartarte.utils.Constants.USERS
+import com.proyecpg.hartarte.utils.Resource
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -27,6 +28,10 @@ class UserRepositoryImp @Inject constructor(
             //e.printStackTrace()
             User()
         }
+    }
+
+    override suspend fun editUser(): Resource<Boolean> {
+        TODO("Not yet implemented")
     }
 
 }
