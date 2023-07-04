@@ -34,7 +34,7 @@ fun UserScreen(
             UserCard(
                 userImage = null,
                 username = "Usuario",
-                userDescription = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo. Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo. Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
+                userDescription = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo. Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se.",
                 lazyListState = lazyListState,
                 onSendDescription = {}
             )
