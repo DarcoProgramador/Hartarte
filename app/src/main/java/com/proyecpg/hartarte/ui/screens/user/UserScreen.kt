@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.ui.screens.user
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,9 +26,11 @@ import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.home.ErrorItem
 import com.proyecpg.hartarte.ui.screens.home.LoadingItem
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import java.text.SimpleDateFormat
 
 @Composable
 fun UserScreen(
@@ -36,9 +39,10 @@ fun UserScreen(
     userEditState : UserState,
     userState : UserUI,
     postUser : Flow<PagingData<Post>>,
-    onPostClick: () -> Unit
+    onPostClick: (OpenPostArgs) -> Unit
 ){
     val lazyListState = rememberLazyListState()
+    val dateFormater  = SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm:ss")
 
     //Posts
     val pagingPosts = postUser.collectAsLazyPagingItems()
@@ -68,12 +72,19 @@ fun UserScreen(
 
         LazyColumn(
             modifier = Modifier,
-            state = lazyListState
+            state = lazyListState,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ){
             items(items = pagingPosts){ post ->
                 post?.let{
                     val postId = it.postId?:""
                     val liked = it.liked?:false
+                    var date = "10 de mayo del 2023, 10:23:11"
+                    it.createdAt?.let { dateFirebase ->
+                        date = dateFormater.format(dateFirebase.toDate())
+                    }
+
                     it.images?.let { it1 ->
                         Post(
                             postId = postId,
@@ -95,7 +106,22 @@ fun UserScreen(
                                     postId = id,
                                     bookmarked = bookmark
                                 ))},
-                            onPostClick = onPostClick
+                            onPostClick = {
+                                val params = OpenPostArgs(
+                                    postId,
+                                    it1.toList(),
+                                    it.user?.name ?: "",
+                                    it.user?.photo ?: "",
+                                    it.titulo?: "",
+                                    it.descripcion?:"",
+                                    date,
+                                    liked,
+                                    it.bookmarked?:false,
+                                    it.likes?.toInt() ?: 0
+                                )
+
+                                onPostClick(params)
+                            }
                         )
                     }
                 }
