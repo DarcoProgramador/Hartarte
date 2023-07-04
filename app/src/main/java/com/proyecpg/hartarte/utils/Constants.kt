@@ -41,4 +41,5 @@ object Constants {
 
     //Storage Path
     const val POST_PATH = "post/"
+    const val USER_PATH = "user/"
 }
