@@ -62,31 +62,23 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
 fun OpenPostScreen(
-    postId: String,
-    postImages: List<String>,
-    postUsername: String,
-    postUserPic: String,
-    postTitle: String,
-    postDescription: String,
-    postDate: String,
-    isLiked: Boolean,
-    isBookmarked: Boolean,
-    likesCount: Int,
+    postInfo: OpenPostArgs,
     username: String,
     onReturn: () -> Unit,
     onImageClick: () -> Unit,
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
-    onSendComment: () -> Unit,
+    onSendComment: () -> Unit
 ){
+
     var comment by remember{ mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier,
         topBar = {
             OpenPostTopAppBar(
-                postTitle = postTitle,
+                postTitle = postInfo.postTitle,
                 onClick = onReturn
             )
         }
@@ -94,11 +86,11 @@ fun OpenPostScreen(
 
         comment = openPostScreenContent(
             paddingValues = innerPadding,
-            postId = postId,
-            postImages = postImages,
-            postUser = Pair(postUserPic, postUsername), //Firs: URL, second: name
-            postInfo = Triple(postTitle, postDescription, postDate),
-            postStatistics = Triple(isLiked, likesCount, isBookmarked),
+            postId = postInfo.postId,
+            postImages = postInfo.postImages,
+            postUser = Pair(postInfo.postUserPic, postInfo.postUsername), //Firs: URL, second: name
+            postInfo = Triple(postInfo.postTitle, postInfo.postDescription, postInfo.postDate),
+            postStatistics = Triple(postInfo.isLiked, postInfo.likesCount, postInfo.isBookmarked),
             username = username,
             comment = comment,
             onImageClick = onImageClick,
@@ -187,6 +179,8 @@ fun openPostScreenContent(
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(postImages[page])
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder)
                             .crossfade(true)
                             .scale(Scale.FILL)
                             .build(),
@@ -270,7 +264,13 @@ fun PostUserInfo(
         horizontalArrangement = Arrangement.Start
     ){
         AsyncImage(
-            model = postUser.first,
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(postUser.first)
+                .placeholder(R.drawable.user_placeholder)
+                .error(R.drawable.user_placeholder)
+                .crossfade(true)
+                .scale(Scale.FILL)
+                .build(),
             contentDescription = "User avatar",
             modifier = Modifier
                 .size(35.dp)
@@ -546,21 +546,23 @@ fun PreviewOpenPostScreen(){
     HartarteTheme {
         Box(modifier = Modifier.fillMaxSize()){
             OpenPostScreen(
-                postId = "01",
-                postImages = listOf
-                    (
-                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
-                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
-                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
+                postInfo = OpenPostArgs(
+                    postId = "01",
+                    postImages = listOf
+                        (
+                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
+                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
+                        "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
+                    ),
+                    postUsername = "HartarteUser",
+                    postUserPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                    postTitle = "Título de ejemplo",
+                    postDescription = "Lorem ipsum.",
+                    postDate = "11 de mayo del 2020, 11:30 a.m." ,
+                    isLiked = true,
+                    isBookmarked = false,
+                    likesCount = 15
                 ),
-                postUsername = "HartarteUser",
-                postUserPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                postTitle = "Título de ejemplo",
-                postDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut. Sed pellentesque egestas nisi, sed rutrum metus iaculis ultricies. Vivamus libero nunc, elementum eget massa faucibus, pretium mattis velit. Nullam varius maximus mauris. Nulla gravida quam et suscipit mollis. In tempor nisl sit amet gravida lacinia. Duis ut ipsum dictum, venenatis leo nec, volutpat turpis. Suspendisse vehicula libero at metus finibus porttitor. Fusce vehicula justo mi, auctor tristique enim fermentum sit amet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut.",
-                postDate = "11 de mayo del 2020, 11:30 a.m." ,
-                isLiked = true,
-                isBookmarked = false,
-                likesCount = 15,
                 username = "Username",
                 onReturn = { /*TODO*/ },
                 onImageClick = { /*TODO*/ },

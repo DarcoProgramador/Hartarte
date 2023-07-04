@@ -43,6 +43,7 @@ import androidx.paging.compose.items
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.ui.components.Post
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @OptIn(ExperimentalPagerApi::class)
@@ -50,7 +51,7 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 fun HomeScreen(
     paddingValues: PaddingValues,
     viewModel: HomeViewModel,
-    onPostClick: () -> Unit
+    onPostClick: (OpenPostArgs) -> Unit
 ) {
     HomeScreenContent(paddingValues, viewModel, onPostClick)
 }
@@ -60,7 +61,7 @@ fun HomeScreen(
 fun HomeScreenContent(
     innerPadding: PaddingValues,
     viewModel: HomeViewModel,
-    onPostClick: () -> Unit
+    onPostClick: (OpenPostArgs) -> Unit
 ){
     //Posts
     val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
@@ -89,7 +90,22 @@ fun HomeScreenContent(
                         likesCount = it.likes?.toInt() ?: 0,
                         onLike = viewModel::doLike,
                         onBookmark = viewModel::doBookmark,
-                        onPostClick = onPostClick
+                        onPostClick = {
+                            val params = OpenPostArgs(
+                                postId,
+                                it1.toList(),
+                                it.user?.name ?: "",
+                                it.user?.photo ?: "",
+                                it.titulo?: "",
+                                it.descripcion?:"",
+                                "04 de julio del 2023, 20:23 p.m.",
+                                liked,
+                                it.bookmarked?:false,
+                                it.likes?.toInt() ?: 0
+                            )
+
+                            onPostClick(params)
+                        }
                     )
                 }
             }

@@ -6,15 +6,18 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
 
@@ -35,6 +38,19 @@ fun NavigationRoot(
             authViewModel = authViewModel
         )
 
+        var post = OpenPostArgs(
+            "",
+            emptyList(),
+            "",
+            "",
+            "",
+            "",
+            "",
+            isLiked = false,
+            isBookmarked = false,
+            likesCount = 0
+        )
+
         composable(Graph.MAIN){
             val state by authViewModel.logged.collectAsStateWithLifecycle()
             state.let {
@@ -51,7 +67,21 @@ fun NavigationRoot(
 
                             }
                         },
-                        onPostClick = {
+                        onPostClick = {args ->
+
+                            post = OpenPostArgs(
+                                postId = args.postId,
+                                postImages = args.postImages,
+                                postUsername = args.postUsername,
+                                postUserPic = args.postUserPic,
+                                postTitle = args.postTitle,
+                                postDescription = args.postDescription,
+                                postDate = args.postDate,
+                                isLiked = args.isLiked,
+                                isBookmarked = args.isBookmarked,
+                                likesCount = args.likesCount
+                            )
+
                             navController.navigate(AppScreens.OpenPostScreen.route){
                             }
                         }
@@ -99,23 +129,11 @@ fun NavigationRoot(
             )
         }
 
-        composable(AppScreens.OpenPostScreen.route){
+        composable(AppScreens.OpenPostScreen.route)
+        {
+
             OpenPostScreen(
-                postId = "01",
-                postImages = listOf
-                    (
-                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
-                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
-                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
-                ),
-                postUsername = "HartarteUser",
-                postUserPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
-                postTitle = "Título de ejemplo",
-                postDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut. Sed pellentesque egestas nisi, sed rutrum metus iaculis ultricies. Vivamus libero nunc, elementum eget massa faucibus, pretium mattis velit. Nullam varius maximus mauris. Nulla gravida quam et suscipit mollis. In tempor nisl sit amet gravida lacinia. Duis ut ipsum dictum, venenatis leo nec, volutpat turpis. Suspendisse vehicula libero at metus finibus porttitor. Fusce vehicula justo mi, auctor tristique enim fermentum sit amet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eget volutpat dui. Pellentesque sollicitudin malesuada augue, in sollicitudin nisi efficitur ut.",
-                postDate = "11 de mayo del 2020, 11:30 a.m." ,
-                isLiked = true,
-                isBookmarked = false,
-                likesCount = 15,
+                postInfo = post,
                 username = "Username",
                 onReturn = {
                     navController.popBackStack()

@@ -58,6 +58,7 @@ import com.proyecpg.hartarte.ui.UiState
 import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.user.UserScreen
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.launch
@@ -69,7 +70,7 @@ fun MainScreen(
     onLogoutClick: (LoginEvent) -> Unit,
     onSearchClick: () -> Unit,
     onCreatePost: () -> Unit,
-    onPostClick: () -> Unit
+    onPostClick: (OpenPostArgs) -> Unit
 ){
     //Variables de estado
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
