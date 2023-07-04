@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.data.user
 
+import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,7 +32,7 @@ class UserRepositoryImp @Inject constructor(
         }
     }
 
-    override suspend fun editUser(username : String, descripcion : String, photo : String): Resource<Boolean> {
+    override suspend fun editUser(username : String, descripcion : String): Resource<Boolean> {
         return  try {
             val uid = currentUser?.uid.toString()
 
@@ -40,7 +41,6 @@ class UserRepositoryImp @Inject constructor(
             val userUpdates = mapOf<String, Any>(
                 "username" to username,
                 "descripcion" to descripcion,
-                "photoUrl" to photo
             )
 
             userRef.update(userUpdates).await()
@@ -50,6 +50,10 @@ class UserRepositoryImp @Inject constructor(
             e.printStackTrace()
             Resource.Failure(e)
         }
+    }
+
+    override suspend fun updateUserPhoto(photo: Uri): Resource<Boolean> {
+        TODO("add upload photo and change the url of that photo")
     }
 
 }

@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.data.user
 
+import android.net.Uri
 import com.google.firebase.auth.FirebaseUser
 import com.proyecpg.hartarte.data.model.User
 import com.proyecpg.hartarte.ui.model.UserUI
@@ -10,5 +11,7 @@ interface UserRepository {
 
     suspend fun getUser() : User
 
-    suspend fun editUser(username : String, descripcion : String, photo : String) : Resource<Boolean>
+    suspend fun editUser(username : String, descripcion : String) : Resource<Boolean>
+
+    suspend fun updateUserPhoto(photo : Uri) : Resource<Boolean>
 }
