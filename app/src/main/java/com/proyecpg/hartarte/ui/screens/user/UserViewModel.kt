@@ -24,7 +24,20 @@ class UserViewModel @Inject constructor(
             getUser()
         }
     }
-    
+
+    fun processUser(event: UserEvent){
+        when(event){
+            is UserEvent.UserEditClicked -> {/*TODO: Implementar la funcion para editar descipcion y username*/}
+
+            is UserEvent.UserEditPhotoClicked -> {/*TODO Implementar la funcion para editar la foto de perfil*/}
+
+            is UserEvent.UserOnLoadUser -> {
+                viewModelScope.launch {
+                    getUser()
+                }
+            }
+        }
+    }
     private suspend fun getUser(){
         _userState.value = userRepo.getUser().toUserUI()
     }

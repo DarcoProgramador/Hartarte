@@ -18,6 +18,7 @@ import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
+import com.proyecpg.hartarte.ui.screens.user.UserViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -53,6 +54,7 @@ fun NavigationRoot(
             val state by authViewModel.logged.collectAsStateWithLifecycle()
             state.let {
                 if (it){
+                    val userViewModel = hiltViewModel<UserViewModel>()
                     MainScreen(
                         onCreatePost = {
                             navController.navigate(AppScreens.CreatePostScreen.route){
@@ -82,7 +84,8 @@ fun NavigationRoot(
 
                             navController.navigate(AppScreens.OpenPostScreen.route){
                             }
-                        }
+                        },
+                        onProcessUser = userViewModel::processUser
                     )
                 }else{
                     LaunchedEffect(false) {

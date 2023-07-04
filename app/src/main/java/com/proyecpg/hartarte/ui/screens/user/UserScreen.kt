@@ -21,7 +21,8 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
 fun UserScreen(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    onProcessUSer : (UserEvent) -> Unit
 ){
     val lazyListState = rememberLazyListState()
 
@@ -87,7 +88,10 @@ val LazyListState.isScrolled: Boolean
 fun PreviewUserScreen(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
-            UserScreen(paddingValues = PaddingValues())
+            UserScreen(
+                paddingValues = PaddingValues(),
+                onProcessUSer = {}
+            )
         }
     }
 }

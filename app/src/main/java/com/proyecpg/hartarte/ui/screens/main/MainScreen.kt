@@ -59,6 +59,7 @@ import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
+import com.proyecpg.hartarte.ui.screens.user.UserEvent
 import com.proyecpg.hartarte.ui.screens.user.UserScreen
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.launch
@@ -70,7 +71,9 @@ fun MainScreen(
     onLogoutClick: (LoginEvent) -> Unit,
     onSearchClick: () -> Unit,
     onCreatePost: () -> Unit,
-    onPostClick: (OpenPostArgs) -> Unit
+    onPostClick: (OpenPostArgs) -> Unit,
+    onProcessUser: (UserEvent) -> Unit
+
 ){
     //Variables de estado
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -142,7 +145,7 @@ fun MainScreen(
                 when(selectedNavigationIndex){
                     0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick)
                     1 -> {  }
-                    2 -> UserScreen(paddingValues = innerPadding)
+                    2 -> UserScreen(paddingValues = innerPadding, onProcessUSer = onProcessUser)
                 }
             }
         }
@@ -265,7 +268,8 @@ fun PreviewMainScreen(){
             onCreatePost = {},
             onLogoutClick = {},
             onSearchClick = {},
-            onPostClick = {}
+            onPostClick = {},
+            onProcessUser = {}
         )
     }
 }
