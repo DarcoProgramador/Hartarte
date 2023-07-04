@@ -7,7 +7,8 @@ data class User(
     val email : String? = null,
     val photoUrl: String? = null,
     val username : String? = null,
+    val descripcion : String? = null,
     val createdAt: Timestamp? = null
 )
 
-fun User.toUserUI(): UserUI = UserUI(email = email, photo = photoUrl, username = username)
+fun User.toUserUI(): UserUI = UserUI(email = email, photo = photoUrl, username = username, descripcion = descripcion)
