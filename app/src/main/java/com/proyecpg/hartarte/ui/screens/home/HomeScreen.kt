@@ -7,11 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,7 +22,6 @@ import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalPagerApi::class)
@@ -105,7 +99,6 @@ fun HomeScreenContent(
                                         it.bookmarked?:false,
                                         it.likes?.toInt() ?: 0
                                     )
-
                                     onPostClick(params)
                                 }
                             )
