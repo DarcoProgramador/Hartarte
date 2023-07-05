@@ -2,12 +2,15 @@ package com.proyecpg.hartarte.ui.screens.bookmark
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.data.post.PostRepository
+import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.QueryParams
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,7 +20,27 @@ class BookmarkViewModel @Inject constructor(
     private val repo: PostRepository
 ): ViewModel() {
 
-    val posts = repo.getPostsBy(query = QueryParams.MOST_RECENT).cachedIn(viewModelScope)
+    var posts = flowOf(PagingData.empty<Post>())
+
+    init {
+        viewModelScope.launch {
+            val result = repo.getPostBookmarkedQuery()
+
+            result.let{
+                when(val resource = it){
+                    is Resource.Success -> {
+                        posts = repo.getPostsBy(query = QueryParams.QUERY_SEARCH(resource.result!!)).cachedIn(viewModelScope)
+                    }
+                    is Resource.Failure -> {
+                        //TODO: Poner estado
+                    }
+                    is Resource.Loading -> {
+                        //TODO: Poner estado
+                    }
+                }
+            }
+        }
+    }
 
     fun doLike(postId: String, liked: Boolean){
         viewModelScope.launch {
