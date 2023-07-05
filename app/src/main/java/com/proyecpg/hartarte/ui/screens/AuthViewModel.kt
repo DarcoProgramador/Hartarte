@@ -39,12 +39,18 @@ class AuthViewModel @Inject constructor(
     private val _logged = MutableStateFlow(false)
     val logged = _logged.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+
+
     private val currentUser: FirebaseUser?
         get() = authRepository.currentUser
 
     init {
         viewModelScope.launch {
             isLogged()
+
+            _isLoading.emit(false)
         }
     }
 

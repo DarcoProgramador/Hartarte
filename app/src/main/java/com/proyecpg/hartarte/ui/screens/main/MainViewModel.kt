@@ -17,6 +17,7 @@ import com.proyecpg.hartarte.utils.Constants.DARK_THEME_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,10 +33,15 @@ class MainViewModel @Inject constructor(
 
     private val _userState = MutableStateFlow(UserUI())
     val userState : StateFlow<UserUI> get() = _userState
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+
     init {
         viewModelScope.launch {
             getDarkTheme()
             getUser()
+            _isLoading.emit(false)
         }
     }
 

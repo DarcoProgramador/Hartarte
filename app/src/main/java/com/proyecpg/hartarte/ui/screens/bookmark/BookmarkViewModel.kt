@@ -28,6 +28,10 @@ class BookmarkViewModel @Inject constructor(
     val postBookmarkState get() = _postBookmarkState.asStateFlow()
 
     init {
+        updateBookmarkedPosts()
+    }
+
+    fun updateBookmarkedPosts(){
         viewModelScope.launch {
             val result = repo.getPostBookmarkedQuery()
 
