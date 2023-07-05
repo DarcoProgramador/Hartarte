@@ -23,18 +23,23 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: AuthViewModel by viewModels()
+    @OptIn(ExperimentalPagerApi::class)
+    private val mainViewModel: MainViewModel by viewModels()
     private lateinit var dataStoreUtil: DataStoreUtil
 
     @OptIn(ExperimentalPagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        installSplashScreen()
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.isLoading.value || mainViewModel.isLoading.value
+            }
+        }
 
         dataStoreUtil = DataStoreUtil(applicationContext)
 
         setContent {
-            val mainViewModel = hiltViewModel<MainViewModel>()
             val state = mainViewModel.state
 
             HartarteTheme(
