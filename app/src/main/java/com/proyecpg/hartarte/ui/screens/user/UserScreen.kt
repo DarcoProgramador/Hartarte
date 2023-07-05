@@ -20,6 +20,8 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
@@ -48,6 +50,12 @@ fun UserScreen(
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
 
+    val state = rememberSwipeRefreshState(
+        isRefreshing = pagingPosts.loadState.refresh is LoadState.Loading
+    )
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -68,93 +76,105 @@ fun UserScreen(
             color = MaterialTheme.colorScheme.outline,
             modifier = Modifier.padding(vertical = 10.dp)
         )
-
-        LazyColumn(
-            modifier = Modifier,
-            state = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            items(items = pagingPosts){ post ->
-                post?.let{
-                    val postId = it.postId?:""
-                    val liked = it.liked?:false
-                    var date = "10 de mayo del 2023, 10:23:11"
-                    it.createdAt?.let { dateFirebase ->
-                        date = dateFormater.format(dateFirebase.toDate())
-                    }
-
-                    it.images?.let { it1 ->
-                        Post(
-                            postId = postId,
-                            images = it1.toList(),
-                            username = it.user?.name ?: "",
-                            userPic = it.user?.photo ?: "",
-                            title = it.titulo?:"",
-                            description = it.descripcion?:"",
-                            isLiked = liked,
-                            isBookmarked = it.bookmarked?:false,
-                            likesCount = it.likes?.toInt() ?: 0,
-                            onLike = {id : String, like: Boolean ->
-                                onProcessUSer(UserEvent.UserPostLikeClicked(
-                                    postId = id,
-                                    liked = like
-                                ))},
-                            onBookmark = {id : String, bookmark: Boolean ->
-                                onProcessUSer(UserEvent.UserPostBookmarkCliked(
-                                    postId = id,
-                                    bookmarked = bookmark
-                                ))},
-                            onPostClick = {
-                                val params = OpenPostArgs(
-                                    postId,
-                                    it1.toList(),
-                                    it.user?.name ?: "",
-                                    it.user?.photo ?: "",
-                                    it.titulo?: "",
-                                    it.descripcion?:"",
-                                    date,
-                                    liked,
-                                    it.bookmarked?:false,
-                                    it.likes?.toInt() ?: 0
-                                )
-
-                                onPostClick(params)
+        SwipeRefresh(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            // use the provided LazyPagingItems.refresh() method,
+            // no need for custom solutions
+            onRefresh = { pagingPosts.refresh() }
+        ) {
+            LazyColumn(
+                modifier = Modifier,
+                state = lazyListState,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                if (pagingPosts.loadState.refresh is LoadState.NotLoading) {
+                    items(items = pagingPosts){ post ->
+                        post?.let{
+                            val postId = it.postId?:""
+                            val liked = it.liked?:false
+                            var date = "10 de mayo del 2023, 10:23:11"
+                            it.createdAt?.let { dateFirebase ->
+                                date = dateFormater.format(dateFirebase.toDate())
                             }
-                        )
+
+                            it.images?.let { it1 ->
+                                Post(
+                                    postId = postId,
+                                    images = it1.toList(),
+                                    username = it.user?.name ?: "",
+                                    userPic = it.user?.photo ?: "",
+                                    title = it.titulo?:"",
+                                    description = it.descripcion?:"",
+                                    isLiked = liked,
+                                    isBookmarked = it.bookmarked?:false,
+                                    likesCount = it.likes?.toInt() ?: 0,
+                                    onLike = {id : String, like: Boolean ->
+                                        onProcessUSer(UserEvent.UserPostLikeClicked(
+                                            postId = id,
+                                            liked = like
+                                        ))},
+                                    onBookmark = {id : String, bookmark: Boolean ->
+                                        onProcessUSer(UserEvent.UserPostBookmarkCliked(
+                                            postId = id,
+                                            bookmarked = bookmark
+                                        ))},
+                                    onPostClick = {
+                                        val params = OpenPostArgs(
+                                            postId,
+                                            it1.toList(),
+                                            it.user?.name ?: "",
+                                            it.user?.photo ?: "",
+                                            it.titulo?: "",
+                                            it.descripcion?:"",
+                                            date,
+                                            liked,
+                                            it.bookmarked?:false,
+                                            it.likes?.toInt() ?: 0
+                                        )
+
+                                        onPostClick(params)
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
-            }
-            pagingPosts.loadState.apply {
-                when {
-                    refresh is LoadState.Loading -> {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ){
+
+
+                pagingPosts.loadState.apply {
+                    when {
+                        refresh is LoadState.Loading -> {
+                            item {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ){
+                                    LoadingItem()
+                                }
+                            }
+                        }
+                        refresh is Error -> {
+                            item {
+                                ErrorItem()
+                            }
+                        }
+                        append is LoadState.Loading -> {
+                            item {
                                 LoadingItem()
                             }
                         }
-                    }
-                    refresh is Error -> {
-                        item {
-                            ErrorItem()
-                        }
-                    }
-                    append is LoadState.Loading -> {
-                        item {
-                            LoadingItem()
-                        }
-                    }
-                    append is Error -> {
-                        item {
-                            ErrorItem()
+                        append is Error -> {
+                            item {
+                                ErrorItem()
+                            }
                         }
                     }
                 }
             }
         }
+
     }
 }
 

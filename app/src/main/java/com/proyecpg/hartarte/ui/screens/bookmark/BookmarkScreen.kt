@@ -63,7 +63,7 @@ fun BookmarkScreenContent(
         state = state,
         // use the provided LazyPagingItems.refresh() method,
         // no need for custom solutions
-        onRefresh = { pagingPosts.refresh() }
+        onRefresh = { viewModel.updateBookmarkedPosts() }
     ) {
         LazyColumn(
             modifier = Modifier.padding(innerPadding),
