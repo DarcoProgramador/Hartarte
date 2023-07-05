@@ -18,6 +18,7 @@ import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
+import com.proyecpg.hartarte.ui.screens.search.SearchState
 import com.proyecpg.hartarte.ui.screens.user.UserViewModel
 
 @OptIn(ExperimentalPagerApi::class)
@@ -107,6 +108,27 @@ fun NavigationRoot(
 
         composable(AppScreens.SearchScreen.route){
             SearchScreen(
+                viewModel = hiltViewModel(),
+                state = SearchState(),
+                onPostClick = {args ->
+
+                    post = OpenPostArgs(
+                        postId = args.postId,
+                        postImages = args.postImages,
+                        postUsername = args.postUsername,
+                        postUserPic = args.postUserPic,
+                        postTitle = args.postTitle,
+                        postDescription = args.postDescription,
+                        postDate = args.postDate,
+                        isLiked = args.isLiked,
+                        isBookmarked = args.isBookmarked,
+                        likesCount = args.likesCount
+                    )
+
+                    navController.navigate(AppScreens.OpenPostScreen.route){
+                    }
+
+                },
                 onReturn = {
                     navController.popBackStack()
                 }
