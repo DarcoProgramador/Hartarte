@@ -292,7 +292,7 @@ fun createPostScreenContent(
                 isLastTextField = true
             )
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(125.dp))
         }
     }
 
