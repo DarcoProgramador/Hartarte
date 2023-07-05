@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.ui.components.Comment
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
@@ -112,7 +114,8 @@ fun OpenPostTopAppBar(
             Text(
                 text = postTitle,
                 color = MaterialTheme.colorScheme.primary,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
             )
         },
         modifier = Modifier
@@ -229,6 +232,18 @@ fun openPostScreenContent(
 
                 commentText = customTextInputField(username = username, comment = commentText, onSendComment = onSendComment)
             }
+
+            for (x in 1 .. 5){
+                Comment(
+                    image = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                    username = "User",
+                    description = "Come comen comen comeno comeno comenio coo comeno comenta coio comeo comentar comenrio comtario mentario  comen comen comeno comeno comenta coio comeo comentar comenrio comtario.",
+                    date = "11 de mayo del 2020, 11:30 a.m.",
+                    onPostUserClick = {}
+                )
+            }
+
+            Comments()
         }
     }
 
