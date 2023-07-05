@@ -1,4 +1,4 @@
-package com.proyecpg.hartarte.ui.screens.home
+package com.proyecpg.hartarte.ui.screens.bookmark
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -20,27 +21,33 @@ import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
+import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun HomeScreen(
+fun BookmarkScreen(
     paddingValues: PaddingValues,
-    viewModel: HomeViewModel,
+    viewModel: BookmarkViewModel,
     onPostClick: (OpenPostArgs) -> Unit
-) {
-    HomeScreenContent(paddingValues, viewModel, onPostClick)
+){
+    BookmarkScreenContent(paddingValues, viewModel, onPostClick)
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun HomeScreenContent(
+fun BookmarkScreenContent(
     innerPadding: PaddingValues,
-    viewModel: HomeViewModel,
+    viewModel: BookmarkViewModel,
     onPostClick: (OpenPostArgs) -> Unit
-){
-    //Posts
-    val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
+) {
+    val postBookmarkState = viewModel.postBookmarkState.collectAsStateWithLifecycle()
+
+    if (postBookmarkState.value == null ){
+        return
+    }
+
+    val pagingPosts = postBookmarkState.value!!.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
     val dateFormater  = SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm:ss")
@@ -126,12 +133,16 @@ fun HomeScreenContent(
 }
 
 @OptIn(ExperimentalPagerApi::class)
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun PreviewLoginScreen(){
-    HomeScreen(
-        paddingValues = PaddingValues(),
-        viewModel = hiltViewModel(),
-        onPostClick = {}
-    )
+fun PreviewBookmarkScreen(){
+    HartarteTheme{
+        Box(modifier = Modifier.fillMaxSize()){
+            BookmarkScreen(
+                paddingValues = PaddingValues(),
+                viewModel = hiltViewModel(),
+                onPostClick = {}
+            )
+        }
+    }
 }

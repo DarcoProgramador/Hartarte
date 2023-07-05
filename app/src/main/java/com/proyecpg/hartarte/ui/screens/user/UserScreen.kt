@@ -18,14 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.proyecpg.hartarte.domain.model.Post
+import com.proyecpg.hartarte.ui.components.ErrorItem
+import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.UserUI
-import com.proyecpg.hartarte.ui.screens.home.ErrorItem
-import com.proyecpg.hartarte.ui.screens.home.LoadingItem
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.flow.Flow
