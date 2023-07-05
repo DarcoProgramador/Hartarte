@@ -17,6 +17,7 @@ import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
 import com.proyecpg.hartarte.ui.screens.user.UserViewModel
 
@@ -139,6 +140,7 @@ fun NavigationRoot(
         composable(AppScreens.OpenPostScreen.route)
         {
 
+            val openPostViewModel = hiltViewModel<OpenPostViewModel>()
             OpenPostScreen(
                 postInfo = post,
                 username = "Username",
@@ -147,8 +149,8 @@ fun NavigationRoot(
                 },
                 onImageClick = { /*TODO*/ },
                 onPostUserClick = { /*TODO*/ },
-                onLike = { _, _ -> },
-                onBookmark = { _, _ -> },
+                onLike = openPostViewModel::doLike,
+                onBookmark = openPostViewModel::doBookmark,
                 onSendComment = {}
             )
         }
