@@ -46,11 +46,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -109,9 +111,11 @@ fun UserCard(
             AsyncImage(
                 model = userImage?: R.drawable.user_placeholder,
                 contentDescription = "User image",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(animatedSize)
-                    .clip(CircleShape).clickable {
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable {
                         if (isEditEnabled){
                             multiplePhotoPickerLauncher.launch(
                                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
@@ -130,7 +134,8 @@ fun UserCard(
                     text = username,
                     fontWeight = FontWeight.Bold,
                     fontSize = 19.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    textAlign = TextAlign.Center
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
