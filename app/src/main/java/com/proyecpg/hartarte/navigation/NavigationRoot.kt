@@ -19,7 +19,6 @@ import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
-import com.proyecpg.hartarte.ui.screens.search.SearchState
 import com.proyecpg.hartarte.ui.screens.user.UserViewModel
 
 @OptIn(ExperimentalPagerApi::class)
@@ -110,7 +109,6 @@ fun NavigationRoot(
         composable(AppScreens.SearchScreen.route){
             SearchScreen(
                 viewModel = hiltViewModel(),
-                state = SearchState(),
                 onPostClick = {args ->
 
                     post = OpenPostArgs(

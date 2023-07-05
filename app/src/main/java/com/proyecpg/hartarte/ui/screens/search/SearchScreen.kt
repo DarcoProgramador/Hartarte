@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -16,24 +18,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.HeartBroken
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.HeartBroken
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,16 +39,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.google.accompanist.pager.ExperimentalPagerApi
+import com.proyecpg.hartarte.ui.components.ErrorItem
+import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
-import com.proyecpg.hartarte.ui.screens.home.ErrorItem
-import com.proyecpg.hartarte.ui.screens.home.LoadingItem
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import com.proyecpg.hartarte.utils.QueryParams
@@ -62,13 +57,10 @@ import java.text.SimpleDateFormat
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel,
-    state: SearchState,
     onPostClick: (OpenPostArgs) -> Unit,
     onReturn: () -> Unit
 ){
     var isSearchOpened by remember{ mutableStateOf(true) }
-
-    var postInfo: Triple<Boolean, Boolean, Boolean> = Triple(state.isMostRecent, state.isMostLiked, state.isMostBookmarked)
 
     Scaffold(
         modifier = Modifier
@@ -83,7 +75,7 @@ fun SearchScreen(
                     onReturn = onReturn
                 )
 
-                postInfo = searchBar(isSearchOpened)
+                SearchBar(viewModel, isSearchOpened)
 
                 Spacer(modifier = Modifier.size(5.dp))
 
@@ -100,7 +92,6 @@ fun SearchScreen(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SearchScreenContent(
     innerPadding: PaddingValues,
@@ -108,7 +99,13 @@ fun SearchScreenContent(
     onPostClick: (OpenPostArgs) -> Unit
 ){
     //Posts
-    val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
+    val postSearchState = viewModel.postSearchState.collectAsStateWithLifecycle()
+
+    if (postSearchState.value == null ){
+        return
+    }
+
+    val pagingPosts = postSearchState.value!!.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
     val dateFormater  = SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm:ss")
@@ -242,74 +239,11 @@ fun TopBar(
 
 
 @Composable
-fun searchBar(
+fun SearchBar(
+    viewModel: SearchViewModel,
     isOpened: Boolean
-): Triple<Boolean, Boolean, Boolean> {
-    var isMostRecent by remember{ mutableStateOf(true) }
-    var isMostLiked by remember{ mutableStateOf(false) }
-    var isMostBookmarked by remember{ mutableStateOf(false) }
-
-    var isChecked by remember{ mutableStateOf("Más recientes") }
-
-    AnimatedVisibility(
-        visible = isOpened,
-        enter = expandVertically(),
-        exit = shrinkVertically()
-    ) {
-        LazyRow(content = {
-            item {
-                /*isMostRecent = filterButton(
-                    isTrueChecked = isMostRecent,
-                    pairIsTrue = Pair(Icons.Default.ArrowUpward, "Más recientes"),
-                    pairIsNotTrue = Pair(Icons.Default.ArrowDownward, "Menos recientes")
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                isMostLiked = filterButton(
-                    isTrueChecked = isMostLiked,
-                    pairIsTrue = Pair(Icons.Default.Favorite, "Más gustados"),
-                    pairIsNotTrue = Pair(Icons.Default.HeartBroken, "Menos gustados")
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                isMostBookmarked = filterButton(
-                    isTrueChecked = isMostBookmarked,
-                    pairIsTrue = Pair(Icons.Default.Bookmarks, "Más guardados"),
-                    pairIsNotTrue = Pair(Icons.Default.Bookmark, "Menos guardados")
-                )*/
-            }
-        })
-    }
-
-    return Triple(isMostRecent, isMostBookmarked, isMostLiked)
-}
-
-@Composable
-fun filterButton(
-    isTrueChecked: Boolean,
-    isCheked: String
-): String {
-
-    var checked by remember{ mutableStateOf(isCheked) }
-
-    /*OutlinedButton(
-        onClick = { isTrue = !isTrue },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-        )
-    ) {
-        Icon(
-            imageVector = if (isTrue) pairIsTrue.first else pairIsNotTrue.first,
-            contentDescription = "Chronological icon"
-        )
-
-        Spacer(modifier = Modifier.width(5.dp))
-
-        Text(text = if (isTrue) pairIsTrue.second else pairIsNotTrue.second)
-    }*/
+) {
+    var isChecked by remember{ mutableStateOf("") }
 
     val icons = listOf(
         Icons.Default.ArrowUpward to "Más recientes",
@@ -317,45 +251,50 @@ fun filterButton(
         Icons.Default.Bookmarks to "Más guardados"
     )
 
-    for ((icon, description) in icons){
-        OutlinedIconToggleButton(
-            checked = checked == description,
-            onCheckedChange = {
-                checked = description
+    AnimatedVisibility(
+        visible = isOpened,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ){
+            item {
+                for ((icon, description) in icons){
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        OutlinedIconToggleButton(
+                            checked = isChecked == description,
+                            onCheckedChange = {
+                                isChecked = description
 
-                /*onQueryChange(
-                    when (checked) {
-                        "Más recientes" -> QueryParams.MOST_RECENT
-                        "Más gustados" -> QueryParams.MOST_LIKED
-                        "Más guardados" -> QueryParams.MOST_BOOKMARKED
-                        else -> null
+                                viewModel.onQueryChange(
+                                    when (isChecked) {
+                                        "Más recientes" -> QueryParams.MOST_RECENT
+                                        "Más gustados" -> QueryParams.MOST_LIKED
+                                        "Más guardados" -> QueryParams.MOST_BOOKMARKED
+                                        else -> null
+                                    }
+                                )
+                            }
+                        ) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = description
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(5.dp))
+
+                        Text(text = description)
                     }
-                )*/
+
+                    Spacer(modifier = Modifier.width(10.dp))
+                }
             }
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = description
-            )
-
-            Spacer(modifier = Modifier.width(5.dp))
-
-            Text(text = description)
-        }
-    }
-
-    return checked
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewFilterButton(){
-    HartarteTheme {
-        Box(modifier = Modifier.padding(10.dp)){
-            filterButton(
-                isTrueChecked = true,
-                "Más recientes"
-            )
         }
     }
 }
@@ -365,7 +304,10 @@ fun PreviewFilterButton(){
 fun PreviewSearchBar(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
-            searchBar(isOpened = true)
+            SearchBar(
+                viewModel = hiltViewModel(),
+                isOpened = true
+            )
         }
     }
 }

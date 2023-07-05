@@ -9,24 +9,23 @@ import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.QueryParams
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val repo: PostRepository,
-    state: SearchState
+    private val repo: PostRepository
 ): ViewModel() {
 
-    var posts =flowOf(PagingData.empty<Post>())
+    private val _postSearchState : MutableStateFlow<Flow<PagingData<Post>>?> = MutableStateFlow(null)
+    val postSearchState get() = _postSearchState.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            posts = when(state.isMostRecent){
-                false -> { repo.getPostsBy(query = QueryParams.MOST_RECENT).cachedIn(viewModelScope) }
-                true ->{ repo.getPostsBy(query = QueryParams.MOST_RECENT).cachedIn(viewModelScope) }
-            }
+    fun onQueryChange(query: QueryParams?){
+        if (query != null){
+            _postSearchState.value = repo.getPostsBy(query = query).cachedIn(viewModelScope)
         }
     }
 
