@@ -10,6 +10,10 @@ import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.QueryParams
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,7 +24,8 @@ class BookmarkViewModel @Inject constructor(
     private val repo: PostRepository
 ): ViewModel() {
 
-    var posts = flowOf(PagingData.empty<Post>())
+    private val _postBookmarkState :  MutableStateFlow<Flow<PagingData<Post>>?> = MutableStateFlow(null)
+    val postBookmarkState get() = _postBookmarkState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -29,7 +34,7 @@ class BookmarkViewModel @Inject constructor(
             result.let{
                 when(val resource = it){
                     is Resource.Success -> {
-                        posts = repo.getPostsBy(query = QueryParams.QUERY_SEARCH(resource.result!!)).cachedIn(viewModelScope)
+                        _postBookmarkState.value = repo.getPostsBy(query = QueryParams.QUERY_SEARCH(resource.result!!)).cachedIn(viewModelScope)
                     }
                     is Resource.Failure -> {
                         //TODO: Poner estado

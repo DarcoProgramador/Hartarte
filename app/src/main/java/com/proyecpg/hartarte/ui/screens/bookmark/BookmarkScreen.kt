@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -40,7 +41,13 @@ fun BookmarkScreenContent(
     viewModel: BookmarkViewModel,
     onPostClick: (OpenPostArgs) -> Unit
 ) {
-    val pagingPosts = viewModel.posts.collectAsLazyPagingItems()
+    val postBookmarkState = viewModel.postBookmarkState.collectAsStateWithLifecycle()
+
+    if (postBookmarkState.value == null ){
+        return
+    }
+
+    val pagingPosts = postBookmarkState.value!!.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
     val dateFormater  = SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm:ss")

@@ -57,11 +57,9 @@ class PostRepositoryImp @Inject constructor(
 
            val postIds = postIdsRef.map { it.id }
 
-           val postRef = db.collection(Constants.POST_COLLECTION)
+           val postRef = db.collection(POST_COLLECTION)
 
-           val query = postRef.whereIn(FieldPath.documentId(), postIds)
-               .orderBy(Constants.TIME_STAMP, Query.Direction.DESCENDING)
-               .limit(Constants.PAGE_SIZE)
+           val query = postRef.whereIn(FieldPath.documentId(), postIds).limit(Constants.PAGE_SIZE)
 
            Resource.Success(query)
        } catch (e: Exception) {
