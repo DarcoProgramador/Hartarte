@@ -72,6 +72,9 @@ class AuthViewModel @Inject constructor(
 
     fun resetState() {
         _stateLogin.update { LoginState() }
+        oneTapSignInResponse = Resource.Success(null)
+        signInWithGoogleResponse = Resource.Success(null)
+
     }
 
     private fun login(email: String, password: String){
@@ -145,7 +148,6 @@ class AuthViewModel @Inject constructor(
     fun oneTapSignIn(){
         viewModelScope.launch {
             oneTapSignInResponse = Resource.Loading
-
             oneTapSignInResponse = authRepository.oneTapSignInWithGoogle()
         }
     }
@@ -163,6 +165,18 @@ class AuthViewModel @Inject constructor(
                 isLoading = false,
                 loginError = error
             )
+        }
+    }
+
+    fun updateLoginSuccessful(){
+        viewModelScope.launch {
+            _stateLogin.update { state ->
+                state.copy(
+                    isLoginSuccessful = true,
+                    isLoading = false
+                )
+            }
+            isLogged()
         }
     }
 

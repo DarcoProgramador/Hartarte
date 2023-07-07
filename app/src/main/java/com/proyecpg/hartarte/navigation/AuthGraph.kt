@@ -61,16 +61,6 @@ fun NavGraphBuilder.authNavGraph(
             )
 
             SignInWithGoogle(
-                navigateToHomeScreen = { signedIn ->
-                    if (signedIn) {
-                        navController.navigate(Graph.MAIN){
-                            popUpTo(AuthScreens.LoginScreen.route){
-                                inclusive = true
-                            }
-                        }
-                        authViewModel.resetState()
-                    }
-                },
                 viewModel = authViewModel
             )
 

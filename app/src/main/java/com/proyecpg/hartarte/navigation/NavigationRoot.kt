@@ -28,6 +28,8 @@ fun NavigationRoot(
     authViewModel: AuthViewModel,
     mainViewModel: MainViewModel
 ) {
+    val state by authViewModel.logged.collectAsStateWithLifecycle()
+
     NavHost(
     navController = navController,
     route = Graph.ROOT,
@@ -52,7 +54,6 @@ fun NavigationRoot(
         )
 
         composable(Graph.MAIN){
-            val state by authViewModel.logged.collectAsStateWithLifecycle()
             state.let {
                 if (it){
                     val userViewModel = hiltViewModel<UserViewModel>()
@@ -95,7 +96,7 @@ fun NavigationRoot(
                         postUser = userViewModel.postsUser
                     )
                 }else{
-                    LaunchedEffect(false) {
+                    LaunchedEffect(Unit) {
                         navController.navigate(Graph.AUTHENTICATION){
                             popUpTo(Graph.MAIN){
                                 inclusive = true
