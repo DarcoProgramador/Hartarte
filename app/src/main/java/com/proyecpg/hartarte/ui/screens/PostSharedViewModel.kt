@@ -1,7 +1,11 @@
 package com.proyecpg.hartarte.ui.screens
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.proyecpg.hartarte.ui.model.PostUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,10 +18,13 @@ class PostSharedViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _stateLiked = MutableStateFlow(hashMapOf<String, Boolean>())
-    private val stateLiked get() = _stateLiked.asStateFlow()
+    val stateLiked get() = _stateLiked.asStateFlow()
 
     private val _stateBookmarked = MutableStateFlow(hashMapOf<String, Boolean>())
-    private val stateBookmarked get() = _stateLiked.asStateFlow()
+    val stateBookmarked get() = _stateLiked.asStateFlow()
+
+    var statePost by mutableStateOf(PostUI())
+        private set
 
 
     fun addLiked(postId : String, isLiked : Boolean){
@@ -29,6 +36,12 @@ class PostSharedViewModel @Inject constructor(
     fun addBookmarked(postId : String, isBookmarked : Boolean){
         viewModelScope.launch{
             _stateBookmarked.value[postId] = isBookmarked
+        }
+    }
+
+    fun updatePost(postUI: PostUI){
+        viewModelScope.launch {
+            statePost = postUI
         }
     }
 }
