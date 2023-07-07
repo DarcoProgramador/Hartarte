@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
+import com.proyecpg.hartarte.ui.screens.PostSharedViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
@@ -29,6 +30,7 @@ fun NavigationRoot(
     mainViewModel: MainViewModel
 ) {
     val state by authViewModel.logged.collectAsStateWithLifecycle()
+    val postSharedViewModel : PostSharedViewModel = hiltViewModel()
 
     NavHost(
     navController = navController,
@@ -162,16 +164,36 @@ fun NavigationRoot(
         {
 
             val openPostViewModel = hiltViewModel<OpenPostViewModel>()
+            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
+            val statePost = postSharedViewModel.statePost
             OpenPostScreen(
-                postInfo = post,
-                username = "Username",
+                postInfo = OpenPostArgs(
+                    postId = statePost.postId,
+                    postImages = statePost.images,
+                    postUsername = statePost.username,
+                    postUserPic = statePost.userPic,
+                    postTitle = statePost.title,
+                    postDescription = statePost.description,
+                    postDate = statePost.date,
+                    likesCount = statePost.likesCount,
+                    isLiked = stateLiked[statePost.postId]?:false,
+                    isBookmarked = stateBookmarked[statePost.postId]?:false
+                ),
+                username = statePost.username,
                 onReturn = {
                     navController.popBackStack()
                 },
                 onImageClick = { /*TODO*/ },
                 onPostUserClick = { /*TODO*/ },
-                onLike = openPostViewModel::doLike,
-                onBookmark = openPostViewModel::doBookmark,
+                onLike = { postId : String, like : Boolean ->
+                    openPostViewModel.doLike(postId , like)
+                    postSharedViewModel.updateLiked(postId, like)
+                },
+                onBookmark = { postId : String, bookmark : Boolean ->
+                    openPostViewModel.doBookmark(postId , bookmark)
+                    postSharedViewModel.updateBookmarked(postId, bookmark)
+                },
                 onSendComment = {}
             )
         }

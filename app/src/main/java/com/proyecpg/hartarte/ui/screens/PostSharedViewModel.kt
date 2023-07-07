@@ -27,13 +27,13 @@ class PostSharedViewModel @Inject constructor(
         private set
 
 
-    fun addLiked(postId : String, isLiked : Boolean){
+    fun updateLiked(postId : String, isLiked : Boolean){
         viewModelScope.launch{
             _stateLiked.value[postId] = isLiked
         }
     }
 
-    fun addBookmarked(postId : String, isBookmarked : Boolean){
+    fun updateBookmarked(postId : String, isBookmarked : Boolean){
         viewModelScope.launch{
             _stateBookmarked.value[postId] = isBookmarked
         }
