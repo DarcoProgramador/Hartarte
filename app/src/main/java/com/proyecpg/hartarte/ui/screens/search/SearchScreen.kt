@@ -77,7 +77,7 @@ fun SearchScreen(
                     onReturn = onReturn
                 )
 
-                SearchBar(viewModel, isSearchOpened)
+                SearchFilters(viewModel, isSearchOpened)
 
                 Spacer(modifier = Modifier.size(5.dp))
 
@@ -255,7 +255,7 @@ fun TopBar(
 
 
 @Composable
-fun SearchBar(
+fun SearchFilters(
     viewModel: SearchViewModel,
     isOpened: Boolean
 ) {
@@ -317,10 +317,10 @@ fun SearchBar(
 
 @Preview
 @Composable
-fun PreviewSearchBar(){
+fun PreviewSearchFilters(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
-            SearchBar(
+            SearchFilters(
                 viewModel = hiltViewModel(),
                 isOpened = true
             )
