@@ -34,85 +34,77 @@ import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(
-    isOpened: Boolean
-){
+fun SearchBar(){
     var text by remember{ mutableStateOf("") }
     var active by remember{ mutableStateOf(false) }
     val items = remember { mutableListOf<String>() }
 
-    AnimatedVisibility(
-        visible = isOpened,
-        enter = expandVertically(),
-        exit = shrinkVertically()
-    ) {
-        androidx.compose.material3.SearchBar(
-            query = text,
-            onQueryChange = {
-                text = it
-            },
-            onSearch = {
-                val request = text.trim()
+    androidx.compose.material3.SearchBar(
+        query = text,
+        onQueryChange = {
+            text = it
+        },
+        onSearch = {
+            val request = text.trim()
 
-                if (request.isNotEmpty()){
-                    if (!items.contains(request)){
-                        items.add(request)
-                    }
-                    active = false
+            if (request.isNotEmpty()){
+                if (!items.contains(request)){
+                    items.add(request)
+                }
+                active = false
 
-                    /* TODO: Buscar */
-                }
-            },
-            active = active,
-            onActiveChange = {
-                active = it
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(30.dp)),
-            placeholder = {
-                Text(text = "Buscar publicación")
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search icon",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            },
-            trailingIcon = {
-                if(active){
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close search bar",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.clickable {
-                            if (text.isNotEmpty()){
-                                text = ""
-                            }
-                            else{
-                                active = false
-                            }
-                        }
-                    )
-                }
+                /* TODO: Buscar */
             }
-        ) {
-            items.reversed().forEach {
-                Row(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .clickable {
-                            text = it
-                        },
-                    verticalAlignment = CenterVertically
-                ){
-                    Icon(imageVector = Icons.Default.History, contentDescription = "History icon")
+        },
+        active = active,
+        onActiveChange = {
+            active = it
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(30.dp)),
+        placeholder = {
+            Text(text = "Buscar publicación")
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search icon",
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        },
+        trailingIcon = {
+            if(active){
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close search bar",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.clickable {
+                        if (text.isNotEmpty()){
+                            text = ""
+                        }
+                        else{
+                            active = false
+                        }
+                    }
+                )
+            }
+        }
+    ) {
+        items.reversed().forEach {
+            Row(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .clickable {
+                        text = it
+                    },
+                verticalAlignment = CenterVertically
+            ){
+                Icon(imageVector = Icons.Default.History, contentDescription = "History icon")
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
-                    Text(text = it)
-                }
+                Text(text = it)
             }
         }
     }
@@ -123,7 +115,7 @@ fun SearchBar(
 fun PreviewSearchBar(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
-            SearchBar(isOpened = true)
+            SearchBar()
         }
     }
 }
