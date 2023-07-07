@@ -163,7 +163,7 @@ fun openPostScreenContent(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp),
+                    .height(370.dp),
                 shape = RoundedCornerShape(0.dp)
             ) {
                 HorizontalPager(
