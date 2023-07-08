@@ -153,11 +153,27 @@ class PostRepositoryImp @Inject constructor(
     }
 
     override suspend fun getLike(postId: String): Resource<Boolean> {
-        TODO("Hacer una funcion que se traiga si esta likeado o no")
+        try {
+            val post = db.collection(POST_LIKES_COLLECTION).document(postId).get().await()
+            val user = firebaseAuth.currentUser!!.uid
+            if (!post.exists()) return Resource.Success(false)
+            val likeArray: List<String> = post.get(LIKES) as List<String>
+            return Resource.Success(likeArray.contains(user))
+        } catch (e: Exception) {
+            return Resource.Failure(e)
+        }
     }
 
     override suspend fun getBookmark(postId: String): Resource<Boolean> {
-        TODO("hacer una funcion que se traiga si esta likeado o no")
+        try {
+            val post = db.collection(Constants.POST_BOOKMARKS_COLLECTION).document(postId).get().await()
+            val user = firebaseAuth.currentUser!!.uid
+            if (!post.exists()) return Resource.Success(false)
+            val bookmarkArray: List<String> = post.get(Constants.BOOKMARKS) as List<String>
+            return Resource.Success(bookmarkArray.contains(user))
+        } catch (e: Exception) {
+            return Resource.Failure(e)
+        }
     }
 
     override suspend fun createPost(
