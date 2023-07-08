@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.proyecpg.hartarte.ui.model.PostUI
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.PostSharedViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
@@ -61,6 +62,8 @@ fun NavigationRoot(
                     val userViewModel = hiltViewModel<UserViewModel>()
                     val userState by userViewModel.userState.collectAsStateWithLifecycle()
                     val userEditState by userViewModel.editUserState.collectAsStateWithLifecycle()
+                    val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+                    val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
 
                     MainScreen(
                         onCreatePost = {
@@ -75,25 +78,17 @@ fun NavigationRoot(
                             }
                         },
                         onPostClick = {args ->
-
-                            post = OpenPostArgs(
-                                postId = args.postId,
-                                postImages = args.postImages,
-                                postUsername = args.postUsername,
-                                postUserPic = args.postUserPic,
-                                postTitle = args.postTitle,
-                                postDescription = args.postDescription,
-                                postDate = args.postDate,
-                                isLiked = args.isLiked,
-                                isBookmarked = args.isBookmarked,
-                                likesCount = args.likesCount
-                            )
-
+                            postSharedViewModel.updatePost(args)
                             navController.navigate(AppScreens.OpenPostScreen.route)
                         },
                         onProcessUser = userViewModel::processUser,
+                        onPostSharedProcess = {
+
+                        },
                         userState = userState,
                         userEditState = userEditState,
+                        stateLiked = stateLiked,
+                        stateBookmarked = stateBookmarked,
                         postUser = userViewModel.postsUser
                     )
                 }else{
