@@ -17,6 +17,10 @@ interface PostRepository {
 
     suspend fun registerBookmark(postId: String, bookmarked: Boolean): Resource<Boolean>
 
+    suspend fun getLike(postId: String) : Resource<Boolean>
+
+    suspend fun getBookmark(postId: String) : Resource<Boolean>
+
     suspend fun createPost(images : List<Uri>,
                            titulo: String,
                            descripcion: String

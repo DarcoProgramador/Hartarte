@@ -152,6 +152,14 @@ class PostRepositoryImp @Inject constructor(
         }
     }
 
+    override suspend fun getLike(postId: String): Resource<Boolean> {
+        TODO("Hacer una funcion que se traiga si esta likeado o no")
+    }
+
+    override suspend fun getBookmark(postId: String): Resource<Boolean> {
+        TODO("hacer una funcion que se traiga si esta likeado o no")
+    }
+
     override suspend fun createPost(
         images: List<Uri>,
         titulo: String,
