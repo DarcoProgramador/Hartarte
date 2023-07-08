@@ -81,8 +81,6 @@ fun HomeScreenContent(
                 items(items = pagingPosts){ post ->
                     post?.let{
                         val postId = it.postId?:""
-                        val liked = it.liked?:false
-                        val bookmarked = it.bookmarked?:false
                         var date = "10 de mayo del 2023, 10:23:11"
                         val username = it.user?.name ?: ""
                         val userPic =  it.user?.photo ?: ""
@@ -95,8 +93,8 @@ fun HomeScreenContent(
                             date = dateFormater.format(dateFirebase.toDate())
                         }
 
-                        onPostSharedProcess(PostSharedEvent.onLiked(postId, liked))
-                        onPostSharedProcess(PostSharedEvent.onBookmarked(postId, bookmarked))
+                        onPostSharedProcess(PostSharedEvent.onLiked(postId))
+                        onPostSharedProcess(PostSharedEvent.onBookmarked(postId))
 
                         it.images?.let { it1 ->
                             Post(
@@ -109,8 +107,14 @@ fun HomeScreenContent(
                                 isLiked = stateLiked[postId]?:false,
                                 isBookmarked = stateBookmarked[postId]?:false,
                                 likesCount = likeCount,
-                                onLike = viewModel::doLike,
-                                onBookmark = viewModel::doBookmark,
+                                onLike = { postId : String, like : Boolean ->
+                                    viewModel.doLike(postId, like)
+                                    onPostSharedProcess(PostSharedEvent.onLiked(postId))
+                                },
+                                onBookmark ={ postId : String, bookmark : Boolean ->
+                                    viewModel.doBookmark(postId, bookmark)
+                                    onPostSharedProcess(PostSharedEvent.onBookmarked(postId))
+                                } ,
                                 onPostClick = {
                                     onPostClick(PostUI(
                                         postId = postId,

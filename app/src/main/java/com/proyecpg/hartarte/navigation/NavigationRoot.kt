@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
+import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.PostSharedViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
@@ -178,12 +179,12 @@ fun NavigationRoot(
                 onImageClick = { /*TODO*/ },
                 onPostUserClick = { /*TODO*/ },
                 onLike = { postId : String, like : Boolean ->
-                    openPostViewModel.doLike(postId , like)
-                    postSharedViewModel.updateLiked(postId, like)
+                    openPostViewModel.doLike(postId, like)
+                    postSharedViewModel.onProcess(PostSharedEvent.onLiked(postId))
                 },
                 onBookmark = { postId : String, bookmark : Boolean ->
-                    openPostViewModel.doBookmark(postId , bookmark)
-                    postSharedViewModel.updateBookmarked(postId, bookmark)
+                    openPostViewModel.doBookmark(postId, bookmark)
+                    postSharedViewModel.onProcess(PostSharedEvent.onBookmarked(postId))
                 },
                 onSendComment = {}
             )

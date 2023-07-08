@@ -22,6 +22,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,9 +67,17 @@ fun Post(
 ){
     val pagerState = rememberPagerState(initialPage = 0)
 
-    var liked by remember{ mutableStateOf(isLiked) }
-    var bookmarked by remember{ mutableStateOf(isBookmarked) }
+    val liked by remember{ derivedStateOf { mutableStateOf(isLiked) } }
+    val bookmarked by remember{ derivedStateOf{ mutableStateOf(isBookmarked) } }
     var likeCount by remember{ mutableStateOf(likesCount) }
+
+    LaunchedEffect(key1 = isLiked){
+        liked.value = isLiked
+    }
+
+    LaunchedEffect(key1 = isBookmarked){
+        bookmarked.value = isBookmarked
+    }
 
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -192,17 +202,17 @@ fun Post(
                         IconButton(
                             onClick = {
 
-                                if (liked)
+                                if (liked.value)
                                     likeCount--
                                 else
                                     likeCount++
 
-                                liked = !liked
+                                liked.value = !liked.value
 
-                                onLike(postId, liked) /* TODO: Cambiar despues a event */
+                                onLike(postId, liked.value) /* TODO: Cambiar despues a event */
                             }
                         ) {
-                            if(liked){
+                            if(liked.value){
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_favorite),
                                     contentDescription = "Favorite"
@@ -222,12 +232,12 @@ fun Post(
                     }
                     IconButton(
                         onClick = {
-                            bookmarked = !bookmarked
+                            bookmarked.value = !bookmarked.value
 
-                            onBookmark(postId, bookmarked) //TODO: Cambiar despues a event
+                            onBookmark(postId, bookmarked.value) //TODO: Cambiar despues a event
                         }
                     ) {
-                        if(bookmarked){
+                        if(bookmarked.value){
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_bookmark),
                                 contentDescription = "Bookmark"

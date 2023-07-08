@@ -32,10 +32,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,7 +59,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
-import com.proyecpg.hartarte.ui.components.Comment
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
@@ -283,9 +283,17 @@ fun PostInfo(
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit
 ){
-    var liked by rememberSaveable(key=postId){ mutableStateOf(postStatistics.first) }
-    var likeCount by rememberSaveable(key=postId){ mutableStateOf(postStatistics.second) }
-    var bookmarked by rememberSaveable(key=postId){ mutableStateOf(postStatistics.third) }
+    val liked by remember{ derivedStateOf { mutableStateOf(postStatistics.first)} }
+    var likeCount by remember{ mutableStateOf(postStatistics.second) }
+    val bookmarked by remember{ derivedStateOf { mutableStateOf(postStatistics.third) } }
+
+    LaunchedEffect(key1 = postStatistics.first){
+        liked.value = postStatistics.first
+    }
+
+    LaunchedEffect(key1 = postStatistics.third){
+        bookmarked.value = postStatistics.third
+    }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -331,17 +339,17 @@ fun PostInfo(
                 IconButton(
                     onClick = {
 
-                        if (liked)
+                        if (liked.value)
                             likeCount--
                         else
                             likeCount++
 
-                        liked = !liked
+                        liked.value = !liked.value
 
-                        onLike(postId, liked) /* TODO: Cambiar despues a event */
+                        onLike(postId, liked.value) /* TODO: Cambiar despues a event */
                     }
                 ) {
-                    if(liked){
+                    if(liked.value){
                         Icon(
                             painter = painterResource(id = R.drawable.ic_favorite),
                             contentDescription = "Favorite",
@@ -363,12 +371,12 @@ fun PostInfo(
             }
             IconButton(
                 onClick = {
-                    bookmarked = !bookmarked
+                    bookmarked.value = !bookmarked.value
 
-                    onBookmark(postId, bookmarked) /* TODO: Cambiar despues a event */
+                    onBookmark(postId, bookmarked.value) /* TODO: Cambiar despues a event */
                 }
             ) {
-                if(bookmarked){
+                if(bookmarked.value){
                     Icon(
                         painter = painterResource(id = R.drawable.ic_bookmark),
                         contentDescription = "Bookmark",

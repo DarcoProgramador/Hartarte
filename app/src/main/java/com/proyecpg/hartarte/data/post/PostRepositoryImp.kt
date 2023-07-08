@@ -81,6 +81,7 @@ class PostRepositoryImp @Inject constructor(
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(postRef)
                 val likeCount = snapshot.getLong(LIKES)!!
+                val likesArraysRef = transaction.get(postLikesRef).get(LIKES)
                 //contador de likes mayor a -1
                 if (likeCount >= 0){
                     //si no existe crealo
@@ -89,15 +90,20 @@ class PostRepositoryImp @Inject constructor(
                         transaction.update(postRef, LIKES, increment)
                         return@runTransaction
                     }
+
+                    val likesArrays: List<String> = likesArraysRef as List<String>
+
                     //si es un dislike ponlo
-                    if(!liked){
+                    if(!liked && likesArrays.contains(user)){
                         transaction.update(postRef, LIKES, decrement)
                         transaction.update(postLikesRef, LIKES, FieldValue.arrayRemove(user))
                         return@runTransaction
                     }
                     //si es un like ponlo
-                    transaction.update(postLikesRef, LIKES, FieldValue.arrayUnion(user))
-                    transaction.update(postRef, LIKES, increment)
+                    if (!likesArrays.contains(user)){
+                        transaction.update(postLikesRef, LIKES, FieldValue.arrayUnion(user))
+                        transaction.update(postRef, LIKES, increment)
+                    }
                 }
             }.addOnSuccessListener {
                 //TODO: EMIT Result when the transaccion is true
@@ -123,6 +129,7 @@ class PostRepositoryImp @Inject constructor(
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(postRef)
                 val bookmarksCount = snapshot.getLong(BOOKMARKS)!!
+                val bookmarkesArraysRef = transaction.get(postBookmarksRef).get(BOOKMARKS)
                 //contador de bookmark mayor a -1
                 if (bookmarksCount >= 0){
                     //si no existe crealo
@@ -131,15 +138,20 @@ class PostRepositoryImp @Inject constructor(
                         transaction.update(postRef, BOOKMARKS, increment)
                         return@runTransaction
                     }
+
+                    val bookmarksArray: List<String> = bookmarkesArraysRef as List<String>
+
                     //si es un dislike ponlo
-                    if(!bookmarked){
+                    if(!bookmarked && bookmarksArray.contains(user)){
                         transaction.update(postRef, BOOKMARKS, decrement)
                         transaction.update(postBookmarksRef, BOOKMARKS, FieldValue.arrayRemove(user))
                         return@runTransaction
                     }
                     //si es un like ponlo
-                    transaction.update(postBookmarksRef, BOOKMARKS, FieldValue.arrayUnion(user))
-                    transaction.update(postRef, BOOKMARKS, increment)
+                    if (!bookmarksArray.contains(user)){
+                        transaction.update(postBookmarksRef, BOOKMARKS, FieldValue.arrayUnion(user))
+                        transaction.update(postRef, BOOKMARKS, increment)
+                    }
                 }
             }.addOnSuccessListener {
                 //TODO: EMIT Result when the transaccion is true
@@ -166,10 +178,10 @@ class PostRepositoryImp @Inject constructor(
 
     override suspend fun getBookmark(postId: String): Resource<Boolean> {
         try {
-            val post = db.collection(Constants.POST_BOOKMARKS_COLLECTION).document(postId).get().await()
+            val post = db.collection(POST_BOOKMARKS_COLLECTION).document(postId).get().await()
             val user = firebaseAuth.currentUser!!.uid
             if (!post.exists()) return Resource.Success(false)
-            val bookmarkArray: List<String> = post.get(Constants.BOOKMARKS) as List<String>
+            val bookmarkArray: List<String> = post.get(BOOKMARKS) as List<String>
             return Resource.Success(bookmarkArray.contains(user))
         } catch (e: Exception) {
             return Resource.Failure(e)
