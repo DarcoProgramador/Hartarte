@@ -42,7 +42,7 @@ class UserViewModel @Inject constructor(
 
     fun processUser(event: UserEvent){
         when(event){
-            is UserEvent.UserEditClicked -> updateUsernameAndDescription(event.username, event.descipcion)
+            is UserEvent.UserEditClicked -> updateUsernameAndDescription(event.username, event.description)
 
             is UserEvent.UserEditPhotoClicked -> updateUserPhoto(event.photo)
 

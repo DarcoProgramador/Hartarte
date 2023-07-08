@@ -140,7 +140,6 @@ fun Post(
                     Row(
                         modifier = Modifier
                             .height(IntrinsicSize.Min)
-                            .width(IntrinsicSize.Min)
                             .clickable {
                                 /* TODO */
                             },
