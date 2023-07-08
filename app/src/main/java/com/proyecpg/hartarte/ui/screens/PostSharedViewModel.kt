@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.data.post.PostRepository
 import com.proyecpg.hartarte.ui.model.PostUI
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,58 +26,30 @@ class PostSharedViewModel @Inject constructor(
     private val _stateBookmarked = MutableStateFlow(hashMapOf<String, Boolean>())
     val stateBookmarked get() = _stateBookmarked.asStateFlow()
 
-    var statePost by mutableStateOf(PostUI())
+    var statePost by mutableStateOf(OpenPostArgs())
         private set
 
     fun onProcess(event : PostSharedEvent){
         when(event){
-            is PostSharedEvent.onLiked -> updateLiked(event.postId)
+            is PostSharedEvent.OnLiked -> updateLiked(event.postId, event.like)
 
-            is PostSharedEvent.onBookmarked -> updateBookmarked(event.postId)
+            is PostSharedEvent.OnBookmarked -> updateBookmarked(event.postId, event.bookmark)
         }
     }
 
-    private fun updateLiked(postId : String){
+    private fun updateLiked(postId : String, like : Boolean){
         viewModelScope.launch{
-            val result = postRepository.getLike(postId)
-
-            result.let {
-                when(val resource = it){
-                    is Resource.Success -> {
-                        _stateLiked.value[postId] = resource.result?:false
-                    }
-                    is Resource.Failure -> {
-                        /*TODO: mostrar error al obtener like*/
-                    }
-                    is Resource.Loading -> {
-                        /*TODO: Hacer algo mientras carga*/
-                    }
-                }
-            }
+            _stateLiked.value[postId] = like
         }
     }
 
-    private fun updateBookmarked(postId : String){
+    private fun updateBookmarked(postId : String, bookmark : Boolean){
         viewModelScope.launch{
-            val result = postRepository.getBookmark(postId)
-
-            result.let {
-                when(val resource = it){
-                    is Resource.Success -> {
-                        _stateBookmarked.value[postId] = resource.result?:false
-                    }
-                    is Resource.Failure -> {
-                        /*TODO: mostrar error al obtener like*/
-                    }
-                    is Resource.Loading -> {
-                        /*TODO: Hacer algo mientras carga*/
-                    }
-                }
-            }
+            stateBookmarked.value[postId] = bookmark
         }
     }
 
-    fun updatePost(postUI: PostUI){
+    fun updatePost(postUI: OpenPostArgs){
         viewModelScope.launch {
             statePost = postUI
         }

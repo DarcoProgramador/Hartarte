@@ -73,9 +73,7 @@ fun NavigationRoot(
                         viewModel = mainViewModel,
                         onLogoutClick = authViewModel::process,
                         onSearchClick = {
-                            navController.navigate(AppScreens.SearchScreen.route){
-
-                            }
+                            navController.navigate(AppScreens.SearchScreen.route)
                         },
                         onPostClick = {args ->
                             postSharedViewModel.updatePost(args)
@@ -105,23 +103,8 @@ fun NavigationRoot(
             SearchScreen(
                 viewModel = hiltViewModel(),
                 onPostClick = {args ->
-
-                    post = OpenPostArgs(
-                        postId = args.postId,
-                        postImages = args.postImages,
-                        postUsername = args.postUsername,
-                        postUserPic = args.postUserPic,
-                        postTitle = args.postTitle,
-                        postDescription = args.postDescription,
-                        postDate = args.postDate,
-                        isLiked = args.isLiked,
-                        isBookmarked = args.isBookmarked,
-                        likesCount = args.likesCount
-                    )
-
-                    navController.navigate(AppScreens.OpenPostScreen.route){
-                    }
-
+                    postSharedViewModel.updatePost(args)
+                    navController.navigate(AppScreens.OpenPostScreen.route)
                 },
                 onReturn = {
                     navController.popBackStack()
@@ -160,19 +143,8 @@ fun NavigationRoot(
             val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
             val statePost = postSharedViewModel.statePost
             OpenPostScreen(
-                postInfo = OpenPostArgs(
-                    postId = statePost.postId,
-                    postImages = statePost.images,
-                    postUsername = statePost.username,
-                    postUserPic = statePost.userPic,
-                    postTitle = statePost.title,
-                    postDescription = statePost.description,
-                    postDate = statePost.date,
-                    likesCount = statePost.likesCount,
-                    isLiked = stateLiked[statePost.postId]?:false,
-                    isBookmarked = stateBookmarked[statePost.postId]?:false
-                ),
-                username = statePost.username,
+                postInfo = statePost,
+                username = statePost.postUsername,
                 onReturn = {
                     navController.popBackStack()
                 },
@@ -180,11 +152,11 @@ fun NavigationRoot(
                 onPostUserClick = { /*TODO*/ },
                 onLike = { postId : String, like : Boolean ->
                     openPostViewModel.doLike(postId, like)
-                    postSharedViewModel.onProcess(PostSharedEvent.onLiked(postId))
+                    postSharedViewModel.onProcess(PostSharedEvent.OnLiked(postId, like))
                 },
                 onBookmark = { postId : String, bookmark : Boolean ->
                     openPostViewModel.doBookmark(postId, bookmark)
-                    postSharedViewModel.onProcess(PostSharedEvent.onBookmarked(postId))
+                    postSharedViewModel.onProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
                 },
                 onSendComment = {}
             )

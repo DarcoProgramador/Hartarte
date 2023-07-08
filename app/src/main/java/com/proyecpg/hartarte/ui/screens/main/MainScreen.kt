@@ -63,6 +63,7 @@ import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.bookmark.BookmarkScreen
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.user.UserEvent
 import com.proyecpg.hartarte.ui.screens.user.UserScreen
 import com.proyecpg.hartarte.ui.screens.user.UserState
@@ -78,7 +79,7 @@ fun MainScreen(
     onLogoutClick: (LoginEvent) -> Unit,
     onSearchClick: () -> Unit,
     onCreatePost: () -> Unit,
-    onPostClick: (PostUI) -> Unit,
+    onPostClick: (OpenPostArgs) -> Unit,
     onProcessUser: (UserEvent) -> Unit,
     onPostSharedProcess : (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,

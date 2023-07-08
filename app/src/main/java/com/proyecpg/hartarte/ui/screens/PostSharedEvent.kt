@@ -1,7 +1,7 @@
 package com.proyecpg.hartarte.ui.screens
 
 sealed class PostSharedEvent{
-    class onLiked(val postId : String) : PostSharedEvent()
+    class OnLiked(val postId : String, val like : Boolean) : PostSharedEvent()
 
-    class onBookmarked(val postId: String) : PostSharedEvent()
+    class OnBookmarked(val postId: String, val bookmark : Boolean) : PostSharedEvent()
 }

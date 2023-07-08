@@ -23,6 +23,7 @@ import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.PostUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalPagerApi::class)
@@ -30,7 +31,7 @@ import java.text.SimpleDateFormat
 fun HomeScreen(
     paddingValues: PaddingValues,
     viewModel: HomeViewModel,
-    onPostClick: (PostUI) -> Unit,
+    onPostClick: (OpenPostArgs) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>
@@ -50,7 +51,7 @@ fun HomeScreen(
 fun HomeScreenContent(
     innerPadding: PaddingValues,
     viewModel: HomeViewModel,
-    onPostClick: (PostUI) -> Unit,
+    onPostClick: (OpenPostArgs) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>
@@ -87,14 +88,12 @@ fun HomeScreenContent(
                         val title = it.titulo?:""
                         val description = it.descripcion?:""
                         val likeCount = it.likes?.toInt() ?: 0
-
+                        val liked = stateLiked[postId]?:it.liked?:false
+                        val bookmarked = stateBookmarked[postId]?:it.bookmarked?:false
 
                         it.createdAt?.let { dateFirebase ->
                             date = dateFormater.format(dateFirebase.toDate())
                         }
-
-                        onPostSharedProcess(PostSharedEvent.onLiked(postId))
-                        onPostSharedProcess(PostSharedEvent.onBookmarked(postId))
 
                         it.images?.let { it1 ->
                             Post(
@@ -104,27 +103,29 @@ fun HomeScreenContent(
                                 userPic = userPic,
                                 title = title,
                                 description = description,
-                                isLiked = stateLiked[postId]?:false,
-                                isBookmarked = stateBookmarked[postId]?:false,
+                                isLiked = liked,
+                                isBookmarked = bookmarked,
                                 likesCount = likeCount,
                                 onLike = { postId : String, like : Boolean ->
                                     viewModel.doLike(postId, like)
-                                    onPostSharedProcess(PostSharedEvent.onLiked(postId))
+                                    onPostSharedProcess(PostSharedEvent.OnLiked(postId, like))
                                 },
                                 onBookmark ={ postId : String, bookmark : Boolean ->
                                     viewModel.doBookmark(postId, bookmark)
-                                    onPostSharedProcess(PostSharedEvent.onBookmarked(postId))
+                                    onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
                                 } ,
                                 onPostClick = {
-                                    onPostClick(PostUI(
+                                    onPostClick(OpenPostArgs(
                                         postId = postId,
-                                        images = it1.toList(),
-                                        username = username,
-                                        userPic = userPic,
-                                        title = title,
-                                        description = description,
-                                        date = date,
-                                        likesCount = likeCount
+                                        postImages = it1.toList(),
+                                        postUsername = username,
+                                        postUserPic = userPic,
+                                        postTitle = title,
+                                        postDescription = description,
+                                        postDate = date,
+                                        likesCount = likeCount,
+                                        isBookmarked = bookmarked,
+                                        isLiked = liked
                                         )
                                     )
                                 }
