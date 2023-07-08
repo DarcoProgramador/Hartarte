@@ -10,7 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.proyecpg.hartarte.ui.model.PostUI
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.PostSharedViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
@@ -82,9 +81,7 @@ fun NavigationRoot(
                             navController.navigate(AppScreens.OpenPostScreen.route)
                         },
                         onProcessUser = userViewModel::processUser,
-                        onPostSharedProcess = {
-
-                        },
+                        onPostSharedProcess = postSharedViewModel::onProcess,
                         userState = userState,
                         userEditState = userEditState,
                         stateLiked = stateLiked,

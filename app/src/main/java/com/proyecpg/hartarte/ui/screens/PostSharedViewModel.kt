@@ -26,6 +26,13 @@ class PostSharedViewModel @Inject constructor(
     var statePost by mutableStateOf(PostUI())
         private set
 
+    fun onProcess(event : PostSharedEvent){
+        when(event){
+            is PostSharedEvent.onLiked -> updateLiked(event.postId, event.liked)
+
+            is PostSharedEvent.onBookmarked -> updateBookmarked(event.postId, event.bookmarked)
+        }
+    }
 
     fun updateLiked(postId : String, isLiked : Boolean){
         viewModelScope.launch{
