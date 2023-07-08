@@ -21,7 +21,6 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
-import com.proyecpg.hartarte.ui.model.PostUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import java.text.SimpleDateFormat

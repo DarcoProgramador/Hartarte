@@ -6,9 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.data.post.PostRepository
-import com.proyecpg.hartarte.ui.model.PostUI
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
-import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
