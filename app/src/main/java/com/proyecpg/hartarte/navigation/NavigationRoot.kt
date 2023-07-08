@@ -168,14 +168,21 @@ fun NavigationRoot(
             )
         }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5751c93 (Navegar para abrir fotos)
         composable(AppScreens.OpenPostImageScreen.route.plus("/{images}"),
             arguments = listOf(navArgument("images"){type = NavType.StringArrayType})){ backStackEntry ->
             val images = backStackEntry.arguments?.getStringArray("images")
 
+<<<<<<< HEAD
             for (i in images?.indices!!) {
                 Log.e(TAG, images?.get(i).toString())
             }
 
+=======
+>>>>>>> 5751c93 (Navegar para abrir fotos)
             OpenPostImageScreen(imagen = images?.toList() ?: emptyList())
         }
     }
