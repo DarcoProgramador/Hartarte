@@ -1,6 +1,5 @@
 package com.proyecpg.hartarte.ui.screens.post.open
 
-import android.nfc.Tag
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
