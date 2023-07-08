@@ -6,16 +6,18 @@ plugins {
     //Dagger - Hilt
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
+
 }
 
 android {
     namespace 'com.proyecpg.hartarte'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.proyecpg.hartarte"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -145,6 +147,17 @@ dependencies {
 
     //Accompanist
     implementation "com.google.accompanist:accompanist-swiperefresh:0.30.1"
+
+    //ALgolia search dependency
+    implementation 'com.algolia:instantsearch-compose:3.+'
+    implementation 'com.algolia:instantsearch-android-paging3:3.+'
+
+    //Android architecture components
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.+'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.+'
+    implementation 'androidx.compose.material:material-icons-extended:1.+'
+
+
 
 }
 

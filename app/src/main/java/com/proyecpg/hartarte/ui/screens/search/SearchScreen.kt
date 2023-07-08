@@ -15,7 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowUpward
@@ -32,20 +36,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.algolia.instantsearch.android.paging3.Paginator
+import com.algolia.instantsearch.android.paging3.flow
+import com.algolia.instantsearch.compose.searchbox.SearchBoxState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.ui.components.ErrorItem
@@ -54,6 +65,7 @@ import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import com.proyecpg.hartarte.utils.QueryParams
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 @Composable
@@ -257,8 +269,13 @@ fun TopBar(
 @Composable
 fun SearchBar(
     viewModel: SearchViewModel,
-    isOpened: Boolean
+    isOpened: Boolean,
 ) {
+
+    val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
+
+
     var isChecked by remember{ mutableStateOf("") }
 
     val icons = listOf(
@@ -322,8 +339,82 @@ fun PreviewSearchBar(){
         Box(modifier = Modifier.padding(all = 10.dp)){
             SearchBar(
                 viewModel = hiltViewModel(),
-                isOpened = true
+                isOpened = true,
             )
         }
     }
 }
+@Composable
+fun ProductsList(
+    modifier: Modifier = Modifier,
+    pagingHits: LazyPagingItems<SearchProduct>,
+    listState: LazyListState
+) {
+    LazyColumn(modifier, listState) {
+        items(pagingHits) { item ->
+            if (item == null) return@items
+            Text(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
+                text = item.titulo,
+            )
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .width(1.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun SearchBox(
+    modifier: Modifier = Modifier,
+    searchBoxState: SearchBoxState = SearchBoxState(),
+    onValueChange: (String) -> Unit = {}
+) {
+    TextField(
+        modifier = modifier,
+        // set query as text value
+        value = searchBoxState.query,
+        // update text on value change
+        onValueChange = {
+            searchBoxState.setText(it)
+            onValueChange(it)
+        },
+        // set ime action to "search"
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        // set text as query submit on search action
+        keyboardActions = KeyboardActions(
+            onSearch = { searchBoxState.setText(searchBoxState.query, true)}
+        )
+    )
+}
+
+@Composable
+fun Search(
+    modifier: Modifier = Modifier,
+    searchBoxState: SearchBoxState,
+    paginator: Paginator<SearchProduct>
+) {
+    val scope = rememberCoroutineScope()
+    val pagingHits = paginator.flow.collectAsLazyPagingItems()
+    val listState = rememberLazyListState()
+
+    Column(modifier) {
+        SearchBox(
+            modifier = Modifier
+                .weight(1f)
+                .padding(top = 12.dp, start = 12.dp),
+            searchBoxState = searchBoxState,
+            onValueChange = { scope.launch { listState.scrollToItem(0) } },
+        )
+        ProductsList(
+            modifier = Modifier.fillMaxSize(),
+            pagingHits = pagingHits,
+            listState = listState,
+        )
+    }
+}
+
