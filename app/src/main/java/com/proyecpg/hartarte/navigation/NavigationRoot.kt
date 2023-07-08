@@ -17,7 +17,6 @@ import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
-import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
@@ -43,18 +42,6 @@ fun NavigationRoot(
             authViewModel = authViewModel
         )
 
-        var post = OpenPostArgs(
-            "",
-            emptyList(),
-            "",
-            "",
-            "",
-            "",
-            "",
-            isLiked = false,
-            isBookmarked = false,
-            likesCount = 0
-        )
 
         composable(Graph.MAIN){
             state.let {
@@ -100,6 +87,8 @@ fun NavigationRoot(
         }
 
         composable(AppScreens.SearchScreen.route){
+            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
             SearchScreen(
                 viewModel = hiltViewModel(),
                 onPostClick = {args ->
@@ -108,7 +97,10 @@ fun NavigationRoot(
                 },
                 onReturn = {
                     navController.popBackStack()
-                }
+                },
+                onPostSharedProcess = postSharedViewModel::onProcess,
+                stateLiked = stateLiked,
+                stateBookmarked = stateBookmarked
             )
         }
 
@@ -139,8 +131,6 @@ fun NavigationRoot(
         {
 
             val openPostViewModel = hiltViewModel<OpenPostViewModel>()
-            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
-            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
             val statePost = postSharedViewModel.statePost
             OpenPostScreen(
                 postInfo = statePost,

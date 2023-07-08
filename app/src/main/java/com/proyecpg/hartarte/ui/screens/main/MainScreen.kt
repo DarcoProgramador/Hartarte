@@ -57,7 +57,6 @@ import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.ui.Event
 import com.proyecpg.hartarte.ui.UiState
 import com.proyecpg.hartarte.ui.components.SideBar
-import com.proyecpg.hartarte.ui.model.PostUI
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.bookmark.BookmarkScreen
@@ -157,11 +156,18 @@ fun MainScreen(
                 when(selectedNavigationIndex){
                     0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick,
                     onPostSharedProcess = onPostSharedProcess, stateLiked = stateLiked, stateBookmarked = stateBookmarked)
-                    1 -> BookmarkScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = {  })
+                    1 -> BookmarkScreen(paddingValues = innerPadding, viewModel = hiltViewModel(),
+                        onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess,
+                        stateLiked = stateLiked,
+                        stateBookmarked = stateBookmarked
+                    )
                     2 -> UserScreen(
                         paddingValues = innerPadding, onProcessUSer = onProcessUser,
                         userState = userState, userEditState = userEditState,
-                        onPostClick = { }, postUser = postUser
+                        onPostClick = onPostClick, postUser = postUser,
+                        onPostSharedProcess = onPostSharedProcess,
+                        stateLiked = stateLiked,
+                        stateBookmarked = stateBookmarked
                     )
                 }
             }

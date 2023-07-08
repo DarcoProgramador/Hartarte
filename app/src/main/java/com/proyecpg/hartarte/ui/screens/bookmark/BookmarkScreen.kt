@@ -22,6 +22,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
+import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import java.text.SimpleDateFormat
@@ -31,9 +32,16 @@ import java.text.SimpleDateFormat
 fun BookmarkScreen(
     paddingValues: PaddingValues,
     viewModel: BookmarkViewModel,
-    onPostClick: (OpenPostArgs) -> Unit
+    onPostClick: (OpenPostArgs) -> Unit,
+    onPostSharedProcess: (PostSharedEvent) -> Unit,
+    stateLiked : HashMap<String, Boolean>,
+    stateBookmarked : HashMap<String, Boolean>
 ){
-    BookmarkScreenContent(paddingValues, viewModel, onPostClick)
+    BookmarkScreenContent(innerPadding = paddingValues, viewModel = viewModel,
+        onPostClick = onPostClick,
+        onPostSharedProcess = onPostSharedProcess,
+        stateLiked = stateLiked, stateBookmarked = stateBookmarked
+    )
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -41,7 +49,10 @@ fun BookmarkScreen(
 fun BookmarkScreenContent(
     innerPadding: PaddingValues,
     viewModel: BookmarkViewModel,
-    onPostClick: (OpenPostArgs) -> Unit
+    onPostClick: (OpenPostArgs) -> Unit,
+    onPostSharedProcess: (PostSharedEvent) -> Unit,
+    stateLiked : HashMap<String, Boolean>,
+    stateBookmarked : HashMap<String, Boolean>
 ) {
     val postBookmarkState = viewModel.postBookmarkState.collectAsStateWithLifecycle()
 
@@ -74,8 +85,14 @@ fun BookmarkScreenContent(
                 items(items = pagingPosts){ post ->
                     post?.let{
                         val postId = it.postId?:""
-                        val liked = it.liked?:false
                         var date = "10 de mayo del 2023, 10:23:11"
+                        val username = it.user?.name ?: ""
+                        val userPic =  it.user?.photo ?: ""
+                        val title = it.titulo?:""
+                        val description = it.descripcion?:""
+                        val likeCount = it.likes?.toInt() ?: 0
+                        val liked = stateLiked[postId]?:it.liked?:false
+                        val bookmarked = stateBookmarked[postId]?:it.bookmarked?:false
                         it.createdAt?.let { dateFirebase ->
                             date = dateFormater.format(dateFirebase.toDate())
                         }
@@ -84,30 +101,35 @@ fun BookmarkScreenContent(
                             Post(
                                 postId = postId,
                                 images = it1.toList(),
-                                username = it.user?.name ?: "",
-                                userPic = it.user?.photo ?: "",
-                                title = it.titulo?:"",
-                                description = it.descripcion?:"",
+                                username = username,
+                                userPic = userPic,
+                                title = title,
+                                description = description,
                                 isLiked = liked,
-                                isBookmarked = it.bookmarked?:false,
-                                likesCount = it.likes?.toInt() ?: 0,
-                                onLike = viewModel::doLike,
-                                onBookmark = viewModel::doBookmark,
+                                isBookmarked = bookmarked,
+                                likesCount = likeCount,
+                                onLike = { postId : String, like : Boolean ->
+                                    viewModel.doLike(postId, like)
+                                    onPostSharedProcess(PostSharedEvent.OnLiked(postId, like))
+                                },
+                                onBookmark = { postId : String, bookmark : Boolean ->
+                                    viewModel.doBookmark(postId, bookmark)
+                                    onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
+                                },
                                 onPostClick = {
-                                    val params = OpenPostArgs(
-                                        postId,
-                                        it1.toList(),
-                                        it.user?.name ?: "",
-                                        it.user?.photo ?: "",
-                                        it.titulo?: "",
-                                        it.descripcion?:"",
-                                        date,
-                                        liked,
-                                        it.bookmarked?:false,
-                                        it.likes?.toInt() ?: 0
+                                    onPostClick(OpenPostArgs(
+                                        postId = postId,
+                                        postImages = it1.toList(),
+                                        postUsername = username,
+                                        postUserPic = userPic,
+                                        postTitle = title,
+                                        postDescription = description,
+                                        postDate = date,
+                                        likesCount = likeCount,
+                                        isBookmarked = bookmarked,
+                                        isLiked = liked
                                     )
-
-                                    onPostClick(params)
+                                    )
                                 }
                             )
                         }
@@ -157,7 +179,10 @@ fun PreviewBookmarkScreen(){
             BookmarkScreen(
                 paddingValues = PaddingValues(),
                 viewModel = hiltViewModel(),
-                onPostClick = {}
+                onPostClick = {},
+                onPostSharedProcess = {},
+                stateLiked = hashMapOf(),
+                stateBookmarked = hashMapOf()
             )
         }
     }
