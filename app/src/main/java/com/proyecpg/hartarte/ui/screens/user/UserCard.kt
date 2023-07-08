@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -140,7 +141,7 @@ fun UserCard(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                if(lazyListState.isScrolled){
+                if(lazyListState.isScrolled && !isEditEnabled){
                     Button(
                         onClick = {
                             isEditEnabled = !isEditEnabled
@@ -150,13 +151,13 @@ fun UserCard(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
-                            imageVector = if(isEditEnabled) Icons.Default.Close else Icons.Default.Edit,
+                            imageVector = Icons.Default.Edit,
                             contentDescription = "Edit icon"
                         )
 
                         Spacer(modifier = Modifier.width(5.dp))
 
-                        Text(text = if(isEditEnabled) "Cerrar" else "Editar" )
+                        Text(text = "Editar" )
                     }
                 }
             }
@@ -193,7 +194,7 @@ fun UserCard(
             }
         }
 
-        if(!lazyListState.isScrolled){
+        if(!lazyListState.isScrolled && !isEditEnabled){
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -210,13 +211,13 @@ fun UserCard(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(
-                        imageVector = if(isEditEnabled) Icons.Default.Close else Icons.Default.Edit,
+                        imageVector = Icons.Default.Edit,
                         contentDescription = "Edit icon"
                     )
 
                     Spacer(modifier = Modifier.width(5.dp))
 
-                    Text(text = if(isEditEnabled) "Cerrar" else "Editar" )
+                    Text(text = "Editar" )
                 }
             }
         }
@@ -263,27 +264,6 @@ fun customTextInputField(
                     text = "Escribe un nombre..."
                 )
             },
-            trailingIcon = {
-                if (userEditText.isNotEmpty()){
-                    IconButton(
-                        onClick = {
-                            focusManager.clearFocus()
-                            keyboardController?.hide()
-                            onSendDescription(UserEvent.UserEditClicked(
-                                username = userEditText,
-                                description = description
-                            ))
-                            editEnabled = !editEnabled
-                        }
-                    ){
-                        Icon(
-                            imageVector = Icons.Default.Send,
-                            contentDescription = "Send username",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-                }
-            },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
@@ -322,27 +302,6 @@ fun customTextInputField(
                     text = "Escribe una descripción..."
                 )
             },
-            trailingIcon = {
-                if (descriptionEditText.isNotEmpty()){
-                    IconButton(
-                        onClick = {
-                            focusManager.clearFocus()
-                            keyboardController?.hide()
-                            onSendDescription(UserEvent.UserEditClicked(
-                                username = username,
-                                description = descriptionEditText
-                            ))
-                            editEnabled = !editEnabled
-                        }
-                    ){
-                        Icon(
-                            imageVector = Icons.Default.Send,
-                            contentDescription = "Send description",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-                }
-            },
             supportingText = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -364,6 +323,53 @@ fun customTextInputField(
             ),
             maxLines = 3
         )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            Button(
+                onClick = {
+                    editEnabled = !editEnabled
+                },
+                modifier = Modifier
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close icon"
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(text = "Cerrar")
+            }
+
+            Button(
+                onClick = {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                    onSendDescription(UserEvent.UserEditClicked(
+                        username = userEditText,
+                        description = descriptionEditText
+                    ))
+                    editEnabled = !editEnabled
+                },
+                modifier = Modifier
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Send icon"
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(text = "Enviar" )
+            }
+        }
     }
 
     return Triple(userEditText, descriptionEditText, editEnabled)
