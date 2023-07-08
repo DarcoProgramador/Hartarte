@@ -1,5 +1,7 @@
 package com.proyecpg.hartarte.ui.screens.post.open
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -112,6 +115,7 @@ fun OpenPostScreen(
         )
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -191,7 +195,11 @@ fun openPostScreenContent(
                     state = pagerState,
                     verticalAlignment = Alignment.CenterVertically
                 ) { page ->
-
+                    val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffset
+                    val imageSize by animateFloatAsState(
+                        targetValue = if ( pageOffset != 0.0f) 0.75f else 1f,
+                        animationSpec = tween(durationMillis = 300)
+                    )
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(postImages[page])
@@ -201,7 +209,14 @@ fun openPostScreenContent(
                             .scale(Scale.FILL)
                             .build(),
                         contentDescription = "Carousel image",
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(5.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .graphicsLayer {
+                                scaleX = imageSize
+                                scaleY = imageSize
+                            },
                         contentScale = ContentScale.Crop
                     )
                 }

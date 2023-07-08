@@ -179,4 +179,5 @@ sealed class AppScreens(val route: String){
     object SearchScreen: AppScreens("search_screen")
     object CreatePostScreen: AppScreens("create_post_screen")
     object OpenPostScreen: AppScreens("open_post_screen")
+    object OpenPostImageScreen: AppScreens("open_post_image_screen")
 }
