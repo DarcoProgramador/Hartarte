@@ -22,7 +22,7 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,6 +51,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
+import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import com.proyecpg.hartarte.utils.QueryParams
@@ -62,7 +63,7 @@ fun SearchScreen(
     onPostClick: (OpenPostArgs) -> Unit,
     onReturn: () -> Unit
 ){
-    var isSearchOpened by remember{ mutableStateOf(true) }
+    var isSearchOpened by remember{ mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier
@@ -77,9 +78,13 @@ fun SearchScreen(
                     onReturn = onReturn
                 )
 
-                SearchBar(viewModel, isSearchOpened)
+                SearchBar()
 
                 Spacer(modifier = Modifier.size(5.dp))
+
+                SearchFilters(viewModel, isSearchOpened)
+
+
 
                 Divider(
                     color = MaterialTheme.colorScheme.outlineVariant,
@@ -243,8 +248,8 @@ fun TopBar(
                 }
                 else {
                     Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search icon",
+                        imageVector = Icons.Default.FilterAlt,
+                        contentDescription = "Filters icon",
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -255,7 +260,7 @@ fun TopBar(
 
 
 @Composable
-fun SearchBar(
+fun SearchFilters(
     viewModel: SearchViewModel,
     isOpened: Boolean
 ) {
@@ -317,10 +322,10 @@ fun SearchBar(
 
 @Preview
 @Composable
-fun PreviewSearchBar(){
+fun PreviewSearchFilters(){
     HartarteTheme {
         Box(modifier = Modifier.padding(all = 10.dp)){
-            SearchBar(
+            SearchFilters(
                 viewModel = hiltViewModel(),
                 isOpened = true
             )

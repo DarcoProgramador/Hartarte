@@ -18,13 +18,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -65,15 +66,18 @@ import kotlinx.coroutines.launch
 @Composable
 fun UserCard(
     userImage: String?,
-    username: String,
+    username: String?,
     userDescription: String?,
     userEditState: UserState,
     lazyListState: LazyListState,
     onSendDescription: (UserEvent) -> Unit
 ){
+    var name by rememberSaveable(key = "name") { mutableStateOf(username?:"Usuario") }
+    var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"¡Hola, soy un nuevo usuario!") }
+    var isEditEnabled by rememberSaveable(key = "edit") { mutableStateOf(false) }
+
     val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 230.dp else 170.dp)
     val scope = rememberCoroutineScope()
-
     var selectedImageUri : Uri? by rememberSaveable(key = "photo_edit") { mutableStateOf(null) }
 
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
@@ -84,9 +88,6 @@ fun UserCard(
             onSendDescription(UserEvent.UserEditPhotoClicked(selectedImageUri!!))
         }
     }
-
-    var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"¡Hola, soy un nuevo usuario!") }
-    var isEditEnabled by rememberSaveable(key = "edit") { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -116,7 +117,7 @@ fun UserCard(
                     .size(animatedSize)
                     .clip(RoundedCornerShape(16.dp))
                     .clickable {
-                        if (isEditEnabled){
+                        if (isEditEnabled) {
                             multiplePhotoPickerLauncher.launch(
                                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                             )
@@ -131,7 +132,7 @@ fun UserCard(
                 verticalArrangement = Arrangement.Center
             ){
                 Text(
-                    text = username,
+                    text = username?:"Usuario",
                     fontWeight = FontWeight.Bold,
                     fontSize = 19.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -140,7 +141,7 @@ fun UserCard(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                if(lazyListState.isScrolled){
+                if(lazyListState.isScrolled && !isEditEnabled){
                     Button(
                         onClick = {
                             isEditEnabled = !isEditEnabled
@@ -150,13 +151,13 @@ fun UserCard(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
-                            imageVector = if(isEditEnabled) Icons.Default.Close else Icons.Default.Edit,
+                            imageVector = Icons.Default.Edit,
                             contentDescription = "Edit icon"
                         )
 
                         Spacer(modifier = Modifier.width(5.dp))
 
-                        Text(text = if(isEditEnabled) "Cerrar" else "Editar" )
+                        Text(text = "Editar" )
                     }
                 }
             }
@@ -171,13 +172,16 @@ fun UserCard(
                 horizontalArrangement = Arrangement.Center
             ) {
                 if(isEditEnabled){
-                    val descInfo: Pair<String, Boolean> = customTextInputField(
+
+                    val descInfo: Triple<String, String, Boolean> = customTextInputField(
+                        username = name,
                         description = description,
-                        onSendDescription = onSendDescription,
-                        username = username
+                        onSendDescription = onSendDescription
                     )
-                    description = descInfo.first
-                    isEditEnabled = descInfo.second
+                    name = descInfo.first
+                    description = descInfo.second
+                    isEditEnabled = descInfo.third
+
                     onSendDescription(UserEvent.UserOnLoadUser)
                 }
                 else{
@@ -190,7 +194,7 @@ fun UserCard(
             }
         }
 
-        if(!lazyListState.isScrolled){
+        if(!lazyListState.isScrolled && !isEditEnabled){
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -207,13 +211,13 @@ fun UserCard(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(
-                        imageVector = if(isEditEnabled) Icons.Default.Close else Icons.Default.Edit,
+                        imageVector = Icons.Default.Edit,
                         contentDescription = "Edit icon"
                     )
 
                     Spacer(modifier = Modifier.width(5.dp))
 
-                    Text(text = if(isEditEnabled) "Cerrar" else "Editar" )
+                    Text(text = "Editar" )
                 }
             }
         }
@@ -223,85 +227,152 @@ fun UserCard(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun customTextInputField(
-    description: String?,
     username: String,
+    description: String,
     onSendDescription: (UserEvent) -> Unit
-): Pair<String, Boolean> {
+): Triple<String, String, Boolean> {
 
-    var desciptionEditText by remember { (mutableStateOf(description?:"")) }
+    var userEditText by remember { mutableStateOf(username) }
+    var descriptionEditText by remember { (mutableStateOf(description)) }
     var editEnabled by remember { mutableStateOf(true) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(112.dp),
-        shape = RoundedCornerShape(5.dp),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
-        value = desciptionEditText,
-        onValueChange = {
-            if (it.length <= 250){
-                desciptionEditText = it
-            }
-        },
-        textStyle = TextStyle(
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontSize = 16.sp
-        ),
-        placeholder = {
-            Text(
-                text = "Escribe una descipción..."
-            )
-        },
-        trailingIcon = {
-            if (desciptionEditText.isNotEmpty()){
-                IconButton(
-                    onClick = {
-                        focusManager.clearFocus()
-                        keyboardController?.hide()
-                        onSendDescription(UserEvent.UserEditClicked(
-                            descipcion = desciptionEditText,
-                            username = username
-                        ))
-                        editEnabled = !editEnabled
-                    }
-                ){
-                    Icon(
-                        imageVector = Icons.Default.Send,
-                        contentDescription = "Send description",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+    Column {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(5.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            ),
+            value = userEditText,
+            onValueChange = {
+                if (it.length <= 35){
+                    userEditText = it
+                }
+            },
+            textStyle = TextStyle(
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontSize = 16.sp
+            ),
+            placeholder = {
+                Text(
+                    text = "Escribe un nombre..."
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
+            ),
+            maxLines = 1
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(112.dp),
+            shape = RoundedCornerShape(5.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            ),
+            value = descriptionEditText,
+            onValueChange = {
+                if (it.length <= 250){
+                    descriptionEditText = it
+                }
+            },
+            textStyle = TextStyle(
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontSize = 16.sp
+            ),
+            placeholder = {
+                Text(
+                    text = "Escribe una descripción..."
+                )
+            },
+            supportingText = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = descriptionEditText.length.toString() + "/250"
                     )
                 }
-            }
-        },
-        supportingText = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text(
-                    text = desciptionEditText.length.toString() + "/250"
-                )
-            }
-        },
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                focusManager.clearFocus()
-                keyboardController?.hide()
-            }
-        ),
-        maxLines = 3
-    )
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                }
+            ),
+            maxLines = 3
+        )
 
-    return Pair(desciptionEditText, editEnabled)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            Button(
+                onClick = {
+                    editEnabled = !editEnabled
+                },
+                modifier = Modifier
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close icon"
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(text = "Cerrar")
+            }
+
+            Button(
+                onClick = {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                    onSendDescription(UserEvent.UserEditClicked(
+                        username = userEditText,
+                        description = descriptionEditText
+                    ))
+                    editEnabled = !editEnabled
+                },
+                modifier = Modifier
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Send icon"
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(text = "Enviar" )
+            }
+        }
+    }
+
+    return Triple(userEditText, descriptionEditText, editEnabled)
 }
 
 @Preview

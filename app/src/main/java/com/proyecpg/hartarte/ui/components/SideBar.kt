@@ -45,7 +45,7 @@ import com.proyecpg.hartarte.ui.screens.login.LoginEvent
 
 @Composable
 fun SideBar(
-    username: String,
+    username: String?,
     imageURL: String?,
     onUserCardClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
@@ -87,7 +87,7 @@ fun SideBar(
                 Spacer(Modifier.width(12.dp))
 
                 Text(
-                    text = username,
+                    text = username?:"Usuario",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )

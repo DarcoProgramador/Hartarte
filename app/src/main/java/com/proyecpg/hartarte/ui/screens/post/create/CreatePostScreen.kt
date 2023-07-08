@@ -34,6 +34,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -92,6 +94,7 @@ fun CreatePostScreen(
             .padding(top = 12.dp),
         topBar = {
             CreatePostTopAppBar(
+                !state.isLoading,
                 onClick = onReturn
             )
         },
@@ -129,6 +132,7 @@ fun CreatePostScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePostTopAppBar(
+    isEnabled: Boolean,
     onClick: () -> Unit
 ){
     CenterAlignedTopAppBar(
@@ -140,12 +144,16 @@ fun CreatePostTopAppBar(
         },
         navigationIcon = {
             IconButton(
-                onClick = onClick
+                onClick = onClick,
+                enabled = isEnabled,
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    disabledContentColor = MaterialTheme.colorScheme.outlineVariant
+                )
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Return icon",
-                    tint = MaterialTheme.colorScheme.primary
+                    contentDescription = "Return icon"
                 )
             }
         }
@@ -273,7 +281,7 @@ fun createPostScreenContent(
             Spacer(modifier = Modifier.height(15.dp))
 
             title = customTextInputField(
-                placeholder = "Descipción de la publicación",
+                placeholder = "Escribe un título",
                 height = 56,
                 maxLength = 50,
                 maxLines = 1,
@@ -284,7 +292,7 @@ fun createPostScreenContent(
             Spacer(modifier = Modifier.height(15.dp))
 
             description = customTextInputField(
-                placeholder = "Descipción de la publicación",
+                placeholder = "Escribe una descripción divertida o una receta",
                 height = 280,
                 maxLength = 2000,
                 maxLines = null,
@@ -292,7 +300,7 @@ fun createPostScreenContent(
                 isLastTextField = true
             )
 
-            Spacer(modifier = Modifier.height(125.dp))
+            Spacer(modifier = Modifier.height(135.dp))
         }
     }
 
