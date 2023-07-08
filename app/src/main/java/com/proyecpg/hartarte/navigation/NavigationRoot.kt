@@ -89,8 +89,7 @@ fun NavigationRoot(
                                 likesCount = args.likesCount
                             )
 
-                            navController.navigate(AppScreens.OpenPostScreen.route){
-                            }
+                            navController.navigate(AppScreens.OpenPostScreen.route)
                         },
                         onProcessUser = userViewModel::processUser,
                         userState = userState,
