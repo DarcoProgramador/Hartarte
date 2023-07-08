@@ -19,6 +19,7 @@ import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostImageScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
@@ -161,6 +162,14 @@ fun NavigationRoot(
                     openPostViewModel.addComment(postId, comment)
                 }
             )
+        }
+
+
+        composable(AppScreens.OpenPostImageScreen.route.plus("/{images}"),
+            arguments = listOf(navArgument("images"){type = NavType.StringArrayType})){ backStackEntry ->
+            val images = backStackEntry.arguments?.getStringArray("images")
+
+            OpenPostImageScreen(imagen = images?.toList() ?: emptyList())
         }
     }
 }

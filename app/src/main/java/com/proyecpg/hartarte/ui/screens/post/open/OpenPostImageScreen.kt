@@ -31,7 +31,7 @@ import com.proyecpg.hartarte.R
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun OpenPostImageScreen(
-    imagen: String
+    imagen: List<String>
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -39,7 +39,7 @@ fun OpenPostImageScreen(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                //.data(postImages[page])
+                .data(imagen)
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder)
                 .crossfade(true)
