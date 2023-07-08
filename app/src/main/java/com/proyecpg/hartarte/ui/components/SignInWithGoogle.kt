@@ -10,15 +10,13 @@ import com.proyecpg.hartarte.utils.Resource
 
 @Composable
 fun SignInWithGoogle(
-    viewModel: AuthViewModel = hiltViewModel(),
-    navigateToHomeScreen: (signedIn: Boolean) -> Unit
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     when(val signInWithGoogleResponse = viewModel.signInWithGoogleResponse) {
         is Resource.Loading -> {/*TODO: Hacer cargar el boton de google*/}
         is Resource.Success -> signInWithGoogleResponse.result?.let { signedIn ->
             LaunchedEffect(signedIn) {
-                viewModel.isLogged()
-                navigateToHomeScreen(true)
+                viewModel.updateLoginSuccessful()
             }
         }
         is Resource.Failure -> LaunchedEffect(Unit) {

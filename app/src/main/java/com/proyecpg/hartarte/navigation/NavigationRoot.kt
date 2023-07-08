@@ -11,11 +11,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
+import com.proyecpg.hartarte.ui.screens.PostSharedEvent
+import com.proyecpg.hartarte.ui.screens.PostSharedViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
-import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
@@ -28,6 +29,9 @@ fun NavigationRoot(
     authViewModel: AuthViewModel,
     mainViewModel: MainViewModel
 ) {
+    val state by authViewModel.logged.collectAsStateWithLifecycle()
+    val postSharedViewModel : PostSharedViewModel = hiltViewModel()
+
     NavHost(
     navController = navController,
     route = Graph.ROOT,
@@ -38,26 +42,15 @@ fun NavigationRoot(
             authViewModel = authViewModel
         )
 
-        var post = OpenPostArgs(
-            "",
-            emptyList(),
-            "",
-            "",
-            "",
-            "",
-            "",
-            isLiked = false,
-            isBookmarked = false,
-            likesCount = 0
-        )
 
         composable(Graph.MAIN){
-            val state by authViewModel.logged.collectAsStateWithLifecycle()
             state.let {
                 if (it){
                     val userViewModel = hiltViewModel<UserViewModel>()
                     val userState by userViewModel.userState.collectAsStateWithLifecycle()
                     val userEditState by userViewModel.editUserState.collectAsStateWithLifecycle()
+                    val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+                    val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
 
                     MainScreen(
                         onCreatePost = {
@@ -67,35 +60,22 @@ fun NavigationRoot(
                         viewModel = mainViewModel,
                         onLogoutClick = authViewModel::process,
                         onSearchClick = {
-                            navController.navigate(AppScreens.SearchScreen.route){
-
-                            }
+                            navController.navigate(AppScreens.SearchScreen.route)
                         },
                         onPostClick = {args ->
-
-                            post = OpenPostArgs(
-                                postId = args.postId,
-                                postImages = args.postImages,
-                                postUsername = args.postUsername,
-                                postUserPic = args.postUserPic,
-                                postTitle = args.postTitle,
-                                postDescription = args.postDescription,
-                                postDate = args.postDate,
-                                isLiked = args.isLiked,
-                                isBookmarked = args.isBookmarked,
-                                likesCount = args.likesCount
-                            )
-
-                            navController.navigate(AppScreens.OpenPostScreen.route){
-                            }
+                            postSharedViewModel.updatePost(args)
+                            navController.navigate(AppScreens.OpenPostScreen.route)
                         },
                         onProcessUser = userViewModel::processUser,
+                        onPostSharedProcess = postSharedViewModel::onProcess,
                         userState = userState,
                         userEditState = userEditState,
+                        stateLiked = stateLiked,
+                        stateBookmarked = stateBookmarked,
                         postUser = userViewModel.postsUser
                     )
                 }else{
-                    LaunchedEffect(false) {
+                    LaunchedEffect(Unit) {
                         navController.navigate(Graph.AUTHENTICATION){
                             popUpTo(Graph.MAIN){
                                 inclusive = true
@@ -107,30 +87,20 @@ fun NavigationRoot(
         }
 
         composable(AppScreens.SearchScreen.route){
+            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
             SearchScreen(
                 viewModel = hiltViewModel(),
                 onPostClick = {args ->
-
-                    post = OpenPostArgs(
-                        postId = args.postId,
-                        postImages = args.postImages,
-                        postUsername = args.postUsername,
-                        postUserPic = args.postUserPic,
-                        postTitle = args.postTitle,
-                        postDescription = args.postDescription,
-                        postDate = args.postDate,
-                        isLiked = args.isLiked,
-                        isBookmarked = args.isBookmarked,
-                        likesCount = args.likesCount
-                    )
-
-                    navController.navigate(AppScreens.OpenPostScreen.route){
-                    }
-
+                    postSharedViewModel.updatePost(args)
+                    navController.navigate(AppScreens.OpenPostScreen.route)
                 },
                 onReturn = {
                     navController.popBackStack()
-                }
+                },
+                onPostSharedProcess = postSharedViewModel::onProcess,
+                stateLiked = stateLiked,
+                stateBookmarked = stateBookmarked
             )
         }
 
@@ -161,16 +131,23 @@ fun NavigationRoot(
         {
 
             val openPostViewModel = hiltViewModel<OpenPostViewModel>()
+            val statePost = postSharedViewModel.statePost
             OpenPostScreen(
-                postInfo = post,
-                username = "Username",
+                postInfo = statePost,
+                username = statePost.postUsername,
                 onReturn = {
                     navController.popBackStack()
                 },
                 onImageClick = { /*TODO*/ },
                 onPostUserClick = { /*TODO*/ },
-                onLike = openPostViewModel::doLike,
-                onBookmark = openPostViewModel::doBookmark,
+                onLike = { postId : String, like : Boolean ->
+                    openPostViewModel.doLike(postId, like)
+                    postSharedViewModel.onProcess(PostSharedEvent.OnLiked(postId, like))
+                },
+                onBookmark = { postId : String, bookmark : Boolean ->
+                    openPostViewModel.doBookmark(postId, bookmark)
+                    postSharedViewModel.onProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
+                },
                 onSendComment = {}
             )
         }

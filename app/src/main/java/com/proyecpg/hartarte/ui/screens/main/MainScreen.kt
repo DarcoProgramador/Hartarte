@@ -58,6 +58,7 @@ import com.proyecpg.hartarte.ui.Event
 import com.proyecpg.hartarte.ui.UiState
 import com.proyecpg.hartarte.ui.components.SideBar
 import com.proyecpg.hartarte.ui.model.UserUI
+import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.bookmark.BookmarkScreen
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
@@ -79,6 +80,9 @@ fun MainScreen(
     onCreatePost: () -> Unit,
     onPostClick: (OpenPostArgs) -> Unit,
     onProcessUser: (UserEvent) -> Unit,
+    onPostSharedProcess : (PostSharedEvent) -> Unit,
+    stateLiked : HashMap<String, Boolean>,
+    stateBookmarked : HashMap<String, Boolean>,
     userState : UserUI,
     userEditState : UserState,
     postUser : Flow<PagingData<Post>>
@@ -150,12 +154,20 @@ fun MainScreen(
             ){ innerPadding ->
 
                 when(selectedNavigationIndex){
-                    0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick)
-                    1 -> BookmarkScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick)
+                    0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick,
+                    onPostSharedProcess = onPostSharedProcess, stateLiked = stateLiked, stateBookmarked = stateBookmarked)
+                    1 -> BookmarkScreen(paddingValues = innerPadding, viewModel = hiltViewModel(),
+                        onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess,
+                        stateLiked = stateLiked,
+                        stateBookmarked = stateBookmarked
+                    )
                     2 -> UserScreen(
                         paddingValues = innerPadding, onProcessUSer = onProcessUser,
                         userState = userState, userEditState = userEditState,
-                        onPostClick = onPostClick, postUser = postUser
+                        onPostClick = onPostClick, postUser = postUser,
+                        onPostSharedProcess = onPostSharedProcess,
+                        stateLiked = stateLiked,
+                        stateBookmarked = stateBookmarked
                     )
                 }
             }
@@ -282,9 +294,12 @@ fun PreviewMainScreen(){
             onSearchClick = {},
             onPostClick = {},
             onProcessUser = {},
+            onPostSharedProcess = {},
             userEditState = UserState(),
             userState = UserUI(username = "Prueba", descripcion = "descipcion"),
-            postUser = emptyPost
+            postUser = emptyPost,
+            stateBookmarked = hashMapOf(),
+            stateLiked = hashMapOf()
         )
     }
 }

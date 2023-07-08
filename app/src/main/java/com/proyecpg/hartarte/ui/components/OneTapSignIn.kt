@@ -15,7 +15,7 @@ fun OneTapSignIn(
     launch: (result: BeginSignInResult) -> Unit
 ) {
     when(val oneTapSignInResponse = viewModel.oneTapSignInResponse) {
-        is Resource.Loading -> {/*TODO:Hacer que cargue el boton de google*/}
+        is Resource.Loading -> {/*TODO: Hacer que cargue el boton de google*/}
         is Resource.Success -> oneTapSignInResponse.result?.let {
             LaunchedEffect(it) {
                 launch(it)
