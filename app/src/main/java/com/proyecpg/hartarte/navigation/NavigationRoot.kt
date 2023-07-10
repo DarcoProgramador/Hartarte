@@ -1,14 +1,18 @@
 package com.proyecpg.hartarte.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
@@ -54,8 +58,7 @@ fun NavigationRoot(
 
                     MainScreen(
                         onCreatePost = {
-                            navController.navigate(AppScreens.CreatePostScreen.route){
-                            }
+                            navController.navigate(AppScreens.CreatePostScreen.route)
                         },
                         viewModel = mainViewModel,
                         onLogoutClick = authViewModel::process,
@@ -64,7 +67,7 @@ fun NavigationRoot(
                         },
                         onPostClick = {args ->
                             postSharedViewModel.updatePost(args)
-                            navController.navigate(AppScreens.OpenPostScreen.route)
+                            navController.navigate(AppScreens.OpenPostScreen.route.plus("/${args.postId}"))
                         },
                         onProcessUser = userViewModel::processUser,
                         onPostSharedProcess = postSharedViewModel::onProcess,
@@ -127,14 +130,17 @@ fun NavigationRoot(
             )
         }
 
-        composable(AppScreens.OpenPostScreen.route)
-        {
+        composable(AppScreens.OpenPostScreen.route.plus("/{postId}"),
+            arguments = listOf(navArgument("postId"){type = NavType.StringType})
+            )
+        { backStackEntry ->
 
             val openPostViewModel = hiltViewModel<OpenPostViewModel>()
-            val statePost = postSharedViewModel.statePost
+            openPostViewModel.updatePost(backStackEntry.arguments?.getString("postId")?:"")
+            val statePost = openPostViewModel.statePost.collectAsStateWithLifecycle()
             OpenPostScreen(
-                postInfo = statePost,
-                username = statePost.postUsername,
+                postInfo = statePost.value,
+                username = statePost.value.postUsername,
                 onReturn = {
                     navController.popBackStack()
                 },
