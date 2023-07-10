@@ -19,7 +19,9 @@ import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
+import com.proyecpg.hartarte.ui.screens.search.Search
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
+import com.proyecpg.hartarte.ui.screens.search.SearchViewModel
 import com.proyecpg.hartarte.ui.screens.user.UserViewModel
 
 @OptIn(ExperimentalPagerApi::class)
@@ -27,7 +29,8 @@ import com.proyecpg.hartarte.ui.screens.user.UserViewModel
 fun NavigationRoot(
     navController: NavHostController = rememberNavController(),
     authViewModel: AuthViewModel,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    searchViewModel: SearchViewModel
 ) {
     val state by authViewModel.logged.collectAsStateWithLifecycle()
     val postSharedViewModel : PostSharedViewModel = hiltViewModel()
@@ -87,7 +90,12 @@ fun NavigationRoot(
         }
 
         composable(AppScreens.SearchScreen.route){
-            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+            Search(
+                searchBoxState = searchViewModel.searchBoxState,
+                paginator = searchViewModel.hitsPaginator
+            )
+
+            /*val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
             val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
             SearchScreen(
                 viewModel = hiltViewModel(),
@@ -101,7 +109,7 @@ fun NavigationRoot(
                 onPostSharedProcess = postSharedViewModel::onProcess,
                 stateLiked = stateLiked,
                 stateBookmarked = stateBookmarked
-            )
+            )*/
         }
 
         composable(AppScreens.CreatePostScreen.route){
