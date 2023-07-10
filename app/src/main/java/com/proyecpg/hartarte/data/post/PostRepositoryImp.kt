@@ -22,6 +22,7 @@ import com.proyecpg.hartarte.utils.Resource
 import com.proyecpg.hartarte.data.model.PostEntity
 import com.proyecpg.hartarte.data.model.User
 import com.proyecpg.hartarte.data.model.UserHashmap
+import com.proyecpg.hartarte.data.model.toUser
 import com.proyecpg.hartarte.utils.Constants
 import com.proyecpg.hartarte.utils.Constants.POST_IMAGES
 import com.proyecpg.hartarte.utils.Constants.POST_PATH
@@ -49,8 +50,46 @@ class PostRepositoryImp @Inject constructor(
         )
     }.flow
 
-    override suspend fun getPostById(): Resource<Post> {
-        TODO("Get post from firebase and return Post Object")
+    override suspend fun getPostById(postId: String): Resource<Post> {
+        return try {
+            val user = firebaseAuth.currentUser!!.uid
+
+            val postRef = db.collection(POST_COLLECTION).document(postId).get().await()
+            val post = postRef.toObject(PostEntity::class.java)
+
+            val postLikesRef = db.collection(POST_LIKES_COLLECTION).document(postId).get().await()
+            val liked = if (!postLikesRef.exists()){
+                false
+            }else{
+                val likeArray: List<String> = postLikesRef.get(LIKES) as List<String>
+                likeArray.contains(user)
+            }
+
+            val postBookmarkRef = db.collection(POST_BOOKMARKS_COLLECTION).document(postId).get().await()
+            val bookmarked = if(!postBookmarkRef.exists()){
+                false
+            }else{
+                val bookmarkArray: List<String> = postBookmarkRef.get(BOOKMARKS) as List<String>
+                bookmarkArray.contains(user)
+            }
+
+            //return Post
+            Resource.Success(Post(
+                postId = postId,
+                titulo = post?.titulo,
+                descripcion = post?.descripcion,
+                images = post?.images,
+                liked = liked,
+                bookmarked = bookmarked,
+                likes = post?.likes,
+                bookmarks = post?.bookmarks,
+                user = post?.user?.toUser(),
+                createdAt = post?.createdAt
+            ))
+
+        } catch (e: Exception) {
+            Resource.Failure(e)
+        }
     }
 
     override suspend fun getPostBookmarkedQuery(): Resource<Query> {
