@@ -14,15 +14,17 @@ import com.proyecpg.hartarte.data.DataStoreUtil
 import com.proyecpg.hartarte.navigation.NavigationRoot
 import com.proyecpg.hartarte.ui.screens.AuthViewModel
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
+import com.proyecpg.hartarte.ui.screens.search.SearchViewModel
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: AuthViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
     @OptIn(ExperimentalPagerApi::class)
     private val mainViewModel: MainViewModel by viewModels()
+    private val searchViewModel: SearchViewModel by viewModels()
     private lateinit var dataStoreUtil: DataStoreUtil
 
     @OptIn(ExperimentalPagerApi::class)
@@ -31,7 +33,7 @@ class MainActivity : ComponentActivity() {
 
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                viewModel.isLoading.value || mainViewModel.isLoading.value
+                authViewModel.isLoading.value || mainViewModel.isLoading.value
             }
         }
 
@@ -47,7 +49,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavigationRoot(authViewModel = viewModel, mainViewModel = mainViewModel)
+                    NavigationRoot(authViewModel = authViewModel, mainViewModel = mainViewModel, searchViewModel = searchViewModel)
                 }
             }
         }

@@ -84,7 +84,9 @@ fun HartarteTheme(
   }
 
   MaterialTheme(
-    colorScheme = colors,
-    content = content
+      colorScheme = colors,
+      shapes = Shapes,
+      typography = Typography,
+      content = content
   )
 }
