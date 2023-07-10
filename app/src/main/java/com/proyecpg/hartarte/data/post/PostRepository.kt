@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.Flow
 interface PostRepository {
     fun getPostsBy(query : QueryParams): Flow<PagingData<Post>>
 
+    suspend fun getPostById(postId: String) : Resource<Post>
+
     suspend fun getPostBookmarkedQuery(): Resource<Query>
 
     suspend fun registerLike(postId: String, liked: Boolean): Resource<Boolean>

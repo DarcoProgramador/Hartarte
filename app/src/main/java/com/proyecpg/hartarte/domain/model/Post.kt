@@ -1,7 +1,13 @@
 package com.proyecpg.hartarte.domain.model
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+
 data class Post (
     @DocumentId val postId: String? = null,
     val titulo: String? = null,
@@ -21,3 +27,23 @@ data class User(
     val photo: String? = null
 )
 
+fun Post.toOpenPostArgs() : OpenPostArgs {
+    val imgs = images?: arrayListOf()
+    val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+    val time = createdAt?.toDate()
+    val date = if(time != null) formatter.format(time) else "00/00/0000 00:00:00"
+    val likes = likes?:0L
+
+    return OpenPostArgs(
+        postId = postId?:"",
+        postImages = imgs.toList(),
+        postUsername = user?.name?:"",
+        postUserPic = user?.photo?:"",
+        postTitle = titulo?:"",
+        postDescription = descripcion?:"",
+        postDate = date,
+        likesCount = likes.toInt(),
+        isBookmarked = bookmarked?:false,
+        isLiked = liked?:false
+    )
+}

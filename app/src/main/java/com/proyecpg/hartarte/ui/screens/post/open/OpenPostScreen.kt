@@ -284,11 +284,15 @@ fun PostInfo(
     onBookmark : (String, Boolean) -> Unit
 ){
     val liked by remember{ derivedStateOf { mutableStateOf(postStatistics.first)} }
-    var likeCount by remember{ mutableStateOf(postStatistics.second) }
+    val likeCount by remember{ derivedStateOf {mutableStateOf(postStatistics.second)} }
     val bookmarked by remember{ derivedStateOf { mutableStateOf(postStatistics.third) } }
 
     LaunchedEffect(key1 = postStatistics.first){
         liked.value = postStatistics.first
+    }
+
+    LaunchedEffect(key1 = postStatistics.second){
+        likeCount.value = postStatistics.second
     }
 
     LaunchedEffect(key1 = postStatistics.third){
@@ -340,9 +344,9 @@ fun PostInfo(
                     onClick = {
 
                         if (liked.value)
-                            likeCount--
+                            likeCount.value--
                         else
-                            likeCount++
+                            likeCount.value++
 
                         liked.value = !liked.value
 
@@ -367,7 +371,7 @@ fun PostInfo(
 
                 Spacer(modifier = Modifier.size(5.dp))
 
-                Text(text = likeCount.toString(), color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Text(text = likeCount.value.toString(), color = MaterialTheme.colorScheme.onPrimaryContainer)
             }
             IconButton(
                 onClick = {

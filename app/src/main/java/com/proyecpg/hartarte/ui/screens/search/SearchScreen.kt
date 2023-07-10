@@ -61,7 +61,7 @@ import java.text.SimpleDateFormat
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel,
-    onPostClick: (OpenPostArgs) -> Unit,
+    onPostClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>,
@@ -108,7 +108,7 @@ fun SearchScreen(
 fun SearchScreenContent(
     innerPadding: PaddingValues,
     viewModel: SearchViewModel,
-    onPostClick: (OpenPostArgs) -> Unit,
+    onPostClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>
@@ -123,7 +123,6 @@ fun SearchScreenContent(
     val pagingPosts = postSearchState.value!!.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
-    val dateFormater  = SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm:ss")
 
     val state = rememberSwipeRefreshState(
         isRefreshing = pagingPosts.loadState.refresh is LoadState.Loading
@@ -145,7 +144,7 @@ fun SearchScreenContent(
                 items(items = pagingPosts){ post ->
                     post?.let{
                         val postId = it.postId?:""
-                        var date = "10 de mayo del 2023, 10:23:11"
+                        val date = "10 de mayo del 2023, 10:23:11"
                         val username = it.user?.name ?: ""
                         val userPic =  it.user?.photo ?: ""
                         val title = it.titulo?:""
@@ -153,9 +152,6 @@ fun SearchScreenContent(
                         val likeCount = it.likes?.toInt() ?: 0
                         val liked = stateLiked[postId]?:it.liked?:false
                         val bookmarked = stateBookmarked[postId]?:it.bookmarked?:false
-                        it.createdAt?.let { dateFirebase ->
-                            date = dateFormater.format(dateFirebase.toDate())
-                        }
 
                         it.images?.let { it1 ->
                             Post(
@@ -177,19 +173,7 @@ fun SearchScreenContent(
                                     onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
                                 },
                                 onPostClick = {
-                                    onPostClick(OpenPostArgs(
-                                        postId = postId,
-                                        postImages = it1.toList(),
-                                        postUsername = username,
-                                        postUserPic = userPic,
-                                        postTitle = title,
-                                        postDescription = description,
-                                        postDate = date,
-                                        likesCount = likeCount,
-                                        isBookmarked = bookmarked,
-                                        isLiked = liked
-                                    )
-                                    )
+                                    onPostClick(postId)
                                 }
                             )
                         }

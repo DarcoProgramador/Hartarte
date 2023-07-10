@@ -1,5 +1,6 @@
 package com.proyecpg.hartarte.data.model
 import com.google.firebase.Timestamp
+import com.proyecpg.hartarte.domain.model.User
 
 data class PostEntity(
     val titulo: String? = "",
@@ -16,3 +17,5 @@ data class UserHashmap(
     val name: String? = "",
     val photo: String? = ""
 )
+
+fun UserHashmap.toUser() : User = User(uid = uid, name = name, photo = photo)
