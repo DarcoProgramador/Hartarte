@@ -49,6 +49,10 @@ class PostRepositoryImp @Inject constructor(
         )
     }.flow
 
+    override suspend fun getPostById(): Resource<Post> {
+        TODO("Get post from firebase and return Post Object")
+    }
+
     override suspend fun getPostBookmarkedQuery(): Resource<Query> {
        return try {
            val bookMarkRef = db.collection(POST_BOOKMARKS_COLLECTION)
