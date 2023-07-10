@@ -6,6 +6,9 @@ plugins {
     //Dagger - Hilt
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
+
+    //Algolia
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
 }
 
 android {
@@ -145,6 +148,11 @@ dependencies {
 
     //Accompanist
     implementation "com.google.accompanist:accompanist-swiperefresh:0.30.1"
+
+    //Algolia
+    implementation 'com.algolia:instantsearch-compose:3.+'
+    implementation 'com.algolia:instantsearch-android-paging3:3.+'
+
 
 }
 
