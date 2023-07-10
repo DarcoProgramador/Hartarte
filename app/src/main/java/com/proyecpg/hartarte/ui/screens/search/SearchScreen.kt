@@ -3,6 +3,7 @@ package com.proyecpg.hartarte.ui.screens.search
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -27,11 +29,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Bookmarks
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,11 +46,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconToggleButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,9 +60,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,8 +75,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.algolia.instantsearch.android.paging3.Paginator
 import com.algolia.instantsearch.android.paging3.flow
+import com.algolia.instantsearch.compose.filter.facet.FacetListState
 import com.algolia.instantsearch.compose.item.StatsState
 import com.algolia.instantsearch.compose.searchbox.SearchBoxState
+import com.algolia.instantsearch.core.selectable.list.SelectableItem
+import com.algolia.search.model.search.Facet
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.data.product.Product
@@ -84,21 +94,68 @@ import com.proyecpg.hartarte.utils.QueryParams
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Search(
     searchBoxState: SearchBoxState,
     paginator: Paginator<Product>,
-    statsText: StatsState<String>
+    statsText: StatsState<String>,
+    facetList: FacetListState
 ) {
+    val scaffoldState = rememberBottomSheetScaffoldState()
+
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetContent = { FacetList(facetList = facetList) },
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp)
+    ) {innerPadding ->
+        SearchContent(
+            paddingValues = innerPadding,
+            searchBoxState = searchBoxState,
+            paginator = paginator,
+            statsText = statsText,
+            scaffoldState = scaffoldState
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchContent(
+    paddingValues: PaddingValues,
+    searchBoxState: SearchBoxState,
+    paginator: Paginator<Product>,
+    statsText: StatsState<String>,
+    scaffoldState: BottomSheetScaffoldState
+){
     val scope = rememberCoroutineScope()
     val pagingHits = paginator.flow.collectAsLazyPagingItems()
     val listState = rememberLazyListState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        SearchBox(
-            searchBoxState = searchBoxState,
-            onValueChange = { scope.launch { listState.scrollToItem(0) } },
-        )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+    ) {
+        Row{
+            SearchBox(
+                searchBoxState = searchBoxState,
+                onValueChange = { scope.launch { listState.scrollToItem(0) } },
+            )
+
+            Card(Modifier.padding(top = 12.dp, end = 12.dp, start = 8.dp)) {
+                Icon(
+                    modifier = Modifier
+                        .clickable { scope.launch { scaffoldState.bottomSheetState.partialExpand() } }
+                        .padding(horizontal = 12.dp)
+                        .height(56.dp),
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = "Filters icon"
+                )
+            }
+        }
 
         Stats(stats = statsText.stats)
 
@@ -210,6 +267,69 @@ fun Stats(stats: String) {
         fontSize = 16.sp,
         maxLines = 1
     )
+}
+
+@Composable
+fun FacetRow(
+    modifier: Modifier = Modifier,
+    selectableFacet: SelectableItem<Facet>
+    val (facet, isSelected) = selectableFacet
+    Row(
+        modifier = modifier.height(56.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(modifier = Modifier.weight(1f)) {
+            Text(
+                modifier = Modifier.alignByBaseline(),
+                text = facet.value,
+                fontSize = 16.sp
+            )
+            Text(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .alignByBaseline(),
+                text = facet.count.toString(),
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
+            )
+        }
+        if (isSelected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+            )
+        }
+    }
+}
+
+@Composable
+fun FacetList(
+    modifier: Modifier = Modifier,
+    facetList: FacetListState
+) {
+    Column(modifier) {
+        Text(
+            text = "Categories",
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(14.dp)
+        )
+        LazyColumn(Modifier.background(MaterialTheme.colorScheme.background)) {
+            items(facetList.items) { item ->
+                FacetRow(
+                    modifier = Modifier
+                        .clickable { facetList.onSelection?.invoke(item.first) }
+                        .padding(horizontal = 14.dp),
+                    selectableFacet = item,
+                )
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .width(1.dp)
+                )
+            }
+        }
+    }
 }
 
 @Composable

@@ -97,7 +97,8 @@ fun NavigationRoot(
             Search(
                 searchBoxState = searchViewModel.searchBoxState,
                 paginator = searchViewModel.hitsPaginator,
-                statsText = searchViewModel.statsText
+                statsText = searchViewModel.statsText,
+                facetList = searchViewModel.facetList
             )
 
             /*val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
