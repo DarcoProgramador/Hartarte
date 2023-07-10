@@ -68,6 +68,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.algolia.instantsearch.android.paging3.Paginator
 import com.algolia.instantsearch.android.paging3.flow
+import com.algolia.instantsearch.compose.item.StatsState
 import com.algolia.instantsearch.compose.searchbox.SearchBoxState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -84,47 +85,24 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 @Composable
-fun ProductsList(
-    modifier: Modifier = Modifier,
-    pagingHits: LazyPagingItems<Product>,
-    listState: LazyListState
-) {
-    LazyColumn(modifier, listState) {
-        items(pagingHits) { item ->
-            if (item == null) return@items
-            Text(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(14.dp),
-                text = item.name,
-                fontSize = 16.sp
-            )
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .width(1.dp)
-            )
-        }
-    }
-}
-
-@Composable
 fun Search(
-    modifier: Modifier = Modifier,
     searchBoxState: SearchBoxState,
-    paginator: Paginator<Product>
+    paginator: Paginator<Product>,
+    statsText: StatsState<String>
 ) {
     val scope = rememberCoroutineScope()
     val pagingHits = paginator.flow.collectAsLazyPagingItems()
     val listState = rememberLazyListState()
 
-    Column(modifier) {
+    Column(modifier = Modifier.fillMaxSize()) {
         SearchBox(
             searchBoxState = searchBoxState,
             onValueChange = { scope.launch { listState.scrollToItem(0) } },
         )
+
+        Stats(stats = statsText.stats)
+
         ProductsList(
-            modifier = Modifier.fillMaxSize(),
             pagingHits = pagingHits,
             listState = listState,
         )
@@ -142,7 +120,7 @@ fun SearchBox(
     TextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 12.dp, start = 12.dp),
+            .padding(vertical = 12.dp, horizontal = 12.dp),
         shape = RoundedCornerShape(30.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -168,7 +146,7 @@ fun SearchBox(
             )
         },
         leadingIcon = {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+            Icon(imageVector = Icons.Default.Search, contentDescription = "Search", modifier = Modifier.padding(start = 5.dp))
         },
         trailingIcon = {
             if(searchBoxState.query.isNotEmpty()){
@@ -179,9 +157,9 @@ fun SearchBox(
                     modifier = Modifier
                         .padding(end = 5.dp)
                         .clickable {
-                        searchBoxState.setText("")
-                        onValueChange("")
-                    }
+                            searchBoxState.setText("")
+                            onValueChange("")
+                        }
                 )
             }
         },
@@ -193,6 +171,43 @@ fun SearchBox(
                 keyboardController?.hide()
             }
         ),
+        maxLines = 1
+    )
+}
+
+@Composable
+fun ProductsList(
+    pagingHits: LazyPagingItems<Product>,
+    listState: LazyListState
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        state = listState
+    ) {
+        items(pagingHits) { item ->
+            if (item == null) return@items
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
+                text = item.name,
+                fontSize = 16.sp
+            )
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .width(1.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun Stats(stats: String) {
+    Text(
+        modifier = Modifier.padding(start = 12.dp),
+        text = stats,
+        fontSize = 16.sp,
         maxLines = 1
     )
 }

@@ -6,11 +6,15 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.algolia.instantsearch.android.paging3.Paginator
 import com.algolia.instantsearch.android.paging3.searchbox.connectPaginator
+import com.algolia.instantsearch.compose.item.StatsTextState
 import com.algolia.instantsearch.compose.searchbox.SearchBoxState
 import com.algolia.instantsearch.core.connection.ConnectionHandler
 import com.algolia.instantsearch.searchbox.SearchBoxConnector
 import com.algolia.instantsearch.searchbox.connectView
 import com.algolia.instantsearch.searcher.hits.HitsSearcher
+import com.algolia.instantsearch.stats.StatsConnector
+import com.algolia.instantsearch.stats.StatsPresenterImpl
+import com.algolia.instantsearch.stats.connectView
 import com.algolia.search.model.APIKey
 import com.algolia.search.model.ApplicationID
 import com.algolia.search.model.IndexName
@@ -33,7 +37,7 @@ class SearchViewModel @Inject constructor(
 
     val searcher = HitsSearcher(
         applicationID = ApplicationID("latency"),
-        apiKey = APIKey("3e3e58b5ae52a17189dda57b84dd8760"),
+        apiKey = APIKey("1f6fd3a6fb973cb08419fe7d288fa4db"),
         indexName = IndexName("instant_search")
     )
 
@@ -44,12 +48,17 @@ class SearchViewModel @Inject constructor(
     //Hits
     val hitsPaginator = Paginator(searcher){ it.deserialize(Product.serializer()) }
 
+    //Stats
+    val statsText = StatsTextState()
+    val statsConnector = StatsConnector(searcher)
+
     val connections = ConnectionHandler(searchBoxConnector)
 
     init {
         //Add a connection a between the data and the search box
         connections += searchBoxConnector.connectView(searchBoxState)
         connections += searchBoxConnector.connectPaginator(hitsPaginator)
+        connections += statsConnector.connectView(statsText, StatsPresenterImpl())
     }
 
     override fun onCleared() {

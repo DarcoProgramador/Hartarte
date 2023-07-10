@@ -96,7 +96,8 @@ fun NavigationRoot(
         composable(AppScreens.SearchScreen.route){
             Search(
                 searchBoxState = searchViewModel.searchBoxState,
-                paginator = searchViewModel.hitsPaginator
+                paginator = searchViewModel.hitsPaginator,
+                statsText = searchViewModel.statsText
             )
 
             /*val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
