@@ -23,16 +23,14 @@ import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
-import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
-import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun BookmarkScreen(
     paddingValues: PaddingValues,
     viewModel: BookmarkViewModel,
-    onPostClick: (OpenPostArgs) -> Unit,
+    onPostClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>
@@ -49,7 +47,7 @@ fun BookmarkScreen(
 fun BookmarkScreenContent(
     innerPadding: PaddingValues,
     viewModel: BookmarkViewModel,
-    onPostClick: (OpenPostArgs) -> Unit,
+    onPostClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>
@@ -63,7 +61,6 @@ fun BookmarkScreenContent(
     val pagingPosts = postBookmarkState.value!!.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
-    val dateFormater  = SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm:ss")
 
     val state = rememberSwipeRefreshState(
         isRefreshing = pagingPosts.loadState.refresh is LoadState.Loading
@@ -85,7 +82,6 @@ fun BookmarkScreenContent(
                 items(items = pagingPosts){ post ->
                     post?.let{
                         val postId = it.postId?:""
-                        var date = "10 de mayo del 2023, 10:23:11"
                         val username = it.user?.name ?: ""
                         val userPic =  it.user?.photo ?: ""
                         val title = it.titulo?:""
@@ -93,9 +89,6 @@ fun BookmarkScreenContent(
                         val likeCount = it.likes?.toInt() ?: 0
                         val liked = stateLiked[postId]?:it.liked?:false
                         val bookmarked = stateBookmarked[postId]?:it.bookmarked?:false
-                        it.createdAt?.let { dateFirebase ->
-                            date = dateFormater.format(dateFirebase.toDate())
-                        }
 
                         it.images?.let { it1 ->
                             Post(
@@ -117,19 +110,7 @@ fun BookmarkScreenContent(
                                     onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
                                 },
                                 onPostClick = {
-                                    onPostClick(OpenPostArgs(
-                                        postId = postId,
-                                        postImages = it1.toList(),
-                                        postUsername = username,
-                                        postUserPic = userPic,
-                                        postTitle = title,
-                                        postDescription = description,
-                                        postDate = date,
-                                        likesCount = likeCount,
-                                        isBookmarked = bookmarked,
-                                        isLiked = liked
-                                    )
-                                    )
+                                    onPostClick(postId)
                                 }
                             )
                         }

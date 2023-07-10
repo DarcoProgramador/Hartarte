@@ -1,7 +1,5 @@
 package com.proyecpg.hartarte.ui.screens.post.open
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecpg.hartarte.data.post.PostRepository
@@ -20,7 +18,7 @@ class OpenPostViewModel @Inject constructor(
 
     private val _statePost = MutableStateFlow(OpenPostArgs())
     val statePost get() = _statePost.asStateFlow()
-    
+
     fun updatePost(postId: String){
         viewModelScope.launch {
             if(postId.isBlank()){

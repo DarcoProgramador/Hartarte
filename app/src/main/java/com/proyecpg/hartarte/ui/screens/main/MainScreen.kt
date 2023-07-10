@@ -78,7 +78,7 @@ fun MainScreen(
     onLogoutClick: (LoginEvent) -> Unit,
     onSearchClick: () -> Unit,
     onCreatePost: () -> Unit,
-    onPostClick: (OpenPostArgs) -> Unit,
+    onPostClick: (String) -> Unit,
     onProcessUser: (UserEvent) -> Unit,
     onPostSharedProcess : (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,

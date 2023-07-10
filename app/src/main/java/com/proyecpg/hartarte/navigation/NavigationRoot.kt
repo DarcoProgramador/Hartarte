@@ -65,9 +65,10 @@ fun NavigationRoot(
                         onSearchClick = {
                             navController.navigate(AppScreens.SearchScreen.route)
                         },
-                        onPostClick = {args ->
-                            postSharedViewModel.updatePost(args)
-                            navController.navigate(AppScreens.OpenPostScreen.route.plus("/${args.postId}"))
+                        onPostClick = {postId ->
+                            navController.navigate(AppScreens.OpenPostScreen.route.plus("/${postId}")){
+                                launchSingleTop = true
+                            }
                         },
                         onProcessUser = userViewModel::processUser,
                         onPostSharedProcess = postSharedViewModel::onProcess,
@@ -94,9 +95,8 @@ fun NavigationRoot(
             val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
             SearchScreen(
                 viewModel = hiltViewModel(),
-                onPostClick = {args ->
-                    postSharedViewModel.updatePost(args)
-                    navController.navigate(AppScreens.OpenPostScreen.route)
+                onPostClick = {postId ->
+                    navController.navigate(AppScreens.OpenPostScreen.route.plus("/${postId}"))
                 },
                 onReturn = {
                     navController.popBackStack()
