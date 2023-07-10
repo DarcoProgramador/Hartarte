@@ -23,6 +23,7 @@ import com.proyecpg.hartarte.data.model.PostEntity
 import com.proyecpg.hartarte.data.model.User
 import com.proyecpg.hartarte.data.model.UserHashmap
 import com.proyecpg.hartarte.data.model.toUser
+import com.proyecpg.hartarte.domain.model.Comment
 import com.proyecpg.hartarte.utils.Constants
 import com.proyecpg.hartarte.utils.Constants.POST_IMAGES
 import com.proyecpg.hartarte.utils.Constants.POST_PATH
@@ -276,6 +277,14 @@ class PostRepositoryImp @Inject constructor(
         } catch (e: Exception) {
             Resource.Failure(e)
         }
+    }
+
+    override suspend fun getComments(postId: String): Resource<List<Comment>> {
+        TODO("Añadir funcion para traerse los comentarios de un post")
+    }
+
+    override suspend fun registerComment(postId: String, comment: String): Resource<Boolean> {
+        TODO("Registrar comentario de un post")
     }
 
 }

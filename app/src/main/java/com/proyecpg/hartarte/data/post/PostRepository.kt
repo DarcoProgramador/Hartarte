@@ -3,6 +3,7 @@ package com.proyecpg.hartarte.data.post
 import android.net.Uri
 import androidx.paging.PagingData
 import com.google.firebase.firestore.Query
+import com.proyecpg.hartarte.domain.model.Comment
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.QueryParams
 import com.proyecpg.hartarte.utils.Resource
@@ -27,4 +28,8 @@ interface PostRepository {
                            titulo: String,
                            descripcion: String
     ): Resource<Boolean>
+
+    suspend fun getComments(postId: String): Resource<List<Comment>>
+
+    suspend fun registerComment(postId: String, comment : String) : Resource<Boolean>
 }
