@@ -36,7 +36,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -50,7 +49,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -94,142 +92,56 @@ import com.proyecpg.hartarte.utils.QueryParams
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Search(
+    viewModel: SearchViewModel,
     searchBoxState: SearchBoxState,
     paginator: Paginator<Product>,
     statsText: StatsState<String>,
-    facetList: FacetListState
+    onReturn: () -> Unit
 ) {
-    val scaffoldState = rememberBottomSheetScaffoldState()
-
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetContent = { FacetList(facetList = facetList) },
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp)
-    ) {innerPadding ->
-        SearchContent(
-            paddingValues = innerPadding,
-            searchBoxState = searchBoxState,
-            paginator = paginator,
-            statsText = statsText,
-            scaffoldState = scaffoldState
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchContent(
-    paddingValues: PaddingValues,
-    searchBoxState: SearchBoxState,
-    paginator: Paginator<Product>,
-    statsText: StatsState<String>,
-    scaffoldState: BottomSheetScaffoldState
-){
+    var isSearchOpened by remember{ mutableStateOf(false) }
+    val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val pagingHits = paginator.flow.collectAsLazyPagingItems()
-    val listState = rememberLazyListState()
 
-    Column(
+    Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
-    ) {
-        Row{
-            SearchBox(
-                searchBoxState = searchBoxState,
-                onValueChange = { scope.launch { listState.scrollToItem(0) } },
-            )
+            .padding(12.dp),
+        topBar = {
+            Column {
+                SearchTopBar(
+                    isOpened = isSearchOpened,
+                    onSearchClick = {
+                        isSearchOpened = !isSearchOpened
+                    },
+                    onReturn = onReturn
+                )
 
-            Card(Modifier.padding(top = 12.dp, end = 12.dp, start = 8.dp)) {
-                Icon(
-                    modifier = Modifier
-                        .clickable { scope.launch { scaffoldState.bottomSheetState.partialExpand() } }
-                        .padding(horizontal = 12.dp)
-                        .height(56.dp),
-                    imageVector = Icons.Default.FilterList,
-                    contentDescription = "Filters icon"
+                SearchBar(
+                    searchBoxState = searchBoxState,
+                    pagingHits = pagingHits,
+                    listState = listState,
+                    onValueChange = { scope.launch { listState.scrollToItem(0) } }
+                )
+
+                if (searchBoxState.query.isNotEmpty()){
+                    Stats(stats = statsText.stats)
+                }
+
+                SearchFilters(viewModel, isSearchOpened)
+
+                Divider(
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier.padding(top = 10.dp)
                 )
             }
         }
 
-        Stats(stats = statsText.stats)
-
-        ProductsList(
-            pagingHits = pagingHits,
-            listState = listState,
-        )
+    ) {innerPadding ->
+        innerPadding
     }
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun SearchBox(
-    searchBoxState: SearchBoxState = SearchBoxState(),
-    onValueChange: (String) -> Unit = {}
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 12.dp),
-        shape = RoundedCornerShape(30.dp),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            focusedIndicatorColor = MaterialTheme.colorScheme.background,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.background,
-            errorIndicatorColor = MaterialTheme.colorScheme.background,
-        ),
-        value = searchBoxState.query,
-        // Update text on value change
-        onValueChange = {
-            searchBoxState.setText(it)
-            onValueChange(it)
-        },
-        textStyle = TextStyle(
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontSize = 16.sp
-        ),
-        placeholder = {
-            Text(
-                text = "Buscar..."
-            )
-        },
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "Search", modifier = Modifier.padding(start = 5.dp))
-        },
-        trailingIcon = {
-            if(searchBoxState.query.isNotEmpty()){
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close search bar",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier
-                        .padding(end = 5.dp)
-                        .clickable {
-                            searchBoxState.setText("")
-                            onValueChange("")
-                        }
-                )
-            }
-        },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        // Set text as query submit on search action
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                searchBoxState.setText(searchBoxState.query, true)
-                keyboardController?.hide()
-            }
-        ),
-        maxLines = 1
-    )
 }
 
 @Composable
@@ -273,6 +185,7 @@ fun Stats(stats: String) {
 fun FacetRow(
     modifier: Modifier = Modifier,
     selectableFacet: SelectableItem<Facet>
+) {
     val (facet, isSelected) = selectableFacet
     Row(
         modifier = modifier.height(56.dp),
@@ -348,7 +261,7 @@ fun SearchScreen(
             .padding(all = 12.dp),
         topBar = {
             Column {
-                TopBar(
+                SearchTopBar(
                     isOpened = isSearchOpened,
                     onSearchClick = {
                         isSearchOpened = !isSearchOpened
@@ -356,7 +269,7 @@ fun SearchScreen(
                     onReturn = onReturn
                 )
 
-                SearchBar()
+                //SearchBar()
 
                 Spacer(modifier = Modifier.size(5.dp))
 
@@ -491,7 +404,7 @@ fun SearchScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(
+fun SearchTopBar(
     isOpened: Boolean,
     onSearchClick: () -> Unit,
     onReturn: () -> Unit
@@ -527,7 +440,7 @@ fun TopBar(
                 }
                 else {
                     Icon(
-                        imageVector = Icons.Default.FilterAlt,
+                        imageVector = Icons.Default.FilterList,
                         contentDescription = "Filters icon",
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -556,6 +469,8 @@ fun SearchFilters(
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
+        Spacer(modifier = Modifier.height(5.dp))
+        
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly

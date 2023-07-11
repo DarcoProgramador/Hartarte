@@ -95,10 +95,11 @@ fun NavigationRoot(
 
         composable(AppScreens.SearchScreen.route){
             Search(
+                viewModel = searchViewModel,
                 searchBoxState = searchViewModel.searchBoxState,
                 paginator = searchViewModel.hitsPaginator,
                 statsText = searchViewModel.statsText,
-                facetList = searchViewModel.facetList
+                onReturn = { navController.popBackStack() }
             )
 
             /*val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
