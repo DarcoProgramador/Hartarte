@@ -114,11 +114,9 @@ fun UserScreen(
                                     isBookmarked = bookmarked,
                                     likesCount = likeCount,
                                     onLike = { postId : String, like : Boolean ->
-                                        onProcessUSer(UserEvent.UserPostLikeClicked(postId, like))
                                         onPostSharedProcess(PostSharedEvent.OnLiked(postId, like))
                                     },
                                     onBookmark = { postId : String, bookmark : Boolean ->
-                                        onProcessUSer(UserEvent.UserPostBookmarkCliked(postId, bookmark))
                                         onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
                                     },
                                     onPostClick = {

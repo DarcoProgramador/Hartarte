@@ -12,9 +12,7 @@ import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,46 +43,6 @@ class BookmarkViewModel @Inject constructor(
                     }
                     is Resource.Loading -> {
                         //TODO: Poner estado
-                    }
-                }
-            }
-        }
-    }
-
-    fun doLike(postId: String, liked: Boolean){
-        viewModelScope.launch {
-            val result = repo.registerLike(postId, liked)
-
-            result.let {
-                when(val resource = it){
-                    is Resource.Success ->{
-                        //TODO: Hacer un estado para cuando sea correcto
-                    }
-                    is Resource.Failure ->{
-                        //TODO: Hacer un estado para cuando falle
-                    }
-                    is Resource.Loading->{
-                        //TODO: Hacer un estado para cuando este cargando
-                    }
-                }
-            }
-        }
-    }
-
-    fun doBookmark(postId: String, bookmarked: Boolean){
-        viewModelScope.launch {
-            val result = repo.registerBookmark(postId, bookmarked)
-
-            result.let {
-                when(val resource = it){
-                    is Resource.Success ->{
-                        //TODO: Hacer un estado para cuando sea correcto
-                    }
-                    is Resource.Failure ->{
-                        //TODO: Hacer un estado para cuando falle
-                    }
-                    is Resource.Loading->{
-                        //TODO: Hacer un estado para cuando este cargando
                     }
                 }
             }

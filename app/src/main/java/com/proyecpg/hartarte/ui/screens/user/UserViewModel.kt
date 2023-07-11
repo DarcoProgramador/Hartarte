@@ -51,10 +51,6 @@ class UserViewModel @Inject constructor(
                     getUser()
                 }
             }
-
-            is UserEvent.UserPostLikeClicked -> doLike(event.postId, event.liked)
-
-            is UserEvent.UserPostBookmarkCliked -> doBookmark(event.postId, event.bookmarked)
         }
     }
     private suspend fun getUser(){
@@ -162,45 +158,4 @@ class UserViewModel @Inject constructor(
             }
         }
     }
-
-    private fun doLike(postId: String, liked: Boolean){
-        viewModelScope.launch {
-            val result = postRepository.registerLike(postId, liked)
-
-            result.let {
-                when(val resource = it){
-                    is Resource.Success ->{
-                        //TODO: Hacer un estado para cuando sea correcto
-                    }
-                    is Resource.Failure ->{
-                        //TODO: Hacer un estado para cuando falle
-                    }
-                    is Resource.Loading->{
-                        //TODO: Hacer un estado para cuando este cargando
-                    }
-                }
-            }
-        }
-    }
-
-    private fun doBookmark(postId: String, bookmarked: Boolean){
-        viewModelScope.launch {
-            val result = postRepository.registerBookmark(postId, bookmarked)
-
-            result.let {
-                when(val resource = it){
-                    is Resource.Success ->{
-                        //TODO: Hacer un estado para cuando sea correcto
-                    }
-                    is Resource.Failure ->{
-                        //TODO: Hacer un estado para cuando falle
-                    }
-                    is Resource.Loading->{
-                        //TODO: Hacer un estado para cuando este cargando
-                    }
-                }
-            }
-        }
-    }
-
 }

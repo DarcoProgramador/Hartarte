@@ -102,11 +102,9 @@ fun BookmarkScreenContent(
                                 isBookmarked = bookmarked,
                                 likesCount = likeCount,
                                 onLike = { postId : String, like : Boolean ->
-                                    viewModel.doLike(postId, like)
                                     onPostSharedProcess(PostSharedEvent.OnLiked(postId, like))
                                 },
                                 onBookmark = { postId : String, bookmark : Boolean ->
-                                    viewModel.doBookmark(postId, bookmark)
                                     onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
                                 },
                                 onPostClick = {
