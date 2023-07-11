@@ -104,7 +104,7 @@ fun SearchBar(
         items.reversed().forEach {item ->
             Row(
                 modifier = Modifier
-                    .padding(10.dp)
+                    .padding(if(item.contains(searchBoxState.query, ignoreCase = true)) 10.dp else 0.dp)
                     .clickable {
                         searchBoxState.setText(item)
                     },

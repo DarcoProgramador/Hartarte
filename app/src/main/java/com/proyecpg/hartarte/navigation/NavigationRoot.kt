@@ -91,20 +91,13 @@ fun NavigationRoot(
         }
 
         composable(AppScreens.SearchScreen.route){
-            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
-            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
-
             SearchScreen(
-                viewModel = searchViewModel,
                 searchBoxState = searchViewModel.searchBoxState,
                 paginator = searchViewModel.hitsPaginator,
                 statsText = searchViewModel.statsText,
-                stateLiked = stateLiked,
-                stateBookmarked = stateBookmarked,
                 onPostClick = {postId ->
                     navController.navigate(AppScreens.OpenPostScreen.route.plus("/${postId}"))
                 },
-                onPostSharedProcess = postSharedViewModel::onProcess,
                 onReturn = { navController.popBackStack() }
             )
         }
