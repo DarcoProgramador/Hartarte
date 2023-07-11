@@ -39,7 +39,6 @@ import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.user.NonUserCard
-import com.proyecpg.hartarte.ui.screens.user.main.UserEvent
 import kotlinx.coroutines.flow.Flow
 
 @Composable
