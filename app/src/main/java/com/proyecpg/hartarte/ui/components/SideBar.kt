@@ -153,7 +153,7 @@ fun SideBar(
         NavigationDrawerItem(
             label = { Text(text = "Sobre la app") },
             selected = false,
-            onClick = { /* TODO: Mostrar ventana de info */ },
+            onClick = {  },
             icon = { Icon(imageVector = Icons.Outlined.Info, contentDescription = "About us") }
         )
 

@@ -109,6 +109,7 @@ fun MainScreen(
                     },
                     state = state,
                     switchState = state.darkThemeValue
+
                 )
             },
             drawerState = drawerState

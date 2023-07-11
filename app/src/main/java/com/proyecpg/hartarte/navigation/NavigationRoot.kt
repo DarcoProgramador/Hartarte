@@ -174,6 +174,10 @@ fun NavigationRoot(
                 onSendComment = {}
             )
         }
+        composable(AppScreens.OpenAboutApp.route)
+        {
+            AppScreens.OpenAboutApp
+        }
     }
 }
 
@@ -191,4 +195,5 @@ sealed class AppScreens(val route: String){
     object SearchScreen: AppScreens("search_screen")
     object CreatePostScreen: AppScreens("create_post_screen")
     object OpenPostScreen: AppScreens("open_post_screen")
+    object OpenAboutApp: AppScreens("open_about_app")
 }
