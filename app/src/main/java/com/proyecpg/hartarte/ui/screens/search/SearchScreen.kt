@@ -15,26 +15,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,8 +37,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,30 +44,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.algolia.instantsearch.android.paging3.Paginator
 import com.algolia.instantsearch.android.paging3.flow
 import com.algolia.instantsearch.compose.filter.facet.FacetListState
+import com.algolia.instantsearch.compose.item.StatsState
 import com.algolia.instantsearch.compose.searchbox.SearchBoxState
 import com.algolia.instantsearch.core.selectable.list.SelectableItem
 import com.algolia.search.model.search.Facet
-=======
-import com.algolia.instantsearch.compose.item.StatsState
-import com.algolia.instantsearch.compose.searchbox.SearchBoxState
->>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.data.product.Product
@@ -85,22 +69,23 @@ import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
-import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import com.proyecpg.hartarte.utils.QueryParams
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 
 @Composable
-fun Search(
-<<<<<<< HEAD
+fun SearchScreen(
     viewModel: SearchViewModel,
     searchBoxState: SearchBoxState,
     paginator: Paginator<Product>,
     statsText: StatsState<String>,
+    stateLiked : HashMap<String, Boolean>,
+    stateBookmarked : HashMap<String, Boolean>,
+    onPostClick: (String) -> Unit,
+    onPostSharedProcess: (PostSharedEvent) -> Unit,
     onReturn: () -> Unit
 ) {
-    var isSearchOpened by remember{ mutableStateOf(false) }
+    var isSearchOpened by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val pagingHits = paginator.flow.collectAsLazyPagingItems()
@@ -126,7 +111,7 @@ fun Search(
                     onValueChange = { scope.launch { listState.scrollToItem(0) } }
                 )
 
-                if (searchBoxState.query.isNotEmpty()){
+                if (searchBoxState.query.isNotEmpty()) {
                     Stats(stats = statsText.stats)
                 }
 
@@ -139,124 +124,11 @@ fun Search(
             }
         }
 
-    ) {innerPadding ->
-        innerPadding
-    }
-=======
-    searchBoxState: SearchBoxState,
-    paginator: Paginator<Product>,
-    statsText: StatsState<String>
-) {
-    val scope = rememberCoroutineScope()
-    val pagingHits = paginator.flow.collectAsLazyPagingItems()
-    val listState = rememberLazyListState()
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        SearchBox(
-            searchBoxState = searchBoxState,
-            onValueChange = { scope.launch { listState.scrollToItem(0) } },
+    ) { innerPadding ->
+        SearchScreenContent(innerPadding = innerPadding, viewModel = viewModel,
+            onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess,
+            stateLiked = stateLiked, stateBookmarked = stateBookmarked
         )
-
-        Stats(stats = statsText.stats)
-
-        ProductsList(
-            pagingHits = pagingHits,
-            listState = listState,
-        )
-    }
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun SearchBox(
-    searchBoxState: SearchBoxState = SearchBoxState(),
-    onValueChange: (String) -> Unit = {}
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 12.dp),
-        shape = RoundedCornerShape(30.dp),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            focusedIndicatorColor = MaterialTheme.colorScheme.background,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.background,
-            errorIndicatorColor = MaterialTheme.colorScheme.background,
-        ),
-        value = searchBoxState.query,
-        // Update text on value change
-        onValueChange = {
-            searchBoxState.setText(it)
-            onValueChange(it)
-        },
-        textStyle = TextStyle(
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontSize = 16.sp
-        ),
-        placeholder = {
-            Text(
-                text = "Buscar..."
-            )
-        },
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "Search", modifier = Modifier.padding(start = 5.dp))
-        },
-        trailingIcon = {
-            if(searchBoxState.query.isNotEmpty()){
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close search bar",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier
-                        .padding(end = 5.dp)
-                        .clickable {
-                            searchBoxState.setText("")
-                            onValueChange("")
-                        }
-                )
-            }
-        },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        // Set text as query submit on search action
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                searchBoxState.setText(searchBoxState.query, true)
-                keyboardController?.hide()
-            }
-        ),
-        maxLines = 1
-    )
->>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
-}
-
-@Composable
-fun ProductsList(
-    pagingHits: LazyPagingItems<Product>,
-    listState: LazyListState
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        state = listState
-    ) {
-        items(pagingHits) { item ->
-            if (item == null) return@items
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(14.dp),
-                text = item.name,
-                fontSize = 16.sp
-            )
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .width(1.dp)
-            )
-        }
     }
 }
 
@@ -271,7 +143,6 @@ fun Stats(stats: String) {
 }
 
 @Composable
-<<<<<<< HEAD
 fun FacetRow(
     modifier: Modifier = Modifier,
     selectableFacet: SelectableItem<Facet>
@@ -332,54 +203,6 @@ fun FacetList(
                 )
             }
         }
-    }
-}
-
-@Composable
-=======
->>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
-fun SearchScreen(
-    viewModel: SearchViewModel,
-    onPostClick: (String) -> Unit,
-    onPostSharedProcess: (PostSharedEvent) -> Unit,
-    stateLiked : HashMap<String, Boolean>,
-    stateBookmarked : HashMap<String, Boolean>,
-    onReturn: () -> Unit
-){
-    var isSearchOpened by remember{ mutableStateOf(false) }
-
-    Scaffold(
-        modifier = Modifier
-            .padding(all = 12.dp),
-        topBar = {
-            Column {
-                SearchTopBar(
-                    isOpened = isSearchOpened,
-                    onSearchClick = {
-                        isSearchOpened = !isSearchOpened
-                    },
-                    onReturn = onReturn
-                )
-
-                //SearchBar()
-
-                Spacer(modifier = Modifier.size(5.dp))
-
-                SearchFilters(viewModel, isSearchOpened)
-
-
-
-                Divider(
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-            }
-        }
-    ) { innerPadding ->
-        SearchScreenContent(innerPadding = innerPadding, viewModel = viewModel,
-            onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess,
-            stateLiked = stateLiked, stateBookmarked = stateBookmarked
-        )
     }
 }
 

@@ -1,7 +1,5 @@
 package com.proyecpg.hartarte.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,7 +21,6 @@ import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
-import com.proyecpg.hartarte.ui.screens.search.Search
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
 import com.proyecpg.hartarte.ui.screens.search.SearchViewModel
 import com.proyecpg.hartarte.ui.screens.user.UserViewModel
@@ -94,28 +91,22 @@ fun NavigationRoot(
         }
 
         composable(AppScreens.SearchScreen.route){
-            Search(
+            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
+
+            SearchScreen(
                 viewModel = searchViewModel,
                 searchBoxState = searchViewModel.searchBoxState,
                 paginator = searchViewModel.hitsPaginator,
                 statsText = searchViewModel.statsText,
-                onReturn = { navController.popBackStack() }
-            )
-
-            /*val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
-            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
-            SearchScreen(
-                viewModel = hiltViewModel(),
+                stateLiked = stateLiked,
+                stateBookmarked = stateBookmarked,
                 onPostClick = {postId ->
                     navController.navigate(AppScreens.OpenPostScreen.route.plus("/${postId}"))
                 },
-                onReturn = {
-                    navController.popBackStack()
-                },
                 onPostSharedProcess = postSharedViewModel::onProcess,
-                stateLiked = stateLiked,
-                stateBookmarked = stateBookmarked
-            )*/
+                onReturn = { navController.popBackStack() }
+            )
         }
 
         composable(AppScreens.CreatePostScreen.route){
