@@ -1,5 +1,7 @@
 package com.proyecpg.hartarte.navigation
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -169,6 +171,10 @@ fun NavigationRoot(
         composable(AppScreens.OpenPostImageScreen.route.plus("/{images}"),
             arguments = listOf(navArgument("images"){type = NavType.StringArrayType})){ backStackEntry ->
             val images = backStackEntry.arguments?.getStringArray("images")
+
+            for (i in images?.indices!!) {
+                Log.e(TAG, images?.get(i).toString())
+            }
 
             OpenPostImageScreen(imagen = images?.toList() ?: emptyList())
         }

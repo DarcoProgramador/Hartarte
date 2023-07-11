@@ -1,15 +1,14 @@
 package com.proyecpg.hartarte.ui.screens.post.open
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,13 +28,15 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.utils.Constants
 
 @OptIn(ExperimentalPagerApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun OpenPostImageScreen(
-    imagen: List<String>
-) {
+fun OpenPostImageScreen(imagen:List<String>) {
+    for (i in imagen.indices!!) {
+        Log.e(Constants.TAG, imagen[i])
+    }
     val pagerState = rememberPagerState(initialPage = 0)
     val scale = remember { mutableStateOf(1f) }
     val rotationState = remember { mutableStateOf(1f) }
@@ -63,8 +64,7 @@ fun OpenPostImageScreen(
         ) { page ->
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    //.data(imagen[page])
-                    .data(R.drawable.img_facebook)
+                    .data(imagen[page])
                     .placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder)
                     .crossfade(true)
