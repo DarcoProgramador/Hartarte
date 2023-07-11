@@ -51,4 +51,7 @@
 
     //Otros
     <string name="web_client_id">977446594568-4mfefmfj6kg4dpqqfnbi97apc093bo9n.apps.googleusercontent.com</string>
+    <string name="web_client_search_apikey">3e3e58b5ae52a17189dda57b84dd8760</string>
+    <string name="web_client_search_aplication_id">A02C7FD8FB</string>
+    <string name="web_client_search_index_name">posts_search</string>
 </resources>

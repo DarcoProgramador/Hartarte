@@ -24,9 +24,6 @@ import com.algolia.instantsearch.stats.DefaultStatsPresenter
 import com.algolia.instantsearch.stats.StatsConnector
 import com.algolia.instantsearch.stats.connectView
 import com.algolia.search.client.ClientSearch
-import com.algolia.search.logging.LogLevel
-import com.algolia.search.model.APIKey
-import com.algolia.search.model.ApplicationID
 import com.algolia.search.model.Attribute
 import com.algolia.search.model.IndexName
 import com.proyecpg.hartarte.data.post.PostRepository
@@ -43,16 +40,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val repo: PostRepository
+    private val repo: PostRepository,
+    client : ClientSearch,
+    indexName : IndexName
 ): ViewModel() {
 
-    val client = ClientSearch(
-        ApplicationID("A02C7FD8FB"),
-        APIKey("3e3e58b5ae52a17189dda57b84dd8760"),
-        LogLevel.All
-    )
-    val indexName = IndexName("posts_search")
-    val searcher = HitsSearcher(client, indexName)
+    private val searcher = HitsSearcher(client, indexName)
 
     //Search Box
     val searchBoxState = SearchBoxState()
