@@ -35,11 +35,9 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
-import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.user.NonUserCard
-import com.proyecpg.hartarte.ui.screens.user.main.UserEvent
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -49,6 +47,7 @@ fun OpenUserScreen(
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>,
     onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     onReturn: () -> Unit
 ){
@@ -63,8 +62,8 @@ fun OpenUserScreen(
     ) { innerPadding ->
         OpenUserScreenContent(
             paddingValues = innerPadding, userState = userState, postUser = postUser,
-            stateLiked = stateLiked, stateBookmarked = stateBookmarked,
-            onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess
+            stateLiked = stateLiked, stateBookmarked = stateBookmarked, onPostClick = onPostClick,
+            onPostSharedProcess = onPostSharedProcess, onUserClick = onUserClick
         )
     }
 }
@@ -109,6 +108,7 @@ fun OpenUserScreenContent(
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>,
     onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit
 ){
     val lazyListState = rememberLazyListState()
@@ -166,7 +166,7 @@ fun OpenUserScreenContent(
                             val bookmarked = stateBookmarked[postId]?:it.bookmarked?:false
 
                             it.images?.let { it1 ->
-                                Post(
+                                com.proyecpg.hartarte.ui.components.Post(
                                     postId = postId,
                                     images = it1.toList(),
                                     username = username,
@@ -182,9 +182,11 @@ fun OpenUserScreenContent(
                                     onBookmark = { postId : String, bookmark : Boolean ->
                                         onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
                                     },
-                                    onUserClick = {},
                                     onPostClick = {
                                         onPostClick(postId)
+                                    },
+                                    onUserClick = {
+                                        onUserClick(it.user!!.uid!!)
                                     }
                                 )
                             }

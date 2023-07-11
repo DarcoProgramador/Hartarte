@@ -199,11 +199,14 @@ fun NavigationRoot(
                 postUser = openUserViewModel.postsUser,
                 stateLiked = stateLiked,
                 stateBookmarked = stateBookmarked,
-                onPostClick = {},
+                onPostClick = {postId ->
+                    navController.navigate(AppScreens.OpenPostScreen.route.plus("/${postId}"))
+                },
                 onPostSharedProcess = postSharedViewModel::onProcess,
                 onReturn = {
                     navController.popBackStack()
-                }
+                },
+                onUserClick = {}
             )
         }
     }
