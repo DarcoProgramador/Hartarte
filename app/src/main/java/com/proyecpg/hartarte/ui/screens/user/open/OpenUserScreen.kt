@@ -193,7 +193,6 @@ fun OpenUserScreenContent(
                                         onUserClick(it.user!!.uid!!)
                                     },
                                     onImageClick = {
-
                                     }
                                 )
                             }
