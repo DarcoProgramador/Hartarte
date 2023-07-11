@@ -225,6 +225,66 @@ fun UserCard(
     }
 }
 
+@Composable
+fun NonUserCard(
+    userImage: String?,
+    username: String?,
+    userDescription: String?,
+    lazyListState: LazyListState
+){
+    var name by rememberSaveable(key = "name") { mutableStateOf(username?:"Usuario") }
+    var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"¡Hola, soy un nuevo usuario!") }
+
+    val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 230.dp else 170.dp)
+    val scope = rememberCoroutineScope()
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(if (!lazyListState.isScrolled) IntrinsicSize.Max else IntrinsicSize.Min)
+            .clickable {
+                scope.launch {
+                    lazyListState.animateScrollToItem(0, 0)
+                }
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .padding(if (!lazyListState.isScrolled) 10.dp else 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = userImage ?: R.drawable.user_placeholder,
+                contentDescription = "User image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(animatedSize)
+                    .clip(RoundedCornerShape(16.dp))
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = username ?: "Usuario",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 19.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun customTextInputField(
@@ -389,6 +449,21 @@ fun PreviewUserCard(){
                 lazyListState = LazyListState(6, 6),
                 onSendDescription = {},
                 userEditState = UserState()
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewNonUserCard(){
+    HartarteTheme {
+        Box(modifier = Modifier.padding(all = 10.dp)){
+            NonUserCard(
+                userImage = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                username = "Username",
+                userDescription = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
+                lazyListState = LazyListState(6, 6)
             )
         }
     }
