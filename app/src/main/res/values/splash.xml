@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.Hartarte.SplashScreen" parent="Theme.SplashScreen.Common">
         <item name="windowSplashScreenBackground">#fcfcff</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/img_logo_small</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_hatarte</item>
         <item name="postSplashScreenTheme">@style/Theme.Hartarte</item>
     </style>
 </resources>
