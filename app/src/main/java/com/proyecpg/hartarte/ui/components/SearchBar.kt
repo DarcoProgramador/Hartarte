@@ -27,11 +27,18 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
+import com.algolia.instantsearch.compose.highlighting.toAnnotatedString
 import com.algolia.instantsearch.compose.searchbox.SearchBoxState
 import com.proyecpg.hartarte.data.product.Product
+import java.lang.Math.min
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -93,20 +100,29 @@ fun SearchBar(
             }
         }
     ) {
-        items.reversed().forEach {
+        items.reversed().forEach {item ->
             Row(
                 modifier = Modifier
                     .padding(10.dp)
                     .clickable {
-                        searchBoxState.setText(it)
+                        searchBoxState.setText(item)
                     },
                 verticalAlignment = CenterVertically
             ){
-                Icon(imageVector = Icons.Default.History, contentDescription = "History icon")
+                if (item.contains(searchBoxState.query, ignoreCase = true) || searchBoxState.query.isEmpty()){
+                    Icon(imageVector = Icons.Default.History, contentDescription = "History icon")
 
-                Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
 
-                Text(text = it)
+                    val matchingLetters = getMatchingLetters(item, searchBoxState.query)
+
+                    Text(buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(matchingLetters)
+                        }
+                        append(item.substring(matchingLetters.length, item.length))
+                    })
+                }
             }
         }
         LazyColumn(
@@ -127,9 +143,33 @@ fun SearchBar(
 
                     Spacer(modifier = Modifier.width(10.dp))
 
-                    Text(text = item.name)
+                    TextAnnotated(
+                        annotatedString = item.highlightedName?.toAnnotatedString(),
+                        default = item.name
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+fun TextAnnotated(annotatedString: AnnotatedString?, default: String) {
+    if (annotatedString != null) {
+        Text(text = annotatedString)
+    } else {
+        Text(text = default)
+    }
+}
+
+private fun getMatchingLetters(item: String, query: String): String {
+    val matchingLetters = StringBuilder()
+    for (i in 0 until item.length.coerceAtMost(query.length)) {
+        if (item[i].equals(query[i], ignoreCase = true)) {
+            matchingLetters.append(item[i])
+        } else {
+            break
+        }
+    }
+    return matchingLetters.toString()
 }

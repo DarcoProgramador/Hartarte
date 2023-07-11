@@ -1,8 +1,17 @@
 package com.proyecpg.hartarte.data.product
 
+import com.algolia.instantsearch.core.highlighting.HighlightedString
+import com.algolia.instantsearch.highlighting.Highlightable
+import com.algolia.search.model.Attribute
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 @Serializable
 data class Product(
-    val name: String
-)
+    val name: String,
+    override val _highlightResult: JsonObject?
+) : Highlightable {
+
+    val highlightedName: HighlightedString?
+        get() = getHighlight(Attribute("name"))
+}
