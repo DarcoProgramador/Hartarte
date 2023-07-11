@@ -52,6 +52,7 @@ fun OpenPostImageScreen(imagen:List<String>) {
                 }
             }
     ) {
+<<<<<<< HEAD
         HorizontalPager(
             count = imagen.size,
             modifier = Modifier
@@ -82,6 +83,22 @@ fun OpenPostImageScreen(imagen:List<String>) {
                 contentScale = ContentScale.None
             )
         }
+=======
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imagen)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .crossfade(true)
+                .build(),
+            contentDescription = "Carousel image",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(5.dp)
+                .clip(RoundedCornerShape(16.dp)),
+            contentScale = ContentScale.None
+        )
+>>>>>>> f36ef90 (Ya navega)
     }
 
 }

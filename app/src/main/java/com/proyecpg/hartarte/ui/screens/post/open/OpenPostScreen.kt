@@ -195,6 +195,7 @@ fun openPostScreenContent(
                         .background(
                             Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Black))
                         ),
+
                     state = pagerState,
                     verticalAlignment = Alignment.CenterVertically
                 ) { page ->
@@ -216,9 +217,11 @@ fun openPostScreenContent(
                             .fillMaxSize()
                             .clickable {
                                 var arrayImages = postImages.toTypedArray()
+
                                 for (i in arrayImages.indices) {
                                     Log.e(TAG,arrayImages[i])
                                 }
+
                                 onImageClick(arrayImages)
                             }
                             .padding(5.dp)
