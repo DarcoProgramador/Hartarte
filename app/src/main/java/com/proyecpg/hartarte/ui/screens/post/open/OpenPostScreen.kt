@@ -214,6 +214,8 @@ fun openPostScreenContent(
                         contentDescription = "Carousel image",
                         modifier = Modifier
                             .fillMaxSize()
+                            .padding(5.dp)
+                            .clip(RoundedCornerShape(16.dp))
                             .clickable {
                                 var arrayImages = postImages.toTypedArray()
 <<<<<<< HEAD
@@ -226,8 +228,6 @@ fun openPostScreenContent(
 >>>>>>> 1ac9c84 (mejorando OpenImage)
                                 onImageClick(arrayImages)
                             }
-                            .padding(5.dp)
-                            .clip(RoundedCornerShape(16.dp))
                             .graphicsLayer {
                                 scaleX = imageSize
                                 scaleY = imageSize
