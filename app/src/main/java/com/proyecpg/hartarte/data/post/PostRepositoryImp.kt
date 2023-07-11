@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
+import com.proyecpg.hartarte.data.model.CommentEntity
 import com.proyecpg.hartarte.data.paging.PostPagingSource
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.Constants.BOOKMARKS
@@ -23,9 +24,12 @@ import com.proyecpg.hartarte.data.model.PostEntity
 import com.proyecpg.hartarte.data.model.User
 import com.proyecpg.hartarte.data.model.UserHashmap
 import com.proyecpg.hartarte.data.model.toUser
+import com.proyecpg.hartarte.domain.model.Comment
 import com.proyecpg.hartarte.utils.Constants
+import com.proyecpg.hartarte.utils.Constants.COMMENT_COLLECTION
 import com.proyecpg.hartarte.utils.Constants.POST_IMAGES
 import com.proyecpg.hartarte.utils.Constants.POST_PATH
+import com.proyecpg.hartarte.utils.Constants.USERS
 import com.proyecpg.hartarte.utils.QueryParams
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
@@ -121,6 +125,8 @@ class PostRepositoryImp @Inject constructor(
             val postRef = db.collection(POST_COLLECTION).document(postId)
             val postLikesRef = db.collection(POST_LIKES_COLLECTION).document(postId)
 
+            var exeption : Exception? = null
+
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(postRef)
                 val likeCount = snapshot.getLong(LIKES)!!
@@ -151,7 +157,10 @@ class PostRepositoryImp @Inject constructor(
             }.addOnSuccessListener {
                 //TODO: EMIT Result when the transaccion is true
             }.addOnFailureListener {
-                throw Exception(it.message)
+                exeption = it
+            }
+            if (exeption != null){
+                throw Exception(exeption)
             }
             Resource.Success(true)
         } catch (e: Exception) {
@@ -168,6 +177,8 @@ class PostRepositoryImp @Inject constructor(
 
             val postRef = db.collection(POST_COLLECTION).document(postId)
             val postBookmarksRef = db.collection(POST_BOOKMARKS_COLLECTION).document(postId)
+
+            var exeption : Exception? = null
 
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(postRef)
@@ -199,7 +210,11 @@ class PostRepositoryImp @Inject constructor(
             }.addOnSuccessListener {
                 //TODO: EMIT Result when the transaccion is true
             }.addOnFailureListener {
-                throw Exception(it.message)
+                exeption = it
+            }
+
+            if (exeption != null){
+                throw Exception(exeption)
             }
             Resource.Success(true)
         } catch (e: Exception) {
@@ -273,6 +288,57 @@ class PostRepositoryImp @Inject constructor(
             
             Resource.Success(true)
 
+        } catch (e: Exception) {
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun getComments(postId: String): Resource<List<Comment>> {
+        return try {
+            val commentsRef = db.collection(POST_COLLECTION).document(postId).collection(COMMENT_COLLECTION)
+            val userRef = db.collection(USERS)
+
+            val commentsDocs = commentsRef.get().await()
+
+            val commentsEntity = commentsDocs.toObjects(CommentEntity::class.java)
+
+            val comments : MutableList<Comment> = mutableListOf()
+            for(comment in commentsEntity){
+                if (comment.uid.isNullOrEmpty()){
+                    continue
+                }
+                val userDoc = userRef.document(comment.uid).get().await()
+                val user = userDoc.toObject(User::class.java) ?: continue
+
+                if(user.username.isNullOrEmpty() || user.photoUrl.isNullOrEmpty()){
+                    continue
+                }
+
+                comments.add(Comment(
+                    comment = comment.comment,
+                    uid = comment.uid,
+                    username = user.username,
+                    photo = user.photoUrl
+                ))
+            }
+
+            Resource.Success(comments.toList())
+        } catch (e: Exception) {
+            Resource.Failure(e)
+        }
+    }
+
+    override suspend fun registerComment(postId: String, comment: String): Resource<Boolean> {
+        return try {
+            val user = firebaseAuth.currentUser!!.uid
+            val commentRef = db.collection(POST_COLLECTION).document(postId).collection(COMMENT_COLLECTION)
+            val newComment = CommentEntity(
+                comment = comment,
+                uid = user
+            )
+            //add new comment
+            commentRef.add(newComment).await()
+            Resource.Success(true)
         } catch (e: Exception) {
             Resource.Failure(e)
         }

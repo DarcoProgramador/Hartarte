@@ -42,4 +42,7 @@ object Constants {
     //Storage Path
     const val POST_PATH = "post/"
     const val USER_PATH = "user/"
+
+    //FireBase Comment
+    const val COMMENT_COLLECTION = "comments"
 }
