@@ -47,11 +47,11 @@ class SearchViewModel @Inject constructor(
 ): ViewModel() {
 
     val client = ClientSearch(
-        ApplicationID("latency"),
-        APIKey("1f6fd3a6fb973cb08419fe7d288fa4db"),
+        ApplicationID("A02C7FD8FB"),
+        APIKey("3e3e58b5ae52a17189dda57b84dd8760"),
         LogLevel.All
     )
-    val indexName = IndexName("instant_search")
+    val indexName = IndexName("posts_search")
     val searcher = HitsSearcher(client, indexName)
 
     //Search Box
