@@ -166,7 +166,6 @@ fun NavigationRoot(
             )
         }
 
-
         composable(AppScreens.OpenPostImageScreen.route.plus("/{images}"),
             arguments = listOf(navArgument("images"){type = NavType.StringArrayType})){ backStackEntry ->
             val images = backStackEntry.arguments?.getStringArray("images")
