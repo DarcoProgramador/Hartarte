@@ -62,10 +62,9 @@ import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.bookmark.BookmarkScreen
 import com.proyecpg.hartarte.ui.screens.home.HomeScreen
 import com.proyecpg.hartarte.ui.screens.login.LoginEvent
-import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
-import com.proyecpg.hartarte.ui.screens.user.UserEvent
-import com.proyecpg.hartarte.ui.screens.user.UserScreen
-import com.proyecpg.hartarte.ui.screens.user.UserState
+import com.proyecpg.hartarte.ui.screens.user.main.UserEvent
+import com.proyecpg.hartarte.ui.screens.user.main.UserScreen
+import com.proyecpg.hartarte.ui.screens.user.main.UserState
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
