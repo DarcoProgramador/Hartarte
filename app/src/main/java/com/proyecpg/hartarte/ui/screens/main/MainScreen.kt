@@ -173,7 +173,7 @@ fun MainScreen(
                         onPostSharedProcess = onPostSharedProcess,
                         stateLiked = stateLiked,
                         stateBookmarked = stateBookmarked,
-                        onImageClick = onImageClick, onUserClick = onUserClick,
+                        onImageClick = onImageClick, onUserClick = onUserClick
                     )
                 }
             }
