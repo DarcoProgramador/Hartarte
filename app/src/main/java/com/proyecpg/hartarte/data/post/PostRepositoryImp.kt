@@ -125,6 +125,8 @@ class PostRepositoryImp @Inject constructor(
             val postRef = db.collection(POST_COLLECTION).document(postId)
             val postLikesRef = db.collection(POST_LIKES_COLLECTION).document(postId)
 
+            var exeption : Exception? = null
+
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(postRef)
                 val likeCount = snapshot.getLong(LIKES)!!
@@ -155,7 +157,10 @@ class PostRepositoryImp @Inject constructor(
             }.addOnSuccessListener {
                 //TODO: EMIT Result when the transaccion is true
             }.addOnFailureListener {
-                throw Exception(it.message)
+                exeption = it
+            }
+            if (exeption != null){
+                throw Exception(exeption)
             }
             Resource.Success(true)
         } catch (e: Exception) {
@@ -172,6 +177,8 @@ class PostRepositoryImp @Inject constructor(
 
             val postRef = db.collection(POST_COLLECTION).document(postId)
             val postBookmarksRef = db.collection(POST_BOOKMARKS_COLLECTION).document(postId)
+
+            var exeption : Exception? = null
 
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(postRef)
@@ -203,7 +210,11 @@ class PostRepositoryImp @Inject constructor(
             }.addOnSuccessListener {
                 //TODO: EMIT Result when the transaccion is true
             }.addOnFailureListener {
-                throw Exception(it.message)
+                exeption = it
+            }
+
+            if (exeption != null){
+                throw Exception(exeption)
             }
             Resource.Success(true)
         } catch (e: Exception) {
