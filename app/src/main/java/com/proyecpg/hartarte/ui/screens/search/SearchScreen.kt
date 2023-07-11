@@ -70,7 +70,6 @@ fun SearchScreen(
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     onReturn: () -> Unit
 ) {
-    var isSearchOpened by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val pagingHits = paginator.flow.collectAsLazyPagingItems()
@@ -81,13 +80,7 @@ fun SearchScreen(
             .padding(12.dp),
         topBar = {
             Column {
-                SearchTopBar(
-                    isOpened = isSearchOpened,
-                    onSearchClick = {
-                        isSearchOpened = !isSearchOpened
-                    },
-                    onReturn = onReturn
-                )
+                SearchTopBar( onReturn = onReturn )
 
                 SearchBar(
                     searchBoxState = searchBoxState,
@@ -285,11 +278,8 @@ fun SearchScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchTopBar(
-    isOpened: Boolean,
-    onSearchClick: () -> Unit,
-    onReturn: () -> Unit
-){
+fun SearchTopBar( onReturn: () -> Unit ){
+
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -306,26 +296,6 @@ fun SearchTopBar(
                     contentDescription = "Return icon",
                     tint = MaterialTheme.colorScheme.primary
                 )
-            }
-        },
-        actions = {
-            IconButton(
-                onClick = onSearchClick
-            ) {
-                if (isOpened){
-                    Icon(
-                        imageVector = Icons.Default.ExpandLess,
-                        contentDescription = "Expand less icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                else {
-                    Icon(
-                        imageVector = Icons.Default.FilterList,
-                        contentDescription = "Filters icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
             }
         }
     )
