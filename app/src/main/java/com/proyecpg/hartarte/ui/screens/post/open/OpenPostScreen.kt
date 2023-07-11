@@ -59,18 +59,21 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.domain.model.Comment
+import com.proyecpg.hartarte.ui.components.CommentComponent
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
 fun OpenPostScreen(
     postInfo: OpenPostArgs,
     username: String,
+    comments : List<Comment>,
     onReturn: () -> Unit,
     onImageClick: () -> Unit,
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
-    onSendComment: () -> Unit
+    onSendComment: (String) -> Unit
 ){
 
     var comment by remember{ mutableStateOf("") }
@@ -98,7 +101,8 @@ fun OpenPostScreen(
             onPostUserClick = onPostUserClick,
             onLike = onLike,
             onBookmark = onBookmark,
-            onSendComment = onSendComment
+            onSendComment = onSendComment,
+            comments = comments
         )
     }
 }
@@ -146,11 +150,12 @@ fun openPostScreenContent(
     postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: likes, isBookmarked
     username: String,
     comment: String,
+    comments: List<Comment>,
     onImageClick: () -> Unit,
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
-    onSendComment: () -> Unit
+    onSendComment: (String) -> Unit
 ): String {
     val pagerState = rememberPagerState(initialPage = 0)
     var commentText by remember{ mutableStateOf(comment) }
@@ -234,7 +239,7 @@ fun openPostScreenContent(
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                Comments()
+                Comments(comments = comments)
             }
         }
     }
@@ -409,7 +414,7 @@ fun PostInfo(
 fun customTextInputField(
     username: String,
     comment: String,
-    onSendComment: () -> Unit
+    onSendComment: (String) -> Unit
 ): String {
 
     var text by remember { (mutableStateOf(comment)) }
@@ -442,7 +447,7 @@ fun customTextInputField(
         trailingIcon = {
             if (text.isNotEmpty()){
                 IconButton(
-                    onClick = onSendComment
+                    onClick = {onSendComment(text)}
                 ){
                     Icon(
                         imageVector = Icons.Default.Send,
@@ -483,8 +488,21 @@ fun customTextInputField(
 }
 
 @Composable
-fun Comments(){
-
+fun Comments(comments : List<Comment>){
+    if(comments.isEmpty()){
+        return
+    }
+    Column(modifier = Modifier) {
+        for (comment in comments){
+            CommentComponent(
+                image = comment.photo?:"",
+                username = comment.username?:"",
+                description = comment.comment?:"",
+                date = "",
+                onPostUserClick = {}
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true)
@@ -575,7 +593,8 @@ fun PreviewOpenPostScreen(){
                 onPostUserClick = { /*TODO*/ },
                 onLike = { _, _ -> },
                 onBookmark = { _, _ -> },
-                onSendComment = {}
+                onSendComment = {},
+                comments = listOf(Comment())
             )
         }
     }

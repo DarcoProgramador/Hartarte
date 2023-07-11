@@ -28,7 +28,7 @@ import coil.compose.AsyncImage
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
-fun Comment(
+fun CommentComponent(
     image: String,
     username: String,
     description: String,
@@ -113,7 +113,7 @@ fun PreviewComment(){
         Box(modifier = Modifier
             .fillMaxWidth()
         ){
-            Comment(
+            CommentComponent(
                 image = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
                 username = "User",
                 description = "Come comen comen comeno comeno comenio coo comeno comenta coio comeo comentar comenrio comtario mentario  comen comen comeno comeno comenta coio comeo comentar comenrio comtario.",

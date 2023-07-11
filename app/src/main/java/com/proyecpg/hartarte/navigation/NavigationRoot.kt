@@ -131,25 +131,29 @@ fun NavigationRoot(
         { backStackEntry ->
 
             val openPostViewModel = hiltViewModel<OpenPostViewModel>()
-            openPostViewModel.updatePost(backStackEntry.arguments?.getString("postId")?:"")
+            val postId = backStackEntry.arguments?.getString("postId")?:""
+            openPostViewModel.updatePost(postId)
+            openPostViewModel.updateComments(postId)
             val statePost = openPostViewModel.statePost.collectAsStateWithLifecycle()
+            val stateComments = openPostViewModel.stateComments.collectAsStateWithLifecycle()
             OpenPostScreen(
                 postInfo = statePost.value,
                 username = statePost.value.postUsername,
+                comments = stateComments.value,
                 onReturn = {
                     navController.popBackStack()
                 },
                 onImageClick = { /*TODO*/ },
                 onPostUserClick = { /*TODO*/ },
-                onLike = { postId : String, like : Boolean ->
-                    openPostViewModel.doLike(postId, like)
-                    postSharedViewModel.onProcess(PostSharedEvent.OnLiked(postId, like))
+                onLike = { postId1 : String, like : Boolean ->
+                    postSharedViewModel.onProcess(PostSharedEvent.OnLiked(postId1, like))
                 },
-                onBookmark = { postId : String, bookmark : Boolean ->
-                    openPostViewModel.doBookmark(postId, bookmark)
-                    postSharedViewModel.onProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
+                onBookmark = { postId1 : String, bookmark : Boolean ->
+                    postSharedViewModel.onProcess(PostSharedEvent.OnBookmarked(postId1, bookmark))
                 },
-                onSendComment = {}
+                onSendComment = {comment ->
+                    openPostViewModel.addComment(postId, comment)
+                }
             )
         }
     }
