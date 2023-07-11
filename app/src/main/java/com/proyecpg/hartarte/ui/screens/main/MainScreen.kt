@@ -78,6 +78,7 @@ fun MainScreen(
     onSearchClick: () -> Unit,
     onCreatePost: () -> Unit,
     onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
     onProcessUser: (UserEvent) -> Unit,
     onPostSharedProcess : (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
@@ -154,13 +155,16 @@ fun MainScreen(
             ){ innerPadding ->
 
                 when(selectedNavigationIndex){
-                    0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick,
-                    onPostSharedProcess = onPostSharedProcess, stateLiked = stateLiked, stateBookmarked = stateBookmarked, onImageClick = onImageClick)
-                    1 -> BookmarkScreen(paddingValues = innerPadding, viewModel = hiltViewModel(),
+                    0 -> HomeScreen(
+                        paddingValues = innerPadding, viewModel = hiltViewModel(),
+                        onPostClick = onPostClick, onUserClick = onUserClick,onPostSharedProcess = onPostSharedProcess,
+                        stateLiked = stateLiked, stateBookmarked = stateBookmarked, onImageClick = onImageClick
+                    )
+                    1 -> BookmarkScreen(
+                        paddingValues = innerPadding, viewModel = hiltViewModel(),
                         onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess,
-                        stateLiked = stateLiked,
-                        stateBookmarked = stateBookmarked,
-                        onImageClick = onImageClick
+                        stateLiked = stateLiked, onUserClick = onUserClick,
+                        stateBookmarked = stateBookmarked, onImageClick = onImageClick
                     )
                     2 -> UserScreen(
                         paddingValues = innerPadding, onProcessUSer = onProcessUser,
@@ -169,7 +173,7 @@ fun MainScreen(
                         onPostSharedProcess = onPostSharedProcess,
                         stateLiked = stateLiked,
                         stateBookmarked = stateBookmarked,
-                        onImageClick = onImageClick
+                        onImageClick = onImageClick, onUserClick = onUserClick,
                     )
                 }
             }
@@ -302,7 +306,8 @@ fun PreviewMainScreen(){
             postUser = emptyPost,
             stateBookmarked = hashMapOf(),
             stateLiked = hashMapOf(),
-            onImageClick = {}
+            onImageClick = {},
+            onUserClick = {}
         )
     }
 }

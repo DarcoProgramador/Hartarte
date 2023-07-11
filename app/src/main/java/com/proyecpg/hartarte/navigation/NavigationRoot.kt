@@ -1,7 +1,5 @@
 package com.proyecpg.hartarte.navigation
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +25,8 @@ import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
 import com.proyecpg.hartarte.ui.screens.search.SearchViewModel
 import com.proyecpg.hartarte.ui.screens.user.main.UserViewModel
+import com.proyecpg.hartarte.ui.screens.user.open.OpenUserScreen
+import com.proyecpg.hartarte.ui.screens.user.open.OpenUserViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -82,6 +82,9 @@ fun NavigationRoot(
                         postUser = userViewModel.postsUser,
                         onImageClick = {
 
+                        },
+                        onUserClick = {userId ->
+                            navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}"))
                         }
                     )
                 }else{
@@ -104,7 +107,11 @@ fun NavigationRoot(
                 onPostClick = {postId ->
                     navController.navigate(AppScreens.OpenPostScreen.route.plus("/${postId}"))
                 },
-                onReturn = { navController.popBackStack() }
+                onPostSharedProcess = postSharedViewModel::onProcess,
+                onReturn = { navController.popBackStack() },
+                onUserClick = {userId ->
+                    navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}"))
+                }
             )
         }
 
@@ -172,9 +179,32 @@ fun NavigationRoot(
             )
         }
 
-
-        composable(AppScreens.OpenPostImageScreen.route){
+        composable(AppScreens.OpenPostImageScreen.route) {
             OpenPostImageScreen(imagen = postSharedViewModel.stateImages.value)
+        }
+
+        composable(AppScreens.OpenUserScreen.route.plus("/{userId}"),
+            arguments = listOf(navArgument("userId"){type = NavType.StringType})
+        )
+        { backStackEntry ->
+
+            val openUserViewModel = hiltViewModel<OpenUserViewModel>()
+            openUserViewModel.updateUser(backStackEntry.arguments?.getString("userId")?:"")
+            val userState by openUserViewModel.newUserState.collectAsStateWithLifecycle()
+            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
+
+            OpenUserScreen(
+                userState = userState,
+                postUser = openUserViewModel.postsUser,
+                stateLiked = stateLiked,
+                stateBookmarked = stateBookmarked,
+                onPostClick = {},
+                onPostSharedProcess = postSharedViewModel::onProcess,
+                onReturn = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
@@ -195,4 +225,5 @@ sealed class AppScreens(val route: String){
     object CreatePostScreen: AppScreens("create_post_screen")
     object OpenPostScreen: AppScreens("open_post_screen")
     object OpenPostImageScreen: AppScreens("open_post_image_screen")
+    object OpenUserScreen: AppScreens("open_user_screen")
 }

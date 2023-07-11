@@ -57,6 +57,7 @@ import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.components.SearchingPost
+import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -65,6 +66,8 @@ fun SearchScreen(
     paginator: Paginator<PostSerial>,
     statsText: StatsState<String>,
     onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
+    onPostSharedProcess: (PostSharedEvent) -> Unit,
     onReturn: () -> Unit
 ) {
     var isSearchOpened by remember { mutableStateOf(false) }
@@ -105,7 +108,8 @@ fun SearchScreen(
         }
 
     ) { innerPadding ->
-        SearchScreenContent(innerPadding = innerPadding, paginator = paginator, onPostClick = onPostClick)
+        SearchScreenContent(innerPadding = innerPadding, paginator = paginator, onPostClick = onPostClick, onUserClick = onUserClick
+        )
     }
 }
 
@@ -187,7 +191,8 @@ fun FacetList(
 fun SearchScreenContent(
     innerPadding: PaddingValues,
     paginator: Paginator<PostSerial>,
-    onPostClick: (String) -> Unit
+    onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit
 ){
     //Posts
     val postSearchState = paginator.flow.collectAsStateWithLifecycle(initialValue = 0)
@@ -225,16 +230,21 @@ fun SearchScreenContent(
                         val title = it.titulo
                         val description = it.descripcion
 
-                        SearchingPost(
-                            images = it.images.toList(),
-                            username = username,
-                            userPic = userPic,
-                            title = title,
-                            description = description,
-                            onPostClick = {
-                                onPostClick(postId)
-                            }
-                        )
+                        it.images?.let { it1 ->
+                            SearchingPost(
+                                images = it1.toList(),
+                                username = username,
+                                userPic = userPic,
+                                title = title,
+                                description = description,
+                                onPostClick = {
+                                    onPostClick(postId)
+                                },
+                                onUserClick = {
+                                    onUserClick(it.user!!.uid!!)
+                                }
+                            )
+                        }
                     }
                 }
             }
