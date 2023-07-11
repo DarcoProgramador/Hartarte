@@ -1,8 +1,9 @@
 package com.proyecpg.hartarte.data.model
 
-import com.proyecpg.hartarte.domain.model.Comment
+import com.google.firebase.Timestamp
 
 data class CommentEntity(
     val comment : String? = "",
-    val uid : String? = ""
+    val uid : String? = "",
+    val createAt : Timestamp = Timestamp.now()
 )

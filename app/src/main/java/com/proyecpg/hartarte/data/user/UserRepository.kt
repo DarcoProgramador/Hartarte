@@ -14,4 +14,6 @@ interface UserRepository {
     suspend fun editUser(username : String, descripcion : String) : Resource<Boolean>
 
     suspend fun updateUserPhoto(photo : Uri) : Resource<Boolean>
+
+    suspend fun getUserByUID(uid : String) : Resource<User>
 }

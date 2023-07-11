@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -59,18 +60,24 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.domain.model.Comment
+import com.proyecpg.hartarte.ui.components.CommentComponent
+import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
 fun OpenPostScreen(
     postInfo: OpenPostArgs,
+    currentUserUID : String,
+    currentUserUI : UserUI,
     username: String,
+    comments : List<Comment>,
     onReturn: () -> Unit,
     onImageClick: () -> Unit,
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
-    onSendComment: () -> Unit
+    onSendComment: (String) -> Unit
 ){
 
     var comment by remember{ mutableStateOf("") }
@@ -93,12 +100,15 @@ fun OpenPostScreen(
             postInfo = Triple(postInfo.postTitle, postInfo.postDescription, postInfo.postDate),
             postStatistics = Triple(postInfo.isLiked, postInfo.likesCount, postInfo.isBookmarked),
             username = username,
+            currentUserUID = currentUserUID,
+            currentUserUI = currentUserUI,
             comment = comment,
             onImageClick = onImageClick,
             onPostUserClick = onPostUserClick,
             onLike = onLike,
             onBookmark = onBookmark,
-            onSendComment = onSendComment
+            onSendComment = onSendComment,
+            comments = comments
         )
     }
 }
@@ -145,15 +155,19 @@ fun openPostScreenContent(
     postInfo: Triple<String, String, String>, //First: title, second: description
     postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: likes, isBookmarked
     username: String,
+    currentUserUID: String,
+    currentUserUI: UserUI,
     comment: String,
+    comments: List<Comment>,
     onImageClick: () -> Unit,
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
-    onSendComment: () -> Unit
+    onSendComment: (String) -> Unit
 ): String {
     val pagerState = rememberPagerState(initialPage = 0)
     var commentText by remember{ mutableStateOf(comment) }
+    val userComments  = remember { mutableStateListOf<Comment>() }
 
     LazyColumn(
         modifier = Modifier
@@ -230,7 +244,22 @@ fun openPostScreenContent(
                     onBookmark = onBookmark
                 )
 
-                commentText = customTextInputField(username = username, comment = commentText, onSendComment = onSendComment)
+                commentText = customTextInputField(username = username, comment = commentText,
+                    onSendComment = onSendComment,
+                    addUserComemnt = { commentText ->
+                        userComments.add(Comment(
+                            comment = commentText,
+                            uid = currentUserUID,
+                            username = currentUserUI.username,
+                            photo = currentUserUI.photo
+                        ))
+                    })
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                UserComments(userComments = userComments)
+
+                Comments(comments = comments)
             }
         }
     }
@@ -405,7 +434,8 @@ fun PostInfo(
 fun customTextInputField(
     username: String,
     comment: String,
-    onSendComment: () -> Unit
+    addUserComemnt : (String) -> Unit,
+    onSendComment: (String) -> Unit
 ): String {
 
     var text by remember { (mutableStateOf(comment)) }
@@ -438,7 +468,11 @@ fun customTextInputField(
         trailingIcon = {
             if (text.isNotEmpty()){
                 IconButton(
-                    onClick = onSendComment
+                    onClick = {
+                        onSendComment(text)
+                        addUserComemnt(text)
+                        text = ""
+                    }
                 ){
                     Icon(
                         imageVector = Icons.Default.Send,
@@ -479,8 +513,45 @@ fun customTextInputField(
 }
 
 @Composable
-fun Comments(){
+fun UserComments(userComments : List<Comment>){
+    if(userComments.isEmpty()){
+        return
+    }
+    Column(modifier = Modifier) {
+        for (comment in userComments.reversed()){
+            if (comment.comment.isNullOrBlank()){
+                continue
+            }
+            CommentComponent(
+                image = comment.photo?:"",
+                username = comment.username?:"",
+                description = comment.comment,
+                date = "",
+                onPostUserClick = {}
+            )
+        }
+    }
+}
 
+@Composable
+fun Comments(comments : List<Comment>){
+    if(comments.isEmpty()){
+        return
+    }
+    Column(modifier = Modifier) {
+        for (comment in comments){
+            if (comment.comment.isNullOrBlank()){
+                continue
+            }
+            CommentComponent(
+                image = comment.photo?:"",
+                username = comment.username?:"",
+                description = comment.comment,
+                date = "",
+                onPostUserClick = {}
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true)
@@ -536,7 +607,8 @@ fun PreviewCustomTextInputField(){
             customTextInputField(
                 username = "User",
                 comment = "Comment attempt",
-                onSendComment = {}
+                onSendComment = {},
+                addUserComemnt = {}
             )
         }
     }
@@ -565,13 +637,16 @@ fun PreviewOpenPostScreen(){
                     isBookmarked = false,
                     likesCount = 15
                 ),
+                currentUserUID = "",
                 username = "Username",
                 onReturn = { /*TODO*/ },
                 onImageClick = { /*TODO*/ },
                 onPostUserClick = { /*TODO*/ },
                 onLike = { _, _ -> },
                 onBookmark = { _, _ -> },
-                onSendComment = {}
+                onSendComment = {},
+                comments = listOf(Comment()),
+                currentUserUI = UserUI()
             )
         }
     }
