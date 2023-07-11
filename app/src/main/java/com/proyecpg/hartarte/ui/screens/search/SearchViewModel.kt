@@ -27,7 +27,7 @@ import com.algolia.search.client.ClientSearch
 import com.algolia.search.model.Attribute
 import com.algolia.search.model.IndexName
 import com.proyecpg.hartarte.data.post.PostRepository
-import com.proyecpg.hartarte.data.product.Product
+import com.proyecpg.hartarte.data.model.Product
 import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.utils.QueryParams
 import com.proyecpg.hartarte.utils.Resource

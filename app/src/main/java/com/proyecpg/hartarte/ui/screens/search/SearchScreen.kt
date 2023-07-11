@@ -63,7 +63,7 @@ import com.algolia.instantsearch.core.selectable.list.SelectableItem
 import com.algolia.search.model.search.Facet
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.proyecpg.hartarte.data.product.Product
+import com.proyecpg.hartarte.data.model.Product
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
@@ -246,7 +246,6 @@ fun SearchScreenContent(
                 items(items = pagingPosts){ post ->
                     post?.let{
                         val postId = it.postId?:""
-                        val date = "10 de mayo del 2023, 10:23:11"
                         val username = it.user?.name ?: ""
                         val userPic =  it.user?.photo ?: ""
                         val title = it.titulo?:""

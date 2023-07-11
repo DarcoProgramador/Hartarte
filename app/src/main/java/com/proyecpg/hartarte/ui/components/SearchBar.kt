@@ -37,8 +37,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import com.algolia.instantsearch.compose.highlighting.toAnnotatedString
 import com.algolia.instantsearch.compose.searchbox.SearchBoxState
-import com.proyecpg.hartarte.data.product.Product
-import java.lang.Math.min
+import com.proyecpg.hartarte.data.model.Product
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -137,7 +136,7 @@ fun SearchBar(
                     modifier = Modifier
                         .padding(10.dp)
                         .clickable {
-                            searchBoxState.setText(item.name)
+                            searchBoxState.setText(item.titulo)
                         },
                     verticalAlignment = CenterVertically
                 ){
@@ -147,7 +146,7 @@ fun SearchBar(
 
                     TextAnnotated(
                         annotatedString = item.highlightedName?.toAnnotatedString(),
-                        default = item.name
+                        default = item.titulo
                     )
                 }
             }
