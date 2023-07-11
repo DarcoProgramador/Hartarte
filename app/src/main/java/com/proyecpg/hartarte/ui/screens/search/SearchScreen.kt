@@ -1,8 +1,5 @@
 package com.proyecpg.hartarte.ui.screens.search
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,23 +7,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
@@ -34,7 +26,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,10 +37,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -66,23 +55,16 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.data.model.PostSerial
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
-import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.components.SearchBar
-import com.proyecpg.hartarte.ui.screens.PostSharedEvent
-import com.proyecpg.hartarte.ui.theme.HartarteTheme
-import com.proyecpg.hartarte.utils.QueryParams
+import com.proyecpg.hartarte.ui.components.SearchingPost
 import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel,
     searchBoxState: SearchBoxState,
     paginator: Paginator<PostSerial>,
     statsText: StatsState<String>,
-    stateLiked : HashMap<String, Boolean>,
-    stateBookmarked : HashMap<String, Boolean>,
     onPostClick: (String) -> Unit,
-    onPostSharedProcess: (PostSharedEvent) -> Unit,
     onReturn: () -> Unit
 ) {
     var isSearchOpened by remember { mutableStateOf(false) }
@@ -115,8 +97,6 @@ fun SearchScreen(
                     Stats(stats = statsText.stats)
                 }
 
-                SearchFilters(viewModel, isSearchOpened)
-
                 Divider(
                     color = MaterialTheme.colorScheme.outlineVariant,
                     modifier = Modifier.padding(top = 10.dp)
@@ -125,10 +105,7 @@ fun SearchScreen(
         }
 
     ) { innerPadding ->
-        SearchScreenContent(innerPadding = innerPadding, viewModel = viewModel,
-            onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess,
-            stateLiked = stateLiked, stateBookmarked = stateBookmarked
-        )
+        SearchScreenContent(innerPadding = innerPadding, paginator = paginator, onPostClick = onPostClick)
     }
 }
 
@@ -209,20 +186,17 @@ fun FacetList(
 @Composable
 fun SearchScreenContent(
     innerPadding: PaddingValues,
-    viewModel: SearchViewModel,
-    onPostClick: (String) -> Unit,
-    onPostSharedProcess: (PostSharedEvent) -> Unit,
-    stateLiked : HashMap<String, Boolean>,
-    stateBookmarked : HashMap<String, Boolean>
+    paginator: Paginator<PostSerial>,
+    onPostClick: (String) -> Unit
 ){
     //Posts
-    val postSearchState = viewModel.postSearchState.collectAsStateWithLifecycle()
+    val postSearchState = paginator.flow.collectAsStateWithLifecycle(initialValue = 0)
 
     if (postSearchState.value == null ){
         return
     }
 
-    val pagingPosts = postSearchState.value!!.collectAsLazyPagingItems()
+    val pagingPosts = paginator.flow.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
 
@@ -245,32 +219,19 @@ fun SearchScreenContent(
             if (pagingPosts.loadState.refresh is LoadState.NotLoading) {
                 items(items = pagingPosts){ post ->
                     post?.let{
-                        val postId = it.postId?:""
-                        val username = it.user?.name ?: ""
-                        val userPic =  it.user?.photo ?: ""
-                        val title = it.titulo?:""
-                        val description = it.descripcion?:""
-                        val likeCount = it.likes?.toInt() ?: 0
-                        val liked = stateLiked[postId]?:it.liked?:false
-                        val bookmarked = stateBookmarked[postId]?:it.bookmarked?:false
+                        val postId = it.objectID.toString()
+                        val username = it.user.name
+                        val userPic = it.user.photo
+                        val title = it.titulo
+                        val description = it.descripcion
 
                         it.images?.let { it1 ->
-                            Post(
-                                postId = postId,
+                            SearchingPost(
                                 images = it1.toList(),
                                 username = username,
                                 userPic = userPic,
                                 title = title,
                                 description = description,
-                                isLiked = liked,
-                                isBookmarked = bookmarked,
-                                likesCount = likeCount,
-                                onLike = { postId : String, like : Boolean ->
-                                    onPostSharedProcess(PostSharedEvent.OnLiked(postId, like))
-                                },
-                                onBookmark = { postId : String, bookmark : Boolean ->
-                                    onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
-                                },
                                 onPostClick = {
                                     onPostClick(postId)
                                 }
@@ -360,81 +321,4 @@ fun SearchTopBar(
             }
         }
     )
-}
-
-
-@Composable
-fun SearchFilters(
-    viewModel: SearchViewModel,
-    isOpened: Boolean
-) {
-    var isChecked by remember{ mutableStateOf("") }
-
-    val icons = listOf(
-        Icons.Default.ArrowUpward to "Más recientes",
-        Icons.Default.Favorite to "Más gustados",
-        Icons.Default.Bookmarks to "Más guardados"
-    )
-
-    AnimatedVisibility(
-        visible = isOpened,
-        enter = expandVertically(),
-        exit = shrinkVertically()
-    ) {
-        Spacer(modifier = Modifier.height(5.dp))
-        
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ){
-            item {
-                for ((icon, description) in icons){
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        OutlinedIconToggleButton(
-                            checked = isChecked == description,
-                            onCheckedChange = {
-                                isChecked = description
-
-                                viewModel.onQueryChange(
-                                    when (isChecked) {
-                                        "Más recientes" -> QueryParams.MOST_RECENT
-                                        "Más gustados" -> QueryParams.MOST_LIKED
-                                        "Más guardados" -> QueryParams.MOST_BOOKMARKED
-                                        else -> null
-                                    }
-                                )
-                            }
-                        ) {
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = description
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(5.dp))
-
-                        Text(text = description)
-                    }
-
-                    Spacer(modifier = Modifier.width(10.dp))
-                }
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewSearchFilters(){
-    HartarteTheme {
-        Box(modifier = Modifier.padding(all = 10.dp)){
-            SearchFilters(
-                viewModel = hiltViewModel(),
-                isOpened = true
-            )
-        }
-    }
 }
