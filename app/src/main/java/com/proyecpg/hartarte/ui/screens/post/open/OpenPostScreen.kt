@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -159,6 +160,7 @@ fun openPostScreenContent(
 ): String {
     val pagerState = rememberPagerState(initialPage = 0)
     var commentText by remember{ mutableStateOf(comment) }
+    val userComments  = remember { mutableStateListOf<Comment>() }
 
     LazyColumn(
         modifier = Modifier
@@ -235,9 +237,19 @@ fun openPostScreenContent(
                     onBookmark = onBookmark
                 )
 
-                commentText = customTextInputField(username = username, comment = commentText, onSendComment = onSendComment)
+                commentText = customTextInputField(username = username, comment = commentText,
+                    onSendComment = onSendComment,
+                    addUserComemnt = { commentText ->
+                        userComments.add(Comment(
+                            comment = commentText,
+                            username = username,
+                            photo = postUser.first
+                        ))
+                    })
 
                 Spacer(modifier = Modifier.height(5.dp))
+
+                UserComments(userComments = userComments)
 
                 Comments(comments = comments)
             }
@@ -414,6 +426,7 @@ fun PostInfo(
 fun customTextInputField(
     username: String,
     comment: String,
+    addUserComemnt : (String) -> Unit,
     onSendComment: (String) -> Unit
 ): String {
 
@@ -447,7 +460,11 @@ fun customTextInputField(
         trailingIcon = {
             if (text.isNotEmpty()){
                 IconButton(
-                    onClick = {onSendComment(text)}
+                    onClick = {
+                        onSendComment(text)
+                        addUserComemnt(text)
+                        text = ""
+                    }
                 ){
                     Icon(
                         imageVector = Icons.Default.Send,
@@ -488,16 +505,40 @@ fun customTextInputField(
 }
 
 @Composable
+fun UserComments(userComments : List<Comment>){
+    if(userComments.isEmpty()){
+        return
+    }
+    Column(modifier = Modifier) {
+        for (comment in userComments.reversed()){
+            if (comment.comment.isNullOrBlank()){
+                continue
+            }
+            CommentComponent(
+                image = comment.photo?:"",
+                username = comment.username?:"",
+                description = comment.comment,
+                date = "",
+                onPostUserClick = {}
+            )
+        }
+    }
+}
+
+@Composable
 fun Comments(comments : List<Comment>){
     if(comments.isEmpty()){
         return
     }
     Column(modifier = Modifier) {
         for (comment in comments){
+            if (comment.comment.isNullOrBlank()){
+                continue
+            }
             CommentComponent(
                 image = comment.photo?:"",
                 username = comment.username?:"",
-                description = comment.comment?:"",
+                description = comment.comment,
                 date = "",
                 onPostUserClick = {}
             )
@@ -558,7 +599,8 @@ fun PreviewCustomTextInputField(){
             customTextInputField(
                 username = "User",
                 comment = "Comment attempt",
-                onSendComment = {}
+                onSendComment = {},
+                addUserComemnt = {}
             )
         }
     }
