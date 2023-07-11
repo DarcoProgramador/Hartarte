@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.algolia.instantsearch.android.paging3.Paginator
+<<<<<<< HEAD
 import com.algolia.instantsearch.android.paging3.facet.connectPaginator
 import com.algolia.instantsearch.android.paging3.searchbox.connectPaginator
 import com.algolia.instantsearch.compose.filter.facet.FacetListState
@@ -29,6 +30,20 @@ import com.algolia.search.logging.LogLevel
 import com.algolia.search.model.APIKey
 import com.algolia.search.model.ApplicationID
 import com.algolia.search.model.Attribute
+=======
+import com.algolia.instantsearch.android.paging3.searchbox.connectPaginator
+import com.algolia.instantsearch.compose.item.StatsTextState
+import com.algolia.instantsearch.compose.searchbox.SearchBoxState
+import com.algolia.instantsearch.core.connection.ConnectionHandler
+import com.algolia.instantsearch.searchbox.SearchBoxConnector
+import com.algolia.instantsearch.searchbox.connectView
+import com.algolia.instantsearch.searcher.hits.HitsSearcher
+import com.algolia.instantsearch.stats.StatsConnector
+import com.algolia.instantsearch.stats.StatsPresenterImpl
+import com.algolia.instantsearch.stats.connectView
+import com.algolia.search.model.APIKey
+import com.algolia.search.model.ApplicationID
+>>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
 import com.algolia.search.model.IndexName
 import com.proyecpg.hartarte.data.post.PostRepository
 import com.proyecpg.hartarte.data.product.Product
@@ -47,6 +62,7 @@ class SearchViewModel @Inject constructor(
     private val repo: PostRepository
 ): ViewModel() {
 
+<<<<<<< HEAD
     val client = ClientSearch(
         ApplicationID("latency"),
         APIKey("1f6fd3a6fb973cb08419fe7d288fa4db"),
@@ -54,6 +70,13 @@ class SearchViewModel @Inject constructor(
     )
     val indexName = IndexName("instant_search")
     val searcher = HitsSearcher(client, indexName)
+=======
+    val searcher = HitsSearcher(
+        applicationID = ApplicationID("latency"),
+        apiKey = APIKey("1f6fd3a6fb973cb08419fe7d288fa4db"),
+        indexName = IndexName("instant_search")
+    )
+>>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
 
     //Search Box
     val searchBoxState = SearchBoxState()
@@ -66,6 +89,7 @@ class SearchViewModel @Inject constructor(
     val statsText = StatsTextState()
     val statsConnector = StatsConnector(searcher)
 
+<<<<<<< HEAD
     //Filters
     val facetList = FacetListState()
     val filterState = FilterState()
@@ -79,23 +103,33 @@ class SearchViewModel @Inject constructor(
     )
 
     val connections = ConnectionHandler(searchBoxConnector, statsConnector, facetListConnector)
+=======
+    val connections = ConnectionHandler(searchBoxConnector)
+>>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
 
     init {
         //Add a connection a between the data and the search box
         connections += searchBoxConnector.connectView(searchBoxState)
         connections += searchBoxConnector.connectPaginator(hitsPaginator)
+<<<<<<< HEAD
         connections += statsConnector.connectView(statsText, DefaultStatsPresenter())
         connections += searcher.connectFilterState(filterState)
         connections += facetListConnector.connectView(facetList)
         connections += facetListConnector.connectPaginator(hitsPaginator)
 
         searcherForFacet.searchAsync()
+=======
+        connections += statsConnector.connectView(statsText, StatsPresenterImpl())
+>>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
     }
 
     override fun onCleared() {
         super.onCleared()
         searcher.cancel()
+<<<<<<< HEAD
         searcherForFacet.cancel()
+=======
+>>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
     }
 
     private val _postSearchState : MutableStateFlow<Flow<PagingData<Post>>?> = MutableStateFlow(null)

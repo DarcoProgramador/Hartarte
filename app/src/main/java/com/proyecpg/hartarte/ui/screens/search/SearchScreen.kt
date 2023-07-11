@@ -33,11 +33,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -71,13 +68,15 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.algolia.instantsearch.android.paging3.Paginator
 import com.algolia.instantsearch.android.paging3.flow
 import com.algolia.instantsearch.compose.filter.facet.FacetListState
-import com.algolia.instantsearch.compose.item.StatsState
 import com.algolia.instantsearch.compose.searchbox.SearchBoxState
 import com.algolia.instantsearch.core.selectable.list.SelectableItem
 import com.algolia.search.model.search.Facet
+=======
+import com.algolia.instantsearch.compose.item.StatsState
+import com.algolia.instantsearch.compose.searchbox.SearchBoxState
+>>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.data.product.Product
@@ -94,6 +93,7 @@ import java.text.SimpleDateFormat
 
 @Composable
 fun Search(
+<<<<<<< HEAD
     viewModel: SearchViewModel,
     searchBoxState: SearchBoxState,
     paginator: Paginator<Product>,
@@ -142,6 +142,95 @@ fun Search(
     ) {innerPadding ->
         innerPadding
     }
+=======
+    searchBoxState: SearchBoxState,
+    paginator: Paginator<Product>,
+    statsText: StatsState<String>
+) {
+    val scope = rememberCoroutineScope()
+    val pagingHits = paginator.flow.collectAsLazyPagingItems()
+    val listState = rememberLazyListState()
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        SearchBox(
+            searchBoxState = searchBoxState,
+            onValueChange = { scope.launch { listState.scrollToItem(0) } },
+        )
+
+        Stats(stats = statsText.stats)
+
+        ProductsList(
+            pagingHits = pagingHits,
+            listState = listState,
+        )
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun SearchBox(
+    searchBoxState: SearchBoxState = SearchBoxState(),
+    onValueChange: (String) -> Unit = {}
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp, horizontal = 12.dp),
+        shape = RoundedCornerShape(30.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedIndicatorColor = MaterialTheme.colorScheme.background,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.background,
+            errorIndicatorColor = MaterialTheme.colorScheme.background,
+        ),
+        value = searchBoxState.query,
+        // Update text on value change
+        onValueChange = {
+            searchBoxState.setText(it)
+            onValueChange(it)
+        },
+        textStyle = TextStyle(
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            fontSize = 16.sp
+        ),
+        placeholder = {
+            Text(
+                text = "Buscar..."
+            )
+        },
+        leadingIcon = {
+            Icon(imageVector = Icons.Default.Search, contentDescription = "Search", modifier = Modifier.padding(start = 5.dp))
+        },
+        trailingIcon = {
+            if(searchBoxState.query.isNotEmpty()){
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close search bar",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier
+                        .padding(end = 5.dp)
+                        .clickable {
+                            searchBoxState.setText("")
+                            onValueChange("")
+                        }
+                )
+            }
+        },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        // Set text as query submit on search action
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                searchBoxState.setText(searchBoxState.query, true)
+                keyboardController?.hide()
+            }
+        ),
+        maxLines = 1
+    )
+>>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
 }
 
 @Composable
@@ -182,6 +271,7 @@ fun Stats(stats: String) {
 }
 
 @Composable
+<<<<<<< HEAD
 fun FacetRow(
     modifier: Modifier = Modifier,
     selectableFacet: SelectableItem<Facet>
@@ -246,6 +336,8 @@ fun FacetList(
 }
 
 @Composable
+=======
+>>>>>>> 66222bea0e815a9e6caa3bfa0412aaf3b773e1cc
 fun SearchScreen(
     viewModel: SearchViewModel,
     onPostClick: (String) -> Unit,
