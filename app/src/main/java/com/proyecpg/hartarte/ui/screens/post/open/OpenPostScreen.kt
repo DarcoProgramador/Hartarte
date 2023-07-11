@@ -62,11 +62,14 @@ import com.google.accompanist.pager.rememberPagerState
 import com.proyecpg.hartarte.R
 import com.proyecpg.hartarte.domain.model.Comment
 import com.proyecpg.hartarte.ui.components.CommentComponent
+import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 
 @Composable
 fun OpenPostScreen(
     postInfo: OpenPostArgs,
+    currentUserUID : String,
+    currentUserUI : UserUI,
     username: String,
     comments : List<Comment>,
     onReturn: () -> Unit,
@@ -97,6 +100,8 @@ fun OpenPostScreen(
             postInfo = Triple(postInfo.postTitle, postInfo.postDescription, postInfo.postDate),
             postStatistics = Triple(postInfo.isLiked, postInfo.likesCount, postInfo.isBookmarked),
             username = username,
+            currentUserUID = currentUserUID,
+            currentUserUI = currentUserUI,
             comment = comment,
             onImageClick = onImageClick,
             onPostUserClick = onPostUserClick,
@@ -150,6 +155,8 @@ fun openPostScreenContent(
     postInfo: Triple<String, String, String>, //First: title, second: description
     postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: likes, isBookmarked
     username: String,
+    currentUserUID: String,
+    currentUserUI: UserUI,
     comment: String,
     comments: List<Comment>,
     onImageClick: () -> Unit,
@@ -242,8 +249,9 @@ fun openPostScreenContent(
                     addUserComemnt = { commentText ->
                         userComments.add(Comment(
                             comment = commentText,
-                            username = username,
-                            photo = postUser.first
+                            uid = currentUserUID,
+                            username = currentUserUI.username,
+                            photo = currentUserUI.photo
                         ))
                     })
 
@@ -629,6 +637,7 @@ fun PreviewOpenPostScreen(){
                     isBookmarked = false,
                     likesCount = 15
                 ),
+                currentUserUID = "",
                 username = "Username",
                 onReturn = { /*TODO*/ },
                 onImageClick = { /*TODO*/ },
@@ -636,7 +645,8 @@ fun PreviewOpenPostScreen(){
                 onLike = { _, _ -> },
                 onBookmark = { _, _ -> },
                 onSendComment = {},
-                comments = listOf(Comment())
+                comments = listOf(Comment()),
+                currentUserUI = UserUI()
             )
         }
     }

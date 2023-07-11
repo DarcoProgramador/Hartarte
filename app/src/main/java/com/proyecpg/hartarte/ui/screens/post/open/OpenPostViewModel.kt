@@ -2,19 +2,24 @@ package com.proyecpg.hartarte.ui.screens.post.open
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.proyecpg.hartarte.data.model.toUserUI
 import com.proyecpg.hartarte.data.post.PostRepository
+import com.proyecpg.hartarte.data.user.UserRepository
 import com.proyecpg.hartarte.domain.model.Comment
 import com.proyecpg.hartarte.domain.model.toOpenPostArgs
+import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OpenPostViewModel @Inject constructor(
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val userRepo: UserRepository,
 ) : ViewModel() {
 
     private val _statePost = MutableStateFlow(OpenPostArgs())
@@ -22,6 +27,9 @@ class OpenPostViewModel @Inject constructor(
 
     private val _stateComments = MutableStateFlow(emptyList<Comment>())
     val stateComments = _stateComments.asStateFlow()
+
+    private val _userState = MutableStateFlow(UserUI())
+    val userState : StateFlow<UserUI> get() = _userState
 
     fun updatePost(postId: String){
         viewModelScope.launch {
@@ -71,6 +79,12 @@ class OpenPostViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    fun getUser(){
+        viewModelScope.launch {
+            _userState.value = userRepo.getUser().toUserUI()
         }
     }
 

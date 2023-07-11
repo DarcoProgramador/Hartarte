@@ -189,4 +189,6 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
+    fun getCurrentUserUID() : String = currentUser?.uid?:""
 }

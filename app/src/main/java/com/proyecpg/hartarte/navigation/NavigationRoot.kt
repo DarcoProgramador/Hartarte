@@ -134,11 +134,17 @@ fun NavigationRoot(
             val postId = backStackEntry.arguments?.getString("postId")?:""
             openPostViewModel.updatePost(postId)
             openPostViewModel.updateComments(postId)
+            openPostViewModel.getUser()
             val statePost = openPostViewModel.statePost.collectAsStateWithLifecycle()
             val stateComments = openPostViewModel.stateComments.collectAsStateWithLifecycle()
+            val currentUserUI = openPostViewModel.userState.collectAsStateWithLifecycle()
+            val currentUserUID = authViewModel.getCurrentUserUID()
+
             OpenPostScreen(
                 postInfo = statePost.value,
                 username = statePost.value.postUsername,
+                currentUserUID = currentUserUID,
+                currentUserUI = currentUserUI.value,
                 comments = stateComments.value,
                 onReturn = {
                     navController.popBackStack()
