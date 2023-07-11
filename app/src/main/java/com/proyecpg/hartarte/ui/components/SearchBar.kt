@@ -37,13 +37,13 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import com.algolia.instantsearch.compose.highlighting.toAnnotatedString
 import com.algolia.instantsearch.compose.searchbox.SearchBoxState
-import com.proyecpg.hartarte.data.model.Product
+import com.proyecpg.hartarte.data.model.PostSerial
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(
     searchBoxState: SearchBoxState = SearchBoxState(),
-    pagingHits: LazyPagingItems<Product>,
+    pagingHits: LazyPagingItems<PostSerial>,
     listState: LazyListState,
     onValueChange: (String) -> Unit = {}
 ){

@@ -63,7 +63,7 @@ import com.algolia.instantsearch.core.selectable.list.SelectableItem
 import com.algolia.search.model.search.Facet
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.proyecpg.hartarte.data.model.Product
+import com.proyecpg.hartarte.data.model.PostSerial
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
@@ -77,7 +77,7 @@ import kotlinx.coroutines.launch
 fun SearchScreen(
     viewModel: SearchViewModel,
     searchBoxState: SearchBoxState,
-    paginator: Paginator<Product>,
+    paginator: Paginator<PostSerial>,
     statsText: StatsState<String>,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>,

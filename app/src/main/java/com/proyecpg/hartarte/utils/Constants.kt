@@ -45,4 +45,7 @@ object Constants {
 
     //FireBase Comment
     const val COMMENT_COLLECTION = "comments"
+
+    //Algolia fields
+    const val TITLE_FIELD = "titulo"
 }
