@@ -256,6 +256,136 @@ fun Post(
     )
 }
 
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun SearchingPost(
+    images: List<String>,
+    username: String,
+    userPic: String,
+    title: String,
+    description: String,
+    onPostClick: () -> Unit
+){
+    val pagerState = rememberPagerState(initialPage = 0)
+
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        border = null,
+        content = {
+
+            HorizontalPager(
+                count = images.size,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                state = pagerState,
+                verticalAlignment = Alignment.CenterVertically
+            ) { page ->
+
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(images[page])
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.placeholder)
+                        .crossfade(true)
+                        .scale(Scale.FILL)
+                        .build(),
+                    contentDescription = "Carousel image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            //Current image
+            Row(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(images.size){
+                    Box(
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clip(shape = CircleShape)
+                            .size(5.dp)
+                            .background(if (pagerState.currentPage == it) Color.DarkGray else Color.LightGray)
+                    )
+                }
+            }
+
+            Column(modifier = Modifier
+                .clickable {
+                    onPostClick()
+                }
+            ){
+                //User
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 17.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    //Clickable segment in the row
+                    Row(
+                        modifier = Modifier
+                            .height(IntrinsicSize.Min)
+                            .clickable {
+                                /* TODO */
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        AsyncImage(
+                            model = userPic,
+                            contentDescription = "User avatar",
+                            placeholder = painterResource(id = R.drawable.user_placeholder),
+                            error = painterResource(id = R.drawable.user_placeholder),
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clip(shape = CircleShape)
+                        )
+
+                        Spacer(modifier = Modifier.size(10.dp))
+
+                        Text(
+                            text = username
+                        )
+                    }
+                }
+
+                //Card information
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 17.dp)
+                ){
+                    Text(
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        text = title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+
+                    Text(
+                        text = description,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 3
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+    )
+}
+
 @Preview
 @Composable
 fun PreviewPost(){
@@ -280,6 +410,30 @@ fun PreviewPost(){
                 likesCount = 40,
                 onLike = { _: String, _: Boolean -> run {} },
                 onBookmark = { _: String, _: Boolean -> run {} },
+                onPostClick = {}
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewSearchingPost(){
+    HartarteTheme {
+        Box(
+            modifier = Modifier.padding(all = 10.dp)
+        ) {
+            SearchingPost(
+                images = listOf
+                    (
+                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581830883127406/576294.png",
+                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581862520766484/576296.png",
+                    "https://cdn.discordapp.com/attachments/1109581677199634522/1109581879872585859/576295.png"
+                ),
+                username = "TheJosuep",
+                userPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
+                title = "Título de ejemplo",
+                description = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
                 onPostClick = {}
             )
         }
