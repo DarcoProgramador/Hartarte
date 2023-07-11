@@ -84,4 +84,18 @@ class UserRepositoryImp @Inject constructor(
         }
     }
 
+    override suspend fun getUserByUID(uid: String): Resource<User> {
+        return try {
+            val userRef = db.collection(USERS).document(uid).get().await()
+            val user = userRef.toObject(User::class.java)
+            user?.let {
+                Resource.Success(it)
+            }
+            Resource.Failure(java.lang.Exception("The document user don't exist"))
+        }catch (e: Exception){
+            e.printStackTrace()
+            Resource.Failure(e)
+        }
+    }
+
 }
