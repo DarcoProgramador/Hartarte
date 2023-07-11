@@ -318,7 +318,8 @@ class PostRepositoryImp @Inject constructor(
                     comment = comment.comment,
                     uid = comment.uid,
                     username = user.username,
-                    photo = user.photoUrl
+                    photo = user.photoUrl,
+                    date = comment.createAt
                 ))
             }
 

@@ -231,6 +231,10 @@ fun openPostScreenContent(
                 )
 
                 commentText = customTextInputField(username = username, comment = commentText, onSendComment = onSendComment)
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Comments()
             }
         }
     }
