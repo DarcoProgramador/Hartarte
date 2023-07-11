@@ -26,7 +26,7 @@ import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
 import com.proyecpg.hartarte.ui.screens.search.SearchViewModel
-import com.proyecpg.hartarte.ui.screens.user.UserViewModel
+import com.proyecpg.hartarte.ui.screens.user.main.UserViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable

@@ -24,13 +24,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -60,6 +58,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.proyecpg.hartarte.R
+import com.proyecpg.hartarte.ui.screens.user.main.UserEvent
+import com.proyecpg.hartarte.ui.screens.user.main.UserState
+import com.proyecpg.hartarte.ui.screens.user.main.isScrolled
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.launch
 
@@ -350,7 +351,8 @@ fun customTextInputField(
                 onClick = {
                     focusManager.clearFocus()
                     keyboardController?.hide()
-                    onSendDescription(UserEvent.UserEditClicked(
+                    onSendDescription(
+                        UserEvent.UserEditClicked(
                         username = userEditText,
                         description = descriptionEditText
                     ))

@@ -1,4 +1,4 @@
-package com.proyecpg.hartarte.ui.screens.user
+package com.proyecpg.hartarte.ui.screens.user.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +28,7 @@ import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
+import com.proyecpg.hartarte.ui.screens.user.UserCard
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
