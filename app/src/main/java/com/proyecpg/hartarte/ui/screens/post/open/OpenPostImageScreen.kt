@@ -43,14 +43,13 @@ fun OpenPostImageScreen(
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder)
                 .crossfade(true)
-                .scale(Scale.FILL)
                 .build(),
             contentDescription = "Carousel image",
             modifier = Modifier
                 .fillMaxSize()
                 .padding(5.dp)
                 .clip(RoundedCornerShape(16.dp)),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.None
         )
     }
 

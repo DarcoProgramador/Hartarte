@@ -150,7 +150,9 @@ fun NavigationRoot(
                 onReturn = {
                     navController.popBackStack()
                 },
-                onImageClick = { /*TODO*/ },
+                onImageClick = {images ->
+                    navController.navigate(AppScreens.OpenPostImageScreen.route.plus("/${images}"))
+                },
                 onPostUserClick = { /*TODO*/ },
                 onLike = { postId1 : String, like : Boolean ->
                     postSharedViewModel.onProcess(PostSharedEvent.OnLiked(postId1, like))

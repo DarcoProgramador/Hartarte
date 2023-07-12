@@ -76,7 +76,7 @@ fun OpenPostScreen(
     username: String,
     comments : List<Comment>,
     onReturn: () -> Unit,
-    onImageClick: () -> Unit,
+    onImageClick: (Array<String>) -> Unit,
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
@@ -163,7 +163,7 @@ fun openPostScreenContent(
     currentUserUI: UserUI,
     comment: String,
     comments: List<Comment>,
-    onImageClick: () -> Unit,
+    onImageClick: (Array<String>) -> Unit,
     onPostUserClick: () -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
@@ -188,10 +188,7 @@ fun openPostScreenContent(
                     count = postImages.size,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .clickable {
-                            onImageClick()
-                        },
+                        .background(MaterialTheme.colorScheme.primaryContainer),
                     state = pagerState,
                     verticalAlignment = Alignment.CenterVertically
                 ) { page ->
@@ -211,6 +208,10 @@ fun openPostScreenContent(
                         contentDescription = "Carousel image",
                         modifier = Modifier
                             .fillMaxSize()
+                            .clickable {
+                                var arrayImages = postImages.toTypedArray()
+                                onImageClick(arrayImages)
+                            }
                             .padding(5.dp)
                             .clip(RoundedCornerShape(16.dp))
                             .graphicsLayer {
