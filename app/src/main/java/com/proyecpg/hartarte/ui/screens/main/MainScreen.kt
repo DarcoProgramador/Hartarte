@@ -77,6 +77,7 @@ fun MainScreen(
     onLogoutClick: (LoginEvent) -> Unit,
     onSearchClick: () -> Unit,
     onCreatePost: () -> Unit,
+    onOpenAbout: () -> Unit,
     onPostClick: (OpenPostArgs) -> Unit,
     onProcessUser: (UserEvent) -> Unit,
     userState : UserUI,
@@ -106,6 +107,9 @@ fun MainScreen(
                     onLogoutClick = onLogoutClick,
                     saveDarkThemeValue = {
                         viewModel.onEvent(Event.SaveDarkThemeValue(it))
+                    },
+                    onOpenAbout = {
+
                     },
                     state = state,
                     switchState = state.darkThemeValue
@@ -283,6 +287,7 @@ fun PreviewMainScreen(){
             onSearchClick = {},
             onPostClick = {},
             onProcessUser = {},
+            onOpenAbout = {},
             userEditState = UserState(),
             userState = UserUI(username = "Prueba", descripcion = "descipcion"),
             postUser = emptyPost

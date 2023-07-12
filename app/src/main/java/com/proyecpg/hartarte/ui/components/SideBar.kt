@@ -48,6 +48,7 @@ fun SideBar(
     username: String,
     imageURL: String?,
     onUserCardClick: () -> Unit,
+    onOpenAbout: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
     onLogoutClick: (LoginEvent) -> Unit,
     saveDarkThemeValue: (Boolean) -> Unit,
@@ -153,7 +154,7 @@ fun SideBar(
         NavigationDrawerItem(
             label = { Text(text = "Sobre la app") },
             selected = false,
-            onClick = {  },
+            onClick = { onOpenAbout() },
             icon = { Icon(imageVector = Icons.Outlined.Info, contentDescription = "About us") }
         )
 

@@ -60,6 +60,7 @@ fun NavigationRoot(
                     val userEditState by userViewModel.editUserState.collectAsStateWithLifecycle()
 
                     MainScreen(
+                        onOpenAbout = {navController.navigate(AppScreens.OpenAboutApp.route)},
                         onCreatePost = {
                             navController.navigate(AppScreens.CreatePostScreen.route){
                             }
