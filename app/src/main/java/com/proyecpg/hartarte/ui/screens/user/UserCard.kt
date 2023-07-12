@@ -232,9 +232,6 @@ fun NonUserCard(
     userDescription: String?,
     lazyListState: LazyListState
 ){
-    var name by rememberSaveable(key = "name") { mutableStateOf(username?:"Usuario") }
-    var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"¡Hola, soy un nuevo usuario!") }
-
     val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 230.dp else 170.dp)
     val scope = rememberCoroutineScope()
 
@@ -259,7 +256,7 @@ fun NonUserCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = userImage ?: R.drawable.user_placeholder,
+                model = userImage?: R.drawable.user_placeholder,
                 contentDescription = "User image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -279,6 +276,22 @@ fun NonUserCard(
                     fontSize = 19.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        if(!lazyListState.isScrolled ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = userDescription?:"¡Hola, soy un nuevo usuario!",
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
