@@ -1,5 +1,7 @@
 package com.proyecpg.hartarte.navigation
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +21,7 @@ import com.proyecpg.hartarte.ui.screens.main.MainScreen
 import com.proyecpg.hartarte.ui.screens.main.MainViewModel
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreen
 import com.proyecpg.hartarte.ui.screens.post.create.CreatePostScreenViewModel
+import com.proyecpg.hartarte.ui.screens.post.open.OpenPostImageScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
@@ -76,7 +79,10 @@ fun NavigationRoot(
                         userEditState = userEditState,
                         stateLiked = stateLiked,
                         stateBookmarked = stateBookmarked,
-                        postUser = userViewModel.postsUser
+                        postUser = userViewModel.postsUser,
+                        onImageClick = {
+
+                        }
                     )
                 }else{
                     LaunchedEffect(Unit) {
@@ -149,7 +155,10 @@ fun NavigationRoot(
                 onReturn = {
                     navController.popBackStack()
                 },
-                onImageClick = { /*TODO*/ },
+                onImageClick = {images ->
+                    postSharedViewModel.stateImages.value = images.toList()
+                    navController.navigate(AppScreens.OpenPostImageScreen.route)
+                },
                 onPostUserClick = { /*TODO*/ },
                 onLike = { postId1 : String, like : Boolean ->
                     postSharedViewModel.onProcess(PostSharedEvent.OnLiked(postId1, like))
@@ -162,8 +171,14 @@ fun NavigationRoot(
                 }
             )
         }
+
+
+        composable(AppScreens.OpenPostImageScreen.route){
+            OpenPostImageScreen(imagen = postSharedViewModel.stateImages.value)
+        }
     }
 }
+
 
 object Graph {
     const val ROOT = "root_graph"
@@ -179,4 +194,5 @@ sealed class AppScreens(val route: String){
     object SearchScreen: AppScreens("search_screen")
     object CreatePostScreen: AppScreens("create_post_screen")
     object OpenPostScreen: AppScreens("open_post_screen")
+    object OpenPostImageScreen: AppScreens("open_post_image_screen")
 }

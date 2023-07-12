@@ -19,6 +19,8 @@ class PostSharedViewModel @Inject constructor(
     private val postRepository: PostRepository
 ) : ViewModel() {
 
+    var stateImages = mutableStateOf(listOf(""))
+
     private val _stateLiked = MutableStateFlow(hashMapOf<String, Boolean>())
     val stateLiked get() = _stateLiked.asStateFlow()
 

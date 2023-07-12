@@ -85,6 +85,7 @@ fun MainScreen(
     stateBookmarked : HashMap<String, Boolean>,
     userState : UserUI,
     userEditState : UserState,
+    onImageClick: (Array<String>) -> Unit,
     postUser : Flow<PagingData<Post>>
 ){
     //Variables de estado
@@ -155,11 +156,12 @@ fun MainScreen(
 
                 when(selectedNavigationIndex){
                     0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick,
-                    onPostSharedProcess = onPostSharedProcess, stateLiked = stateLiked, stateBookmarked = stateBookmarked)
+                    onPostSharedProcess = onPostSharedProcess, stateLiked = stateLiked, stateBookmarked = stateBookmarked, onImageClick = onImageClick)
                     1 -> BookmarkScreen(paddingValues = innerPadding, viewModel = hiltViewModel(),
                         onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess,
                         stateLiked = stateLiked,
-                        stateBookmarked = stateBookmarked
+                        stateBookmarked = stateBookmarked,
+                        onImageClick = onImageClick
                     )
                     2 -> UserScreen(
                         paddingValues = innerPadding, onProcessUSer = onProcessUser,
@@ -167,7 +169,8 @@ fun MainScreen(
                         onPostClick = onPostClick, postUser = postUser,
                         onPostSharedProcess = onPostSharedProcess,
                         stateLiked = stateLiked,
-                        stateBookmarked = stateBookmarked
+                        stateBookmarked = stateBookmarked,
+                        onImageClick = onImageClick
                     )
                 }
             }
@@ -299,7 +302,8 @@ fun PreviewMainScreen(){
             userState = UserUI(username = "Prueba", descripcion = "descipcion"),
             postUser = emptyPost,
             stateBookmarked = hashMapOf(),
-            stateLiked = hashMapOf()
+            stateLiked = hashMapOf(),
+            onImageClick = {}
         )
     }
 }

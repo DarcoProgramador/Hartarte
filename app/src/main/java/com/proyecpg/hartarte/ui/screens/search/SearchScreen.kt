@@ -225,18 +225,16 @@ fun SearchScreenContent(
                         val title = it.titulo
                         val description = it.descripcion
 
-                        it.images?.let { it1 ->
-                            SearchingPost(
-                                images = it1.toList(),
-                                username = username,
-                                userPic = userPic,
-                                title = title,
-                                description = description,
-                                onPostClick = {
-                                    onPostClick(postId)
-                                }
-                            )
-                        }
+                        SearchingPost(
+                            images = it.images.toList(),
+                            username = username,
+                            userPic = userPic,
+                            title = title,
+                            description = description,
+                            onPostClick = {
+                                onPostClick(postId)
+                            }
+                        )
                     }
                 }
             }

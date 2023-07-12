@@ -60,6 +60,7 @@ fun Post(
     description: String,
     isLiked: Boolean,
     isBookmarked: Boolean,
+    onImageClick: (Array<String>) -> Unit,
     likesCount: Int,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
@@ -108,7 +109,12 @@ fun Post(
                         .scale(Scale.FILL)
                         .build(),
                     contentDescription = "Carousel image",
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable {
+                            val arrayImages = images.toTypedArray()
+                            onImageClick(arrayImages)
+                        },
                     contentScale = ContentScale.Crop
                 )
             }
@@ -161,6 +167,7 @@ fun Post(
                             modifier = Modifier
                                 .size(30.dp)
                                 .clip(shape = CircleShape)
+
                         )
 
                         Spacer(modifier = Modifier.size(10.dp))
@@ -410,7 +417,8 @@ fun PreviewPost(){
                 likesCount = 40,
                 onLike = { _: String, _: Boolean -> run {} },
                 onBookmark = { _: String, _: Boolean -> run {} },
-                onPostClick = {}
+                onPostClick = {},
+                onImageClick = {}
             )
         }
     }
