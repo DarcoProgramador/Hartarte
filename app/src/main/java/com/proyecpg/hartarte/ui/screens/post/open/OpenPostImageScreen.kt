@@ -37,6 +37,7 @@ fun OpenPostImageScreen(imagen:List<String>) {
     for (i in imagen.indices!!) {
         Log.e(Constants.TAG, imagen[i])
     }
+
     val pagerState = rememberPagerState(initialPage = 0)
     val scale = remember { mutableStateOf(1f) }
     val rotationState = remember { mutableStateOf(1f) }
@@ -85,3 +86,4 @@ fun OpenPostImageScreen(imagen:List<String>) {
     }
 
 }
+
