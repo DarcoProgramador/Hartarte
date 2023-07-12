@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -444,31 +443,6 @@ fun customTextInputField(
                 Spacer(modifier = Modifier.width(5.dp))
 
                 Text(text = "Cerrar")
-            }
-
-            Button(
-                onClick = {
-                    focusManager.clearFocus()
-                    keyboardController?.hide()
-                    onSendDescription(
-                        UserEvent.UserEditClicked(
-                        username = userEditText,
-                        description = descriptionEditText
-                    ))
-                    editEnabled = !editEnabled
-                },
-                modifier = Modifier
-                    .height(50.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "Send icon"
-                )
-
-                Spacer(modifier = Modifier.width(5.dp))
-
-                Text(text = "Enviar" )
             }
         }
     }

@@ -226,10 +226,6 @@ object Graph {
 }
 
 sealed class AppScreens(val route: String){
-    object MainScreen: AppScreens("main_screen")
-    object HomeScreen: AppScreens("home_screen")
-    object BookmarkScreen: AppScreens("bookmarks_screen")
-    object UserScreen: AppScreens("user_screen")
     object SearchScreen: AppScreens("search_screen")
     object CreatePostScreen: AppScreens("create_post_screen")
     object OpenPostScreen: AppScreens("open_post_screen")
