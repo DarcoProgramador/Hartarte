@@ -6,10 +6,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.proyecpg.hartarte.data.model.User
-import com.proyecpg.hartarte.ui.model.UserUI
-import com.proyecpg.hartarte.utils.Constants
 import com.proyecpg.hartarte.utils.Constants.PHOTO_URL
-import com.proyecpg.hartarte.utils.Constants.POST_PATH
 import com.proyecpg.hartarte.utils.Constants.USERS
 import com.proyecpg.hartarte.utils.Constants.USER_PATH
 import com.proyecpg.hartarte.utils.Resource
@@ -88,10 +85,12 @@ class UserRepositoryImp @Inject constructor(
         return try {
             val userRef = db.collection(USERS).document(uid).get().await()
             val user = userRef.toObject(User::class.java)
-            user?.let {
-                Resource.Success(it)
+
+            if(user == null){
+                Resource.Failure(java.lang.Exception("The document user don't exist"))
+            }else{
+                Resource.Success(user)
             }
-            Resource.Failure(java.lang.Exception("The document user don't exist"))
         }catch (e: Exception){
             e.printStackTrace()
             Resource.Failure(e)

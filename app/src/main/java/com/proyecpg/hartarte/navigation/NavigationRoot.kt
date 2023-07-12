@@ -197,12 +197,10 @@ fun NavigationRoot(
             val openUserViewModel = hiltViewModel<OpenUserViewModel>()
             openUserViewModel.updateUser(userId)
             openUserViewModel.updateUserPosts(userId)
-            val userState by openUserViewModel.userState.collectAsStateWithLifecycle()
             val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
             val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
 
             OpenUserScreen(
-                userState = userState,
                 viewModel = openUserViewModel,
                 stateLiked = stateLiked,
                 stateBookmarked = stateBookmarked,

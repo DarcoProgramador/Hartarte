@@ -41,7 +41,6 @@ import com.proyecpg.hartarte.ui.screens.user.NonUserCard
 
 @Composable
 fun OpenUserScreen(
-    userState: UserUI,
     viewModel: OpenUserViewModel,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>,
@@ -49,17 +48,18 @@ fun OpenUserScreen(
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     onReturn: () -> Unit
 ){
+    val userStatePost = viewModel.userState.collectAsStateWithLifecycle()
     Scaffold(
         modifier = Modifier,
         topBar = {
             OpenUserTopAppBar(
-                userName = userState.username?:"Username",
+                userName = userStatePost.value.username?:"Username",
                 onClick = onReturn
             )
         }
     ) { innerPadding ->
         OpenUserScreenContent(
-            paddingValues = innerPadding, userState = userState, viewModel = viewModel,
+            paddingValues = innerPadding, userState = userStatePost.value, viewModel = viewModel,
             stateLiked = stateLiked, stateBookmarked = stateBookmarked,
 <<<<<<< HEAD
             onProcessUser = onProcessUser,
