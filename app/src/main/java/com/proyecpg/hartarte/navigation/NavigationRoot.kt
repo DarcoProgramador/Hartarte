@@ -168,7 +168,9 @@ fun NavigationRoot(
                     postSharedViewModel.stateImages.value = images.toList()
                     navController.navigate(AppScreens.OpenPostImageScreen.route)
                 },
-                onPostUserClick = { /*TODO*/ },
+                onPostUserClick = {userId ->
+                    navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}"))
+                },
                 onLike = { postId1 : String, like : Boolean ->
                     postSharedViewModel.onProcess(PostSharedEvent.OnLiked(postId1, like))
                 },

@@ -36,6 +36,7 @@ fun Post.toOpenPostArgs() : OpenPostArgs {
 
     return OpenPostArgs(
         postId = postId?:"",
+        userId = user?.uid?:"",
         postImages = imgs.toList(),
         postUsername = user?.name?:"",
         postUserPic = user?.photo?:"",
