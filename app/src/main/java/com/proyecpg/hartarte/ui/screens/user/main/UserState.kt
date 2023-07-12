@@ -1,4 +1,4 @@
-package com.proyecpg.hartarte.ui.screens.user
+package com.proyecpg.hartarte.ui.screens.user.main
 
 data class UserState(
     val isUserEditSuccessful: Boolean = false,

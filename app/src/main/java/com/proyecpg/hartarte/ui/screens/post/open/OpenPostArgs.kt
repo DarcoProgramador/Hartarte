@@ -2,6 +2,7 @@ package com.proyecpg.hartarte.ui.screens.post.open
 
 data class OpenPostArgs(
     val postId: String = "",
+    val userId: String = "",
     val postImages: List<String> = emptyList(),
     val postUsername: String = "",
     val postUserPic: String = "",

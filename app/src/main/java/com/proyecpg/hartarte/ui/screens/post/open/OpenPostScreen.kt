@@ -78,7 +78,7 @@ fun OpenPostScreen(
     comments : List<Comment>,
     onReturn: () -> Unit,
     onImageClick: (Array<String>) -> Unit,
-    onPostUserClick: () -> Unit,
+    onPostUserClick: (String) -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
     onSendComment: (String) -> Unit
@@ -100,7 +100,7 @@ fun OpenPostScreen(
             paddingValues = innerPadding,
             postId = postInfo.postId,
             postImages = postInfo.postImages,
-            postUser = Pair(postInfo.postUserPic, postInfo.postUsername), //Firs: URL, second: name
+            postUser = Triple(postInfo.userId,postInfo.postUserPic, postInfo.postUsername), //Firs: URL, second: name
             postInfo = Triple(postInfo.postTitle, postInfo.postDescription, postInfo.postDate),
             postStatistics = Triple(postInfo.isLiked, postInfo.likesCount, postInfo.isBookmarked),
             username = username,
@@ -156,7 +156,7 @@ fun openPostScreenContent(
     paddingValues: PaddingValues,
     postId: String,
     postImages: List<String>,
-    postUser: Pair<String, String>, //First: URL, second: name, third: followers
+    postUser: Triple<String, String, String>, //First: URL, second: name, third: followers
     postInfo: Triple<String, String, String>, //First: title, second: description
     postStatistics: Triple<Boolean, Int, Boolean>, //First: isLiked, second: likes, isBookmarked
     username: String,
@@ -165,7 +165,7 @@ fun openPostScreenContent(
     comment: String,
     comments: List<Comment>,
     onImageClick: (Array<String>) -> Unit,
-    onPostUserClick: () -> Unit,
+    onPostUserClick: (String) -> Unit,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
     onSendComment: (String) -> Unit
@@ -289,22 +289,22 @@ fun openPostScreenContent(
 
 @Composable
 fun PostUserInfo(
-    postUser: Pair<String, String>,
-    onPostUserClick: () -> Unit
+    postUser: Triple<String, String, String>,
+    onPostUserClick: (String) -> Unit
 ){
     Row(
         modifier = Modifier
             .height(IntrinsicSize.Min)
             .fillMaxWidth()
             .clickable {
-                onPostUserClick()
+                onPostUserClick(postUser.first)
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ){
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(postUser.first)
+                .data(postUser.second)
                 .placeholder(R.drawable.user_placeholder)
                 .error(R.drawable.user_placeholder)
                 .crossfade(true)
@@ -319,7 +319,7 @@ fun PostUserInfo(
         Spacer(modifier = Modifier.size(10.dp))
 
         Text(
-            text = postUser.second
+            text = postUser.third
         )
     }
 }
@@ -583,7 +583,8 @@ fun PreviewPostUserInfo(){
             .padding(5.dp)
         ){
             PostUserInfo(
-                postUser = Pair(
+                postUser = Triple(
+                    "",
                 "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
                 "User"
                 ),

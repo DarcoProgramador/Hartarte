@@ -1,7 +1,5 @@
 package com.proyecpg.hartarte.navigation
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,7 +24,9 @@ import com.proyecpg.hartarte.ui.screens.post.open.OpenPostScreen
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostViewModel
 import com.proyecpg.hartarte.ui.screens.search.SearchScreen
 import com.proyecpg.hartarte.ui.screens.search.SearchViewModel
-import com.proyecpg.hartarte.ui.screens.user.UserViewModel
+import com.proyecpg.hartarte.ui.screens.user.main.UserViewModel
+import com.proyecpg.hartarte.ui.screens.user.open.OpenUserScreen
+import com.proyecpg.hartarte.ui.screens.user.open.OpenUserViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -81,7 +81,11 @@ fun NavigationRoot(
                         stateBookmarked = stateBookmarked,
                         postUser = userViewModel.postsUser,
                         onImageClick = {
-
+                        },
+                        onUserClick = {userId ->
+                            navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}")){
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }else{
@@ -104,7 +108,11 @@ fun NavigationRoot(
                 onPostClick = {postId ->
                     navController.navigate(AppScreens.OpenPostScreen.route.plus("/${postId}"))
                 },
-                onReturn = { navController.popBackStack() }
+                onPostSharedProcess = postSharedViewModel::onProcess,
+                onReturn = { navController.popBackStack() },
+                onUserClick = {userId ->
+                    navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}"))
+                }
             )
         }
 
@@ -159,7 +167,9 @@ fun NavigationRoot(
                     postSharedViewModel.stateImages.value = images.toList()
                     navController.navigate(AppScreens.OpenPostImageScreen.route)
                 },
-                onPostUserClick = { /*TODO*/ },
+                onPostUserClick = {userId ->
+                    navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}"))
+                },
                 onLike = { postId1 : String, like : Boolean ->
                     postSharedViewModel.onProcess(PostSharedEvent.OnLiked(postId1, like))
                 },
@@ -176,6 +186,35 @@ fun NavigationRoot(
         composable(AppScreens.OpenPostImageScreen.route){
             OpenPostImageScreen(imagen = postSharedViewModel.stateImages.value)
         }
+
+        composable(AppScreens.OpenUserScreen.route.plus("/{userId}"),
+            arguments = listOf(navArgument("userId"){type = NavType.StringType})
+        )
+        { backStackEntry ->
+
+            val userId = backStackEntry.arguments?.getString("userId")?:""
+            val openUserViewModel = hiltViewModel<OpenUserViewModel>()
+            openUserViewModel.updateUser(userId)
+            openUserViewModel.updateUserPosts(userId)
+            val userState by openUserViewModel.userState.collectAsStateWithLifecycle()
+            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
+
+            OpenUserScreen(
+                userState = userState,
+                viewModel = openUserViewModel,
+                stateLiked = stateLiked,
+                stateBookmarked = stateBookmarked,
+                onPostClick = {postId ->
+                    navController.navigate(AppScreens.OpenPostScreen.route.plus("/${postId}"))
+                },
+                onPostSharedProcess = postSharedViewModel::onProcess,
+                onReturn = {
+                    navController.popBackStack()
+                },
+                onUserClick = {}
+            )
+        }
     }
 }
 
@@ -187,12 +226,9 @@ object Graph {
 }
 
 sealed class AppScreens(val route: String){
-    object MainScreen: AppScreens("main_screen")
-    object HomeScreen: AppScreens("home_screen")
-    object BookmarkScreen: AppScreens("bookmarks_screen")
-    object UserScreen: AppScreens("user_screen")
     object SearchScreen: AppScreens("search_screen")
     object CreatePostScreen: AppScreens("create_post_screen")
     object OpenPostScreen: AppScreens("open_post_screen")
     object OpenPostImageScreen: AppScreens("open_post_image_screen")
+    object OpenUserScreen: AppScreens("open_user_screen")
 }

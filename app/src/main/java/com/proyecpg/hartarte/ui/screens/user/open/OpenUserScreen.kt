@@ -1,4 +1,4 @@
-package com.proyecpg.hartarte.ui.screens.user
+package com.proyecpg.hartarte.ui.screens.user.open
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,46 +9,119 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
-import com.proyecpg.hartarte.ui.theme.HartarteTheme
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import com.proyecpg.hartarte.ui.screens.user.NonUserCard
 
 @Composable
-fun UserScreen(
-    paddingValues: PaddingValues,
-    onProcessUSer : (UserEvent) -> Unit,
-    userEditState : UserState,
-    userState : UserUI,
-    postUser : Flow<PagingData<Post>>,
-    onImageClick: (Array<String>) -> Unit,
-    onPostClick: (String) -> Unit,
-    onPostSharedProcess: (PostSharedEvent) -> Unit,
+fun OpenUserScreen(
+    userState: UserUI,
+    viewModel: OpenUserViewModel,
     stateLiked : HashMap<String, Boolean>,
-    stateBookmarked : HashMap<String, Boolean>
+    stateBookmarked : HashMap<String, Boolean>,
+    onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
+    onPostSharedProcess: (PostSharedEvent) -> Unit,
+    onReturn: () -> Unit
+){
+    val userStatePost = viewModel.userState.collectAsStateWithLifecycle()
+
+    Scaffold(
+        modifier = Modifier,
+        topBar = {
+            OpenUserTopAppBar(
+                userName = userStatePost.value.username?:"Username",
+                onClick = onReturn
+            )
+        }
+    ) { innerPadding ->
+        OpenUserScreenContent(
+            paddingValues = innerPadding, userState = userState, viewModel = viewModel,
+            stateLiked = stateLiked, stateBookmarked = stateBookmarked, onPostClick = onPostClick,
+            onPostSharedProcess = onPostSharedProcess, onUserClick = onUserClick
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun OpenUserTopAppBar(
+    userName: String,
+    onClick: () -> Unit
+){
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = userName,
+                color = MaterialTheme.colorScheme.primary,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
+            )
+        },
+        modifier = Modifier
+            .padding(horizontal = 12.dp)
+            .padding(top = 12.dp),
+        navigationIcon = {
+            IconButton(
+                onClick = onClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Return icon",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun OpenUserScreenContent(
+    paddingValues: PaddingValues,
+    userState: UserUI,
+    viewModel: OpenUserViewModel,
+    stateLiked : HashMap<String, Boolean>,
+    stateBookmarked : HashMap<String, Boolean>,
+    onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
+    onPostSharedProcess: (PostSharedEvent) -> Unit
 ){
     val lazyListState = rememberLazyListState()
 
     //Posts
-    val pagingPosts = postUser.collectAsLazyPagingItems()
+    val postUserState = viewModel.postUserState.collectAsStateWithLifecycle()
+
+    if (postUserState.value == null ){
+        return
+    }
+
+    val pagingPosts = postUserState.value!!.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
 
@@ -56,21 +129,17 @@ fun UserScreen(
         isRefreshing = pagingPosts.loadState.refresh is LoadState.Loading
     )
 
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
     ){
         Box(modifier = Modifier){
-            UserCard(
+            NonUserCard(
                 userImage = userState.photo,
-                username = userState.username?:"User",
+                username = userState.username,
                 userDescription = userState.descripcion,
-                userEditState = userEditState,
-                lazyListState = lazyListState,
-                onSendDescription = onProcessUSer
+                lazyListState = lazyListState
             )
         }
 
@@ -123,10 +192,12 @@ fun UserScreen(
                                     onPostClick = {
                                         onPostClick(postId)
                                     },
+                                    onUserClick = {
+                                        onUserClick(it.user!!.uid!!)
+                                    },
                                     onImageClick = {
-                                        var arrayImages = it1.toTypedArray()
-                                        onImageClick(arrayImages)
                                     }
+
                                 )
                             }
                         }
@@ -173,24 +244,8 @@ fun UserScreen(
 val LazyListState.isScrolled: Boolean
     get() = firstVisibleItemIndex > 3 || firstVisibleItemScrollOffset > 3
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun PreviewUserScreen(){
-    HartarteTheme {
-        val emptyPost = flowOf(PagingData.empty<Post>())
-        Box(modifier = Modifier.padding(all = 10.dp)){
-            UserScreen(
-                paddingValues = PaddingValues(),
-                onProcessUSer = {},
-                userEditState = UserState(),
-                userState = UserUI(username = "Prueba", descripcion = "descipcion"),
-                onPostClick = {},
-                postUser = emptyPost,
-                onPostSharedProcess = {},
-                stateBookmarked = hashMapOf(),
-                stateLiked = hashMapOf(),
-                onImageClick = {}
-            )
-        }
-    }
+fun PreviewOpenUserScreen(){
+
 }

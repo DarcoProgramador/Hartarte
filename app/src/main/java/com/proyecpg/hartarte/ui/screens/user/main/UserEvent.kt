@@ -1,4 +1,4 @@
-package com.proyecpg.hartarte.ui.screens.user
+package com.proyecpg.hartarte.ui.screens.user.main
 
 import android.net.Uri
 

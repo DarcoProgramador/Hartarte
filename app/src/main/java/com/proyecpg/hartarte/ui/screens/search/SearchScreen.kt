@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,11 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +51,7 @@ import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.components.SearchBar
 import com.proyecpg.hartarte.ui.components.SearchingPost
+import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -65,9 +60,10 @@ fun SearchScreen(
     paginator: Paginator<PostSerial>,
     statsText: StatsState<String>,
     onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
+    onPostSharedProcess: (PostSharedEvent) -> Unit,
     onReturn: () -> Unit
 ) {
-    var isSearchOpened by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val pagingHits = paginator.flow.collectAsLazyPagingItems()
@@ -78,13 +74,7 @@ fun SearchScreen(
             .padding(12.dp),
         topBar = {
             Column {
-                SearchTopBar(
-                    isOpened = isSearchOpened,
-                    onSearchClick = {
-                        isSearchOpened = !isSearchOpened
-                    },
-                    onReturn = onReturn
-                )
+                SearchTopBar( onReturn = onReturn )
 
                 SearchBar(
                     searchBoxState = searchBoxState,
@@ -105,7 +95,8 @@ fun SearchScreen(
         }
 
     ) { innerPadding ->
-        SearchScreenContent(innerPadding = innerPadding, paginator = paginator, onPostClick = onPostClick)
+        SearchScreenContent(innerPadding = innerPadding, paginator = paginator, onPostClick = onPostClick, onUserClick = onUserClick
+        )
     }
 }
 
@@ -187,7 +178,8 @@ fun FacetList(
 fun SearchScreenContent(
     innerPadding: PaddingValues,
     paginator: Paginator<PostSerial>,
-    onPostClick: (String) -> Unit
+    onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit
 ){
     //Posts
     val postSearchState = paginator.flow.collectAsStateWithLifecycle(initialValue = 0)
@@ -233,8 +225,12 @@ fun SearchScreenContent(
                             description = description,
                             onPostClick = {
                                 onPostClick(postId)
+                            },
+                            onUserClick = {
+                                onUserClick(it.user.uid)
                             }
                         )
+
                     }
                 }
             }
@@ -275,11 +271,8 @@ fun SearchScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchTopBar(
-    isOpened: Boolean,
-    onSearchClick: () -> Unit,
-    onReturn: () -> Unit
-){
+fun SearchTopBar( onReturn: () -> Unit ){
+
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -296,26 +289,6 @@ fun SearchTopBar(
                     contentDescription = "Return icon",
                     tint = MaterialTheme.colorScheme.primary
                 )
-            }
-        },
-        actions = {
-            IconButton(
-                onClick = onSearchClick
-            ) {
-                if (isOpened){
-                    Icon(
-                        imageVector = Icons.Default.ExpandLess,
-                        contentDescription = "Expand less icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                else {
-                    Icon(
-                        imageVector = Icons.Default.FilterList,
-                        contentDescription = "Filters icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
             }
         }
     )

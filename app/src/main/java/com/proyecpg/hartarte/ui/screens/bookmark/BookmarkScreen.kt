@@ -32,12 +32,13 @@ fun BookmarkScreen(
     viewModel: BookmarkViewModel,
     onPostClick: (String) -> Unit,
     onImageClick: (Array<String>) -> Unit,
+    onUserClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>
 ){
     BookmarkScreenContent(innerPadding = paddingValues, viewModel = viewModel,
-        onPostClick = onPostClick,
+        onPostClick = onPostClick, onUserClick = onUserClick,
         onPostSharedProcess = onPostSharedProcess,
         onImageClick = onImageClick,
         stateLiked = stateLiked, stateBookmarked = stateBookmarked
@@ -51,6 +52,7 @@ fun BookmarkScreenContent(
     viewModel: BookmarkViewModel,
     onPostClick: (String) -> Unit,
     onImageClick: (Array<String>) -> Unit,
+    onUserClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>
@@ -114,8 +116,11 @@ fun BookmarkScreenContent(
                                     onPostClick(postId)
                                 },
                                 onImageClick = {
-                                    var arrayImages = it1.toTypedArray()
+                                    val arrayImages = it1.toTypedArray()
                                     onImageClick(arrayImages)
+                                },
+                                onUserClick = {
+                                    onUserClick(it.user!!.uid!!)
                                 }
                             )
                         }
@@ -166,6 +171,7 @@ fun PreviewBookmarkScreen(){
                 paddingValues = PaddingValues(),
                 viewModel = hiltViewModel(),
                 onPostClick = {},
+                onUserClick = {},
                 onPostSharedProcess = {},
                 stateLiked = hashMapOf(),
                 stateBookmarked = hashMapOf(),

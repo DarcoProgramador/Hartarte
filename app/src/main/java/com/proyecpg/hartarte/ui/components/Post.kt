@@ -64,6 +64,7 @@ fun Post(
     likesCount: Int,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
+    onUserClick: () -> Unit,
     onPostClick: () -> Unit
 ){
     val pagerState = rememberPagerState(initialPage = 0)
@@ -155,7 +156,7 @@ fun Post(
                         modifier = Modifier
                             .height(IntrinsicSize.Min)
                             .clickable {
-                                /* TODO */
+                                onUserClick()
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ){
@@ -271,7 +272,8 @@ fun SearchingPost(
     userPic: String,
     title: String,
     description: String,
-    onPostClick: () -> Unit
+    onPostClick: () -> Unit,
+    onUserClick: () -> Unit
 ){
     val pagerState = rememberPagerState(initialPage = 0)
 
@@ -345,7 +347,7 @@ fun SearchingPost(
                         modifier = Modifier
                             .height(IntrinsicSize.Min)
                             .clickable {
-                                /* TODO */
+                                onUserClick()
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ){
@@ -418,7 +420,8 @@ fun PreviewPost(){
                 onLike = { _: String, _: Boolean -> run {} },
                 onBookmark = { _: String, _: Boolean -> run {} },
                 onPostClick = {},
-                onImageClick = {}
+                onImageClick = {},
+                onUserClick = {}
             )
         }
     }
@@ -442,7 +445,8 @@ fun PreviewSearchingPost(){
                 userPic = "https://cdn.discordapp.com/attachments/1029844385237569616/1116569644745097320/393368.png",
                 title = "Título de ejemplo",
                 description = "Esta descripción tiene activado un ellipsis y un límite de 3 líneas para la descripción con el fin de que no se vea muy largo todo.",
-                onPostClick = {}
+                onPostClick = {},
+                onUserClick = {}
             )
         }
     }
