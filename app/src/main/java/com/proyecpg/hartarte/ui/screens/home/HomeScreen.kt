@@ -78,7 +78,7 @@ fun HomeScreenContent(
         LazyColumn(
             modifier = Modifier.padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ){
             if (pagingPosts.loadState.refresh is LoadState.NotLoading) {
                 items(items = pagingPosts){ post ->
@@ -137,7 +137,7 @@ fun HomeScreenContent(
                             }
                         }
                     }
-                    refresh is Error -> {
+                    refresh is LoadState.Error -> {
                         item {
                             ErrorItem()
                         }
@@ -147,7 +147,7 @@ fun HomeScreenContent(
                             LoadingItem()
                         }
                     }
-                    append is Error -> {
+                    append is LoadState.Error -> {
                         item {
                             ErrorItem()
                         }

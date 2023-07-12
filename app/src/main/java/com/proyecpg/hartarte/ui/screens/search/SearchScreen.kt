@@ -247,7 +247,7 @@ fun SearchScreenContent(
                             }
                         }
                     }
-                    refresh is Error -> {
+                    refresh is LoadState.Error -> {
                         item {
                             ErrorItem()
                         }
@@ -257,7 +257,7 @@ fun SearchScreenContent(
                             LoadingItem()
                         }
                     }
-                    append is Error -> {
+                    append is LoadState.Error -> {
                         item {
                             ErrorItem()
                         }

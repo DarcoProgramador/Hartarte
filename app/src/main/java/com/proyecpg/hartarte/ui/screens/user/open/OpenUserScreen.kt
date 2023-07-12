@@ -217,7 +217,7 @@ fun OpenUserScreenContent(
                                 }
                             }
                         }
-                        refresh is Error -> {
+                        refresh is LoadState.Error -> {
                             item {
                                 ErrorItem()
                             }
@@ -227,7 +227,7 @@ fun OpenUserScreenContent(
                                 LoadingItem()
                             }
                         }
-                        append is Error -> {
+                        append is LoadState.Error -> {
                             item {
                                 ErrorItem()
                             }

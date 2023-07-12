@@ -140,7 +140,7 @@ fun BookmarkScreenContent(
                             }
                         }
                     }
-                    refresh is Error -> {
+                    refresh is LoadState.Error -> {
                         item {
                             ErrorItem()
                         }
@@ -150,7 +150,7 @@ fun BookmarkScreenContent(
                             LoadingItem()
                         }
                     }
-                    append is Error -> {
+                    append is LoadState.Error -> {
                         item {
                             ErrorItem()
                         }
