@@ -60,7 +60,7 @@ fun SearchBar(
         onSearch = {
             searchBoxState.setText(searchBoxState.query, true)
             keyboardController?.hide()
-            if(!items.contains(searchBoxState.query)){
+            if(!items.contains(searchBoxState.query) && searchBoxState.query.isNotEmpty()){
                 items.add(searchBoxState.query)
             }
             active = false

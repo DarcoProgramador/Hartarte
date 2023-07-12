@@ -41,7 +41,7 @@ fun customTextField(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(56.dp),
         shape = RoundedCornerShape(5.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -86,7 +86,7 @@ fun customPasswordField(
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(56.dp),
         shape = RoundedCornerShape(5.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,

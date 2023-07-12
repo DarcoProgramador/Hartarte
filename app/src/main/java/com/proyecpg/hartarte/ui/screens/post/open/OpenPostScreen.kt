@@ -510,11 +510,16 @@ fun customTextInputField(
             .fillMaxWidth()
             .padding(top = 5.dp)
     ) {
-        Column(horizontalAlignment = Alignment.Start) {
+        Column(
+            modifier = Modifier.fillMaxWidth(0.7f),
+            horizontalAlignment = Alignment.Start
+        ) {
             Text(
                 text = "Estás comentando como $username",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 12.sp
+                fontSize = 12.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
         }
 
