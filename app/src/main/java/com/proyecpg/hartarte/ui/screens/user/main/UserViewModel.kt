@@ -59,7 +59,9 @@ class UserViewModel @Inject constructor(
 
     private fun updateUsernameAndDescription(username : String, descripcion : String){
         viewModelScope.launch {
-
+            if (username.isBlank() || descripcion.isBlank()){
+                return@launch
+            }
             _editUserState.update { it.copy(isLoading = true) }
 
             val result = userRepo.editUser(username, descripcion)
