@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
@@ -404,6 +405,31 @@ fun customTextInputField(
         ) {
             Button(
                 onClick = {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                    onSendDescription(
+                        UserEvent.UserEditClicked(
+                            username = userEditText,
+                            description = descriptionEditText
+                        ))
+                    editEnabled = !editEnabled
+                },
+                modifier = Modifier
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Save icon"
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(text = "Guardar" )
+            }
+
+            Button(
+                onClick = {
                     editEnabled = !editEnabled
                 },
                 modifier = Modifier
@@ -418,31 +444,6 @@ fun customTextInputField(
                 Spacer(modifier = Modifier.width(5.dp))
 
                 Text(text = "Cerrar")
-            }
-
-            Button(
-                onClick = {
-                    focusManager.clearFocus()
-                    keyboardController?.hide()
-                    onSendDescription(
-                        UserEvent.UserEditClicked(
-                        username = userEditText,
-                        description = descriptionEditText
-                    ))
-                    editEnabled = !editEnabled
-                },
-                modifier = Modifier
-                    .height(50.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "Send icon"
-                )
-
-                Spacer(modifier = Modifier.width(5.dp))
-
-                Text(text = "Enviar" )
             }
         }
     }
