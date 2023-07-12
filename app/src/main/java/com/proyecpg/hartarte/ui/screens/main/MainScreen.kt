@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.PagingData
 import com.exyte.animatednavbar.AnimatedNavigationBar
-import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
+import com.exyte.animatednavbar.animation.balltrajectory.Teleport
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -243,8 +243,8 @@ fun navBar(
         selectedIndex = selectedNavigationIndex,
         barColor = if (state.darkThemeValue) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary,
         ballColor = if (state.darkThemeValue) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary,
-        ballAnimation = Parabolic(tween(300)),
-        indentAnimation = Height(tween(300)),
+        ballAnimation = Teleport(tween(600)),
+        indentAnimation = Height(tween(600)),
         cornerRadius = shapeCornerRadius(cornerRadius = 30.dp)
     ) {
         navigationBarItems.forEach { item ->
