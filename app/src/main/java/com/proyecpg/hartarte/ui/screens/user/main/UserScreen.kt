@@ -42,6 +42,7 @@ fun UserScreen(
     postUser : Flow<PagingData<Post>>,
     onImageClick: (Array<String>) -> Unit,
     onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>
@@ -121,6 +122,9 @@ fun UserScreen(
                                     onBookmark = { postId : String, bookmark : Boolean ->
                                         onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
                                     },
+                                    onUserClick = {
+                                        onUserClick(it.user!!.uid!!)
+                                    },
                                     onPostClick = {
                                         onPostClick(postId)
                                     },
@@ -186,6 +190,7 @@ fun PreviewUserScreen(){
                 userEditState = UserState(),
                 userState = UserUI(username = "Prueba", descripcion = "descipcion"),
                 onPostClick = {},
+                onUserClick = {},
                 postUser = emptyPost,
                 onPostSharedProcess = {},
                 stateBookmarked = hashMapOf(),

@@ -78,6 +78,7 @@ fun MainScreen(
     onSearchClick: () -> Unit,
     onCreatePost: () -> Unit,
     onPostClick: (String) -> Unit,
+    onUserClick: (String) -> Unit,
     onProcessUser: (UserEvent) -> Unit,
     onPostSharedProcess : (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
@@ -155,12 +156,13 @@ fun MainScreen(
 
                 when(selectedNavigationIndex){
                     0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick,
-                    onPostSharedProcess = onPostSharedProcess, stateLiked = stateLiked, stateBookmarked = stateBookmarked, onImageClick = onImageClick)
+                    onPostSharedProcess = onPostSharedProcess, stateLiked = stateLiked, stateBookmarked = stateBookmarked, onImageClick = onImageClick, onUserClick = onUserClick)
                     1 -> BookmarkScreen(paddingValues = innerPadding, viewModel = hiltViewModel(),
                         onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess,
                         stateLiked = stateLiked,
                         stateBookmarked = stateBookmarked,
-                        onImageClick = onImageClick
+                        onImageClick = onImageClick,
+                        onUserClick = onUserClick
                     )
                     2 -> UserScreen(
                         paddingValues = innerPadding, onProcessUSer = onProcessUser,
@@ -169,7 +171,8 @@ fun MainScreen(
                         onPostSharedProcess = onPostSharedProcess,
                         stateLiked = stateLiked,
                         stateBookmarked = stateBookmarked,
-                        onImageClick = onImageClick
+                        onImageClick = onImageClick,
+                        onUserClick = onUserClick
                     )
                 }
             }
@@ -302,7 +305,8 @@ fun PreviewMainScreen(){
             postUser = emptyPost,
             stateBookmarked = hashMapOf(),
             stateLiked = hashMapOf(),
-            onImageClick = {}
+            onImageClick = {},
+            onUserClick = {}
         )
     }
 }
