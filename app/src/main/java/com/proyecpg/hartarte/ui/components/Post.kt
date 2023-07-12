@@ -1,5 +1,7 @@
 package com.proyecpg.hartarte.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -60,6 +63,7 @@ fun Post(
     description: String,
     isLiked: Boolean,
     isBookmarked: Boolean,
+    onImageClick: (Array<String>) -> Unit,
     likesCount: Int,
     onLike : (String, Boolean) -> Unit,
     onBookmark : (String, Boolean) -> Unit,
@@ -108,7 +112,12 @@ fun Post(
                         .scale(Scale.FILL)
                         .build(),
                     contentDescription = "Carousel image",
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable {
+                            var arrayImages = images.toTypedArray()
+                            onImageClick(arrayImages)
+                        },
                     contentScale = ContentScale.Crop
                 )
             }
@@ -161,6 +170,7 @@ fun Post(
                             modifier = Modifier
                                 .size(30.dp)
                                 .clip(shape = CircleShape)
+
                         )
 
                         Spacer(modifier = Modifier.size(10.dp))
@@ -410,7 +420,8 @@ fun PreviewPost(){
                 likesCount = 40,
                 onLike = { _: String, _: Boolean -> run {} },
                 onBookmark = { _: String, _: Boolean -> run {} },
-                onPostClick = {}
+                onPostClick = {},
+                onImageClick = {}
             )
         }
     }

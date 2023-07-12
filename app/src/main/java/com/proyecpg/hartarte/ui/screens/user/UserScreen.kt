@@ -39,6 +39,7 @@ fun UserScreen(
     userEditState : UserState,
     userState : UserUI,
     postUser : Flow<PagingData<Post>>,
+    onImageClick: (Array<String>) -> Unit,
     onPostClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
@@ -121,6 +122,10 @@ fun UserScreen(
                                     },
                                     onPostClick = {
                                         onPostClick(postId)
+                                    },
+                                    onImageClick = {
+                                        var arrayImages = it1.toTypedArray()
+                                        onImageClick(arrayImages)
                                     }
                                 )
                             }
@@ -183,7 +188,8 @@ fun PreviewUserScreen(){
                 postUser = emptyPost,
                 onPostSharedProcess = {},
                 stateBookmarked = hashMapOf(),
-                stateLiked = hashMapOf()
+                stateLiked = hashMapOf(),
+                onImageClick = {}
             )
         }
     }

@@ -79,7 +79,10 @@ fun NavigationRoot(
                         userEditState = userEditState,
                         stateLiked = stateLiked,
                         stateBookmarked = stateBookmarked,
-                        postUser = userViewModel.postsUser
+                        postUser = userViewModel.postsUser,
+                        onImageClick = {
+
+                        }
                     )
                 }else{
                     LaunchedEffect(Unit) {
@@ -175,6 +178,7 @@ fun NavigationRoot(
         }
     }
 }
+
 
 object Graph {
     const val ROOT = "root_graph"

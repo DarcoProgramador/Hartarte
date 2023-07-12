@@ -234,6 +234,9 @@ fun SearchScreenContent(
                                 description = description,
                                 onPostClick = {
                                     onPostClick(postId)
+                                },
+                                onImageClick = {
+
                                 }
                             )
                         }
