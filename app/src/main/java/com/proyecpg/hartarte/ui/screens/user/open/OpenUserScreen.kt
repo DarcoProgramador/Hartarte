@@ -39,12 +39,14 @@ import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.user.NonUserCard
+import com.proyecpg.hartarte.ui.screens.user.UserCard
 import com.proyecpg.hartarte.ui.screens.user.main.UserEvent
 import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun OpenUserScreen(
     userState: UserUI,
+    onProcessUser : (UserEvent) -> Unit,
     postUser : Flow<PagingData<Post>>,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>,
@@ -64,6 +66,7 @@ fun OpenUserScreen(
         OpenUserScreenContent(
             paddingValues = innerPadding, userState = userState, postUser = postUser,
             stateLiked = stateLiked, stateBookmarked = stateBookmarked,
+            onProcessUser = onProcessUser,
             onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess
         )
     }
@@ -108,6 +111,7 @@ fun OpenUserScreenContent(
     postUser : Flow<PagingData<Post>>,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>,
+    onProcessUser : (UserEvent) -> Unit,
     onPostClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit
 ){
