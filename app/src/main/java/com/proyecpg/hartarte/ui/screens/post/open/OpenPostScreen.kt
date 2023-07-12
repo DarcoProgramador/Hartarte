@@ -277,9 +277,9 @@ fun openPostScreenContent(
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                UserComments(userComments = userComments)
+                UserComments(userComments = userComments, onPostUserClick = onPostUserClick)
 
-                Comments(comments = comments)
+                Comments(comments = comments, onPostUserClick = onPostUserClick)
             }
         }
     }
@@ -533,7 +533,7 @@ fun customTextInputField(
 }
 
 @Composable
-fun UserComments(userComments : List<Comment>){
+fun UserComments(userComments : List<Comment>, onPostUserClick: (String) -> Unit){
     if(userComments.isEmpty()){
         return
     }
@@ -547,14 +547,14 @@ fun UserComments(userComments : List<Comment>){
                 username = comment.username?:"",
                 description = comment.comment,
                 date = "",
-                onPostUserClick = {}
+                onPostUserClick = {onPostUserClick(comment.uid?:"")}
             )
         }
     }
 }
 
 @Composable
-fun Comments(comments : List<Comment>){
+fun Comments(comments : List<Comment>, onPostUserClick: (String) -> Unit){
     if(comments.isEmpty()){
         return
     }
@@ -568,7 +568,7 @@ fun Comments(comments : List<Comment>){
                 username = comment.username?:"",
                 description = comment.comment,
                 date = "",
-                onPostUserClick = {}
+                onPostUserClick = {onPostUserClick(comment.uid?:"")}
             )
         }
     }
