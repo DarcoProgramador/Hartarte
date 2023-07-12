@@ -84,7 +84,9 @@ fun NavigationRoot(
 
                         },
                         onUserClick = {userId ->
-                            navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}"))
+                            navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}")){
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }else{
@@ -188,15 +190,17 @@ fun NavigationRoot(
         )
         { backStackEntry ->
 
+            val userId = backStackEntry.arguments?.getString("userId")?:""
             val openUserViewModel = hiltViewModel<OpenUserViewModel>()
-            openUserViewModel.updateUser(backStackEntry.arguments?.getString("userId")?:"")
-            val userState by openUserViewModel.newUserState.collectAsStateWithLifecycle()
+            openUserViewModel.updateUser(userId)
+            openUserViewModel.updateUserPosts(userId)
+            val userState by openUserViewModel.userState.collectAsStateWithLifecycle()
             val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
             val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
 
             OpenUserScreen(
                 userState = userState,
-                postUser = openUserViewModel.postsUser,
+                viewModel = openUserViewModel,
                 stateLiked = stateLiked,
                 stateBookmarked = stateBookmarked,
                 onPostClick = {postId ->
@@ -207,30 +211,6 @@ fun NavigationRoot(
                     navController.popBackStack()
                 },
                 onUserClick = {}
-            )
-        }
-
-        composable(AppScreens.OpenUserScreen.route.plus("/{userId}"),
-            arguments = listOf(navArgument("userId"){type = NavType.StringType})
-        )
-        { backStackEntry ->
-
-            val openUserViewModel = hiltViewModel<OpenUserViewModel>()
-            openUserViewModel.updateUser(backStackEntry.arguments?.getString("userId")?:"")
-            val userState by openUserViewModel.newUserState.collectAsStateWithLifecycle()
-            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
-            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
-
-            OpenUserScreen(
-                userState = userState,
-                postUser = openUserViewModel.postsUser,
-                stateLiked = stateLiked,
-                stateBookmarked = stateBookmarked,
-                onPostClick = {},
-                onPostSharedProcess = postSharedViewModel::onProcess,
-                onReturn = {
-                    navController.popBackStack()
-                }
             )
         }
     }

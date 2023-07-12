@@ -26,24 +26,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.proyecpg.hartarte.domain.model.Post
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.user.NonUserCard
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun OpenUserScreen(
     userState: UserUI,
-    postUser : Flow<PagingData<Post>>,
+    viewModel: OpenUserViewModel,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>,
     onPostClick: (String) -> Unit,
@@ -61,7 +59,7 @@ fun OpenUserScreen(
         }
     ) { innerPadding ->
         OpenUserScreenContent(
-            paddingValues = innerPadding, userState = userState, postUser = postUser,
+            paddingValues = innerPadding, userState = userState, viewModel = viewModel,
             stateLiked = stateLiked, stateBookmarked = stateBookmarked, onPostClick = onPostClick,
             onPostSharedProcess = onPostSharedProcess, onUserClick = onUserClick
         )
@@ -104,7 +102,7 @@ fun OpenUserTopAppBar(
 fun OpenUserScreenContent(
     paddingValues: PaddingValues,
     userState: UserUI,
-    postUser : Flow<PagingData<Post>>,
+    viewModel: OpenUserViewModel,
     stateLiked : HashMap<String, Boolean>,
     stateBookmarked : HashMap<String, Boolean>,
     onPostClick: (String) -> Unit,
@@ -114,7 +112,13 @@ fun OpenUserScreenContent(
     val lazyListState = rememberLazyListState()
 
     //Posts
-    val pagingPosts = postUser.collectAsLazyPagingItems()
+    val postUserState = viewModel.postUserState.collectAsStateWithLifecycle()
+
+    if (postUserState.value == null ){
+        return
+    }
+
+    val pagingPosts = postUserState.value!!.collectAsLazyPagingItems()
     val refresh = pagingPosts.loadState.refresh
     val append = pagingPosts.loadState.append
 
