@@ -209,6 +209,30 @@ fun NavigationRoot(
                 }
             )
         }
+
+        composable(AppScreens.OpenUserScreen.route.plus("/{userId}"),
+            arguments = listOf(navArgument("userId"){type = NavType.StringType})
+        )
+        { backStackEntry ->
+
+            val openUserViewModel = hiltViewModel<OpenUserViewModel>()
+            openUserViewModel.updateUser(backStackEntry.arguments?.getString("userId")?:"")
+            val userState by openUserViewModel.newUserState.collectAsStateWithLifecycle()
+            val stateLiked by postSharedViewModel.stateLiked.collectAsStateWithLifecycle()
+            val stateBookmarked by postSharedViewModel.stateBookmarked.collectAsStateWithLifecycle()
+
+            OpenUserScreen(
+                userState = userState,
+                postUser = openUserViewModel.postsUser,
+                stateLiked = stateLiked,
+                stateBookmarked = stateBookmarked,
+                onPostClick = {},
+                onPostSharedProcess = postSharedViewModel::onProcess,
+                onReturn = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }
 

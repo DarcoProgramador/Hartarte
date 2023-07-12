@@ -42,7 +42,10 @@ fun HomeScreen(
         onPostSharedProcess = onPostSharedProcess,
         stateLiked = stateLiked,
         stateBookmarked = stateBookmarked,
+<<<<<<< HEAD
         onImageClick = onImageClick,
+=======
+>>>>>>> 830332a (ViewModel and onClick events)
         onUserClick = onUserClick
     )
 }
@@ -53,7 +56,10 @@ fun HomeScreenContent(
     innerPadding: PaddingValues,
     viewModel: HomeViewModel,
     onPostClick: (String) -> Unit,
+<<<<<<< HEAD
     onImageClick: (Array<String>) -> Unit,
+=======
+>>>>>>> 830332a (ViewModel and onClick events)
     onUserClick: (String) -> Unit,
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     stateLiked : HashMap<String, Boolean>,
@@ -112,10 +118,13 @@ fun HomeScreenContent(
                                 onPostClick = {
                                     onPostClick(postId)
                                 },
+<<<<<<< HEAD
                                 onImageClick = {
                                     var arrayImages = it1.toTypedArray()
                                     onImageClick(arrayImages)
                                 },
+=======
+>>>>>>> 830332a (ViewModel and onClick events)
                                 onUserClick = {
                                     onUserClick(it.user!!.uid!!)
                                 }
@@ -170,7 +179,10 @@ fun PreviewLoginScreen(){
         onPostSharedProcess = { _:PostSharedEvent -> run{  }},
         stateBookmarked = hashMapOf(),
         stateLiked = hashMapOf(),
+<<<<<<< HEAD
         onImageClick = {},
+=======
+>>>>>>> 830332a (ViewModel and onClick events)
         onUserClick = {}
     )
 }

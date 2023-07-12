@@ -155,6 +155,7 @@ fun MainScreen(
             ){ innerPadding ->
 
                 when(selectedNavigationIndex){
+
                     0 -> HomeScreen(paddingValues = innerPadding, viewModel = hiltViewModel(), onPostClick = onPostClick,
                     onPostSharedProcess = onPostSharedProcess, stateLiked = stateLiked, stateBookmarked = stateBookmarked, onImageClick = onImageClick, onUserClick = onUserClick)
                     1 -> BookmarkScreen(paddingValues = innerPadding, viewModel = hiltViewModel(),
