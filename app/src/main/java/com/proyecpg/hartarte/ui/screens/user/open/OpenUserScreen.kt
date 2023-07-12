@@ -137,7 +137,7 @@ fun OpenUserScreenContent(
         Box(modifier = Modifier){
             NonUserCard(
                 userImage = userState.photo,
-                username = userState.username?:"User",
+                username = userState.username,
                 userDescription = userState.descripcion,
                 lazyListState = lazyListState
             )

@@ -232,9 +232,6 @@ fun NonUserCard(
     userDescription: String?,
     lazyListState: LazyListState
 ){
-    var name by rememberSaveable(key = "name") { mutableStateOf(username?:"Usuario") }
-    var description by rememberSaveable(key = "desc") { mutableStateOf(userDescription?:"¡Hola, soy un nuevo usuario!") }
-
     val animatedSize: Dp by animateDpAsState(targetValue = if (!lazyListState.isScrolled) 230.dp else 170.dp)
     val scope = rememberCoroutineScope()
 
