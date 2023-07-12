@@ -68,6 +68,7 @@ import com.proyecpg.hartarte.domain.model.Comment
 import com.proyecpg.hartarte.ui.components.CommentComponent
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
+import java.text.SimpleDateFormat
 
 @Composable
 fun OpenPostScreen(
@@ -537,16 +538,19 @@ fun UserComments(userComments : List<Comment>, onPostUserClick: (String) -> Unit
     if(userComments.isEmpty()){
         return
     }
+    val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
     Column(modifier = Modifier) {
         for (comment in userComments.reversed()){
             if (comment.comment.isNullOrBlank()){
                 continue
             }
+            val time = comment.date?.toDate()
+            val date = if(time != null) formatter.format(time) else "00/00/0000 00:00:00"
             CommentComponent(
                 image = comment.photo?:"",
                 username = comment.username?:"",
                 description = comment.comment,
-                date = "",
+                date = date,
                 onPostUserClick = {onPostUserClick(comment.uid?:"")}
             )
         }
@@ -558,16 +562,19 @@ fun Comments(comments : List<Comment>, onPostUserClick: (String) -> Unit){
     if(comments.isEmpty()){
         return
     }
+    val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
     Column(modifier = Modifier) {
         for (comment in comments){
             if (comment.comment.isNullOrBlank()){
                 continue
             }
+            val time = comment.date?.toDate()
+            val date = if(time != null) formatter.format(time) else "00/00/0000 00:00:00"
             CommentComponent(
                 image = comment.photo?:"",
                 username = comment.username?:"",
                 description = comment.comment,
-                date = "",
+                date = date,
                 onPostUserClick = {onPostUserClick(comment.uid?:"")}
             )
         }
