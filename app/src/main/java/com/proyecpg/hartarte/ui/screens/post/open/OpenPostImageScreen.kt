@@ -2,16 +2,16 @@ package com.proyecpg.hartarte.ui.screens.post.open
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,17 +39,16 @@ fun OpenPostImageScreen(imagen:List<String>) {
     }
 
     val pagerState = rememberPagerState(initialPage = 0)
-    val scale = remember { mutableStateOf(1f) }
-    val rotationState = remember { mutableStateOf(1f) }
+  //  val scale = remember { mutableStateOf(1f) }
+    
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(5.dp))
             .background(Color.Gray)
             .pointerInput(Unit) {
-                detectTransformGestures { centroid, pan, zoom, rotation ->
-                    scale.value *= zoom
-                    rotationState.value += rotation
+                detectTransformGestures { _, pan, zoom, rotation ->
+                   // scale.value *= zoom
                 }
             }
     ) {
@@ -63,24 +62,30 @@ fun OpenPostImageScreen(imagen:List<String>) {
             state = pagerState,
             verticalAlignment = Alignment.CenterVertically
         ) { page ->
+            val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffset
+            val imageSize by animateFloatAsState(
+                targetValue = if ( pageOffset != 0.0f) 0.75f else 1f,
+                animationSpec = tween(durationMillis = 300)
+            )
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imagen[page])
                     .placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder)
-                    .crossfade(true)
                     .build(),
                 contentDescription = "Carousel image",
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(5.dp)
-                    .graphicsLayer(
+                    .graphicsLayer {
+                        scaleX = imageSize
+                        scaleY = imageSize
+                    }
+                   /* .graphicsLayer(
                         scaleX = maxOf(.3f, minOf(2f, scale.value)),
                         scaleY = maxOf(.3f, minOf(2f, scale.value)),
-                        rotationZ = rotationState.value
-                    )
-                    .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.None
+                    )*/
+                    .clip(RoundedCornerShape(0.dp)),
+                contentScale = ContentScale.FillWidth
             )
         }
     }

@@ -191,7 +191,6 @@ fun openPostScreenContent(
                     count = postImages.size,
                     modifier = Modifier
                         .fillMaxSize()
-                       // .background(MaterialTheme.colorScheme.primaryContainer),
                         .background(
                             Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Black))
                         ),
@@ -217,11 +216,14 @@ fun openPostScreenContent(
                             .fillMaxSize()
                             .clickable {
                                 var arrayImages = postImages.toTypedArray()
+<<<<<<< HEAD
 
                                 for (i in arrayImages.indices) {
                                     Log.e(TAG,arrayImages[i])
                                 }
 
+=======
+>>>>>>> 1ac9c84 (mejorando OpenImage)
                                 onImageClick(arrayImages)
                             }
                             .padding(5.dp)

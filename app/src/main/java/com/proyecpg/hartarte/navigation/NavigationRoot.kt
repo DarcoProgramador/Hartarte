@@ -153,7 +153,8 @@ fun NavigationRoot(
                     navController.popBackStack()
                 },
                 onImageClick = {images ->
-                    navController.navigate(AppScreens.OpenPostImageScreen.route.plus("/${images}"))
+                    postSharedViewModel.stateImages.value = images.toList()
+                    navController.navigate(AppScreens.OpenPostImageScreen.route)
                 },
                 onPostUserClick = { /*TODO*/ },
                 onLike = { postId1 : String, like : Boolean ->
@@ -169,15 +170,8 @@ fun NavigationRoot(
         }
 
 
-        composable(AppScreens.OpenPostImageScreen.route.plus("/{images}"),
-            arguments = listOf(navArgument("images"){type = NavType.StringArrayType})){ backStackEntry ->
-            val images = backStackEntry.arguments?.getStringArray("images")
-
-            for (i in images?.indices!!) {
-                Log.e(TAG, images?.get(i).toString())
-            }
-
-            OpenPostImageScreen(imagen = images?.toList() ?: emptyList())
+        composable(AppScreens.OpenPostImageScreen.route){
+            OpenPostImageScreen(imagen = postSharedViewModel.stateImages.value)
         }
     }
 }
