@@ -1,6 +1,5 @@
 package com.proyecpg.hartarte.ui.screens.post.open
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -69,7 +68,6 @@ import com.proyecpg.hartarte.domain.model.Comment
 import com.proyecpg.hartarte.ui.components.CommentComponent
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.theme.HartarteTheme
-import com.proyecpg.hartarte.utils.Constants.TAG
 
 @Composable
 fun OpenPostScreen(
@@ -217,15 +215,7 @@ fun openPostScreenContent(
                             .padding(5.dp)
                             .clip(RoundedCornerShape(16.dp))
                             .clickable {
-                                var arrayImages = postImages.toTypedArray()
-<<<<<<< HEAD
-
-                                for (i in arrayImages.indices) {
-                                    Log.e(TAG,arrayImages[i])
-                                }
-
-=======
->>>>>>> 1ac9c84 (mejorando OpenImage)
+                                val arrayImages = postImages.toTypedArray()
                                 onImageClick(arrayImages)
                             }
                             .graphicsLayer {
