@@ -1,12 +1,9 @@
 package com.proyecpg.hartarte.domain.model
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.proyecpg.hartarte.ui.screens.post.open.OpenPostArgs
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 
 data class Post (
     @DocumentId val postId: String? = null,

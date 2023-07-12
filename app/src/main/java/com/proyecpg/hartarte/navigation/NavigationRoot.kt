@@ -81,7 +81,6 @@ fun NavigationRoot(
                         stateBookmarked = stateBookmarked,
                         postUser = userViewModel.postsUser,
                         onImageClick = {
-
                         },
                         onUserClick = {userId ->
                             navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}")){
@@ -183,7 +182,8 @@ fun NavigationRoot(
             )
         }
 
-        composable(AppScreens.OpenPostImageScreen.route) {
+
+        composable(AppScreens.OpenPostImageScreen.route){
             OpenPostImageScreen(imagen = postSharedViewModel.stateImages.value)
         }
 

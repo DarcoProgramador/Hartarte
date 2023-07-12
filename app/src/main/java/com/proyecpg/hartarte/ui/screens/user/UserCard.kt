@@ -445,6 +445,31 @@ fun customTextInputField(
 
                 Text(text = "Cerrar")
             }
+
+            Button(
+                onClick = {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                    onSendDescription(
+                        UserEvent.UserEditClicked(
+                        username = userEditText,
+                        description = descriptionEditText
+                    ))
+                    editEnabled = !editEnabled
+                },
+                modifier = Modifier
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Send icon"
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(text = "Enviar" )
+            }
         }
     }
 

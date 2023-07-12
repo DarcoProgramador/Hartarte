@@ -34,6 +34,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.proyecpg.hartarte.ui.components.ErrorItem
 import com.proyecpg.hartarte.ui.components.LoadingItem
+import com.proyecpg.hartarte.ui.components.Post
 import com.proyecpg.hartarte.ui.model.UserUI
 import com.proyecpg.hartarte.ui.screens.PostSharedEvent
 import com.proyecpg.hartarte.ui.screens.user.NonUserCard
@@ -49,11 +50,13 @@ fun OpenUserScreen(
     onPostSharedProcess: (PostSharedEvent) -> Unit,
     onReturn: () -> Unit
 ){
+    val userStatePost = viewModel.userState.collectAsStateWithLifecycle()
+
     Scaffold(
         modifier = Modifier,
         topBar = {
             OpenUserTopAppBar(
-                userName = userState.username?:"Username",
+                userName = userStatePost.value.username?:"Username",
                 onClick = onReturn
             )
         }
@@ -134,7 +137,7 @@ fun OpenUserScreenContent(
         Box(modifier = Modifier){
             NonUserCard(
                 userImage = userState.photo,
-                username = userState.username?:"User",
+                username = userState.username,
                 userDescription = userState.descripcion,
                 lazyListState = lazyListState
             )
@@ -170,7 +173,7 @@ fun OpenUserScreenContent(
                             val bookmarked = stateBookmarked[postId]?:it.bookmarked?:false
 
                             it.images?.let { it1 ->
-                                com.proyecpg.hartarte.ui.components.Post(
+                                Post(
                                     postId = postId,
                                     images = it1.toList(),
                                     username = username,
@@ -194,6 +197,7 @@ fun OpenUserScreenContent(
                                     },
                                     onImageClick = {
                                     }
+
                                 )
                             }
                         }
