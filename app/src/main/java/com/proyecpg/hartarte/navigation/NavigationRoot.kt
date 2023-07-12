@@ -1,7 +1,5 @@
 package com.proyecpg.hartarte.navigation
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -110,7 +108,6 @@ fun NavigationRoot(
                 onPostClick = {postId ->
                     navController.navigate(AppScreens.OpenPostScreen.route.plus("/${postId}"))
                 },
-                onPostSharedProcess = postSharedViewModel::onProcess,
                 onReturn = { navController.popBackStack() },
                 onUserClick = {userId ->
                     navController.navigate(AppScreens.OpenUserScreen.route.plus("/${userId}"))

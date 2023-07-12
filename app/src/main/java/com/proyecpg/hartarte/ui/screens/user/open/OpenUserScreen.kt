@@ -61,10 +61,6 @@ fun OpenUserScreen(
         OpenUserScreenContent(
             paddingValues = innerPadding, userState = userStatePost.value, viewModel = viewModel,
             stateLiked = stateLiked, stateBookmarked = stateBookmarked,
-<<<<<<< HEAD
-            onProcessUser = onProcessUser,
-=======
->>>>>>> 830332a (ViewModel and onClick events)
             onPostClick = onPostClick, onPostSharedProcess = onPostSharedProcess
         )
     }
@@ -192,7 +188,8 @@ fun OpenUserScreenContent(
                                     onUserClick = {},
                                     onPostClick = {
                                         onPostClick(postId)
-                                    }
+                                    },
+                                    onImageClick = {}
                                 )
                             }
                         }

@@ -116,7 +116,7 @@ fun BookmarkScreenContent(
                                     onPostClick(postId)
                                 },
                                 onImageClick = {
-                                    var arrayImages = it1.toTypedArray()
+                                    val arrayImages = it1.toTypedArray()
                                     onImageClick(arrayImages)
                                 },
                                 onUserClick = {
