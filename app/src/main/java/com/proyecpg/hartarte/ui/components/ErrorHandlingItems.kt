@@ -53,6 +53,7 @@ fun LoadingItem(){
 @Composable
 fun ErrorItem(){
     Card(
+        modifier = Modifier.padding(top = 10.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -60,68 +61,21 @@ fun ErrorItem(){
         ),
         border = null,
         content = {
-            Image(
-                painter = painterResource(id = R.drawable.placeholder),
-                contentDescription = "Placeholder image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-            )
-
-            // Current image
-            Row(
-                modifier = Modifier
-                    .height(IntrinsicSize.Min)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .clip(shape = CircleShape)
-                        .size(5.dp)
-                        .background(Color.DarkGray)
-                )
-            }
-
-            // User
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 17.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Image(
-                    painter = painterResource(R.drawable.user_placeholder),
-                    contentDescription = "Placeholder image",
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(shape = CircleShape)
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Text(text = "Username")
-            }
-
-            //Card information
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 25.dp)
                     .padding(horizontal = 17.dp)
             ){
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp),
-                    text = "Error al cargar el post",
+                    text = "Nada que ver aquí...",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
 
                 Text(
-                    text = "Ha ocurrido un error inesperadamente al cargar el post.",
+                    text = "¡Prueba buscando tu comida favorita!",
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3
                 )
