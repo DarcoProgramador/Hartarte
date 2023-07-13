@@ -134,7 +134,7 @@ class PostRepositoryImp @Inject constructor(
                 //contador de likes mayor a -1
                 if (likeCount >= 0){
                     //si no existe crealo
-                    if (!transaction.get(postLikesRef).exists()){
+                    if (likesArraysRef == null){
                         transaction.set(postLikesRef, hashMapOf(LIKES to arrayListOf(user)), SetOptions.merge())
                         transaction.update(postRef, LIKES, increment)
                         return@runTransaction
@@ -158,7 +158,7 @@ class PostRepositoryImp @Inject constructor(
                 //TODO: EMIT Result when the transaccion is true
             }.addOnFailureListener {
                 exeption = it
-            }
+            }.await()
             if (exeption != null){
                 throw Exception(exeption)
             }
@@ -187,7 +187,7 @@ class PostRepositoryImp @Inject constructor(
                 //contador de bookmark mayor a -1
                 if (bookmarksCount >= 0){
                     //si no existe crealo
-                    if (!transaction.get(postBookmarksRef).exists()){
+                    if (bookmarkesArraysRef == null){
                         transaction.set(postBookmarksRef, hashMapOf(BOOKMARKS to arrayListOf(user)), SetOptions.merge())
                         transaction.update(postRef, BOOKMARKS, increment)
                         return@runTransaction
@@ -211,7 +211,7 @@ class PostRepositoryImp @Inject constructor(
                 //TODO: EMIT Result when the transaccion is true
             }.addOnFailureListener {
                 exeption = it
-            }
+            }.await()
 
             if (exeption != null){
                 throw Exception(exeption)

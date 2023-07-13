@@ -97,11 +97,11 @@ dependencies {
     // Also add the dependency for the Google Play services library and specify its version
     implementation 'com.google.android.gms:play-services-auth:20.6.0'
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
 
 
     //Corutines
-    def coruotines_version = "1.7.0"
+    def coruotines_version = '1.7.2'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coruotines_version")
 
     // Paging
