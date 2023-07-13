@@ -2,30 +2,47 @@
 
 # Hartarte
 
-**Hartarte** is a food lovers' community that enjoy sharing their culinary traverses!
+**Hartarte** is a _food lovers' community_ that enjoy sharing their culinary traverses!
 
-You can share your favorite recipes or just share your favorite dishes!
+Share your favorite recipes or just post your favorite dishes and react to others' publications!
 
-<h2>**Relevant information:**</h2>
+This is an **Android application** oriented to those people who want to know more about what they love: **food**!
 
-<details><summary> Technologies </summary>
+<h2>Relevant information:</h2>
+
+<details><summary> Technologies: </summary>
 
 * [Kotlin](https://kotlinlang.org/) as the base programming language.
 * [Jetpack Compose](https://developer.android.com/jetpack/compose) for UI design.
 * [Firebase](https://firebase.google.com/) as the database.
-* [Algolia](https://www.algolia.com/) for Firebase query searchs.
+* [Algolia](https://www.algolia.com/) for query searchs in Firebase.
 
-IDE: Android Studio.
+**IDE:** Android Studio.
 
 </details>
 
 <details><summary> Features: </summary>
 
-* Register in our community by email or using a Google account.
+* Register in our community by email or using a Google account
 * Publish your dishes with a maximum of 3 images!
-* Like and save publications, comment them and discover new users in the community.
+* Like and save publications, comment them and discover new users in the community
 * Look for publications with an easy-to-use UI!
 
 </details>
 
-Wanna eat? Download Hartarte!
+<details><summary> Developers: </summary>
+
+* [DarcoProgramador](https://github.com/DarcoProgramador).
+* [TheJosuep](https://github.com/TheJosuep).
+* [today-is-cinthia](https://github.com/today-is-cinthia).
+* [Yender-M](https://github.com/Yender-M).
+
+</details>
+
+<details><summary> Download: </summary>
+
+Not able to be downloaded yet...
+
+</details>
+
+**Wanna eat? Then Hartarte!**
