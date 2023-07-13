@@ -61,7 +61,6 @@ fun SearchScreen(
     statsText: StatsState<String>,
     onPostClick: (String) -> Unit,
     onUserClick: (String) -> Unit,
-    onPostSharedProcess: (PostSharedEvent) -> Unit,
     onReturn: () -> Unit
 ) {
     val listState = rememberLazyListState()
