@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,8 @@ fun SideBar(
     state: UiState,
     switchState: Boolean
 ){
+    val uriHandler = LocalUriHandler.current
+
     ModalDrawerSheet {
         Spacer(Modifier.height(12.dp))
 
@@ -153,7 +156,7 @@ fun SideBar(
         NavigationDrawerItem(
             label = { Text(text = "Sobre la app") },
             selected = false,
-            onClick = { /* TODO: Mostrar ventana de info */ },
+            onClick = { uriHandler.openUri("https://github.com/DarcoProgramador/Hartarte") },
             icon = { Icon(imageVector = Icons.Outlined.Info, contentDescription = "About us") }
         )
 
