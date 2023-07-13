@@ -2,6 +2,7 @@ package com.proyecpg.hartarte.ui.screens.bookmark
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -60,99 +61,102 @@ fun BookmarkScreenContent(
     val postBookmarkState = viewModel.postBookmarkState.collectAsStateWithLifecycle()
 
     if (postBookmarkState.value == null ){
-        return
+        Column(modifier = Modifier.padding(innerPadding)) {
+            ErrorItem()
+        }
     }
+    else{
+        val pagingPosts = postBookmarkState.value!!.collectAsLazyPagingItems()
+        val refresh = pagingPosts.loadState.refresh
+        val append = pagingPosts.loadState.append
 
-    val pagingPosts = postBookmarkState.value!!.collectAsLazyPagingItems()
-    val refresh = pagingPosts.loadState.refresh
-    val append = pagingPosts.loadState.append
+        val state = rememberSwipeRefreshState(
+            isRefreshing = pagingPosts.loadState.refresh is LoadState.Loading
+        )
 
-    val state = rememberSwipeRefreshState(
-        isRefreshing = pagingPosts.loadState.refresh is LoadState.Loading
-    )
+        SwipeRefresh(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            // use the provided LazyPagingItems.refresh() method,
+            // no need for custom solutions
+            onRefresh = { viewModel.updateBookmarkedPosts() }
+        ) {
+            LazyColumn(
+                modifier = Modifier.padding(innerPadding),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                if (pagingPosts.loadState.refresh is LoadState.NotLoading) {
+                    items(items = pagingPosts){ post ->
+                        post?.let{
+                            val postId = it.postId?:""
+                            val username = it.user?.name ?: ""
+                            val userPic =  it.user?.photo ?: ""
+                            val title = it.titulo?:""
+                            val description = it.descripcion?:""
+                            val likeCount = it.likes?.toInt() ?: 0
+                            val liked = stateLiked[postId]?:it.liked?:false
+                            val bookmarked = stateBookmarked[postId]?:it.bookmarked?:false
 
-    SwipeRefresh(
-        modifier = Modifier.fillMaxSize(),
-        state = state,
-        // use the provided LazyPagingItems.refresh() method,
-        // no need for custom solutions
-        onRefresh = { viewModel.updateBookmarkedPosts() }
-    ) {
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            if (pagingPosts.loadState.refresh is LoadState.NotLoading) {
-                items(items = pagingPosts){ post ->
-                    post?.let{
-                        val postId = it.postId?:""
-                        val username = it.user?.name ?: ""
-                        val userPic =  it.user?.photo ?: ""
-                        val title = it.titulo?:""
-                        val description = it.descripcion?:""
-                        val likeCount = it.likes?.toInt() ?: 0
-                        val liked = stateLiked[postId]?:it.liked?:false
-                        val bookmarked = stateBookmarked[postId]?:it.bookmarked?:false
-
-                        it.images?.let { it1 ->
-                            Post(
-                                postId = postId,
-                                images = it1.toList(),
-                                username = username,
-                                userPic = userPic,
-                                title = title,
-                                description = description,
-                                isLiked = liked,
-                                isBookmarked = bookmarked,
-                                likesCount = likeCount,
-                                onLike = { postId : String, like : Boolean ->
-                                    onPostSharedProcess(PostSharedEvent.OnLiked(postId, like))
-                                },
-                                onBookmark = { postId : String, bookmark : Boolean ->
-                                    onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
-                                },
-                                onPostClick = {
-                                    onPostClick(postId)
-                                },
-                                onImageClick = {
-                                    val arrayImages = it1.toTypedArray()
-                                    onImageClick(arrayImages)
-                                },
-                                onUserClick = {
-                                    onUserClick(it.user!!.uid!!)
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-
-            pagingPosts.loadState.apply {
-                when {
-                    refresh is LoadState.Loading -> {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ){
-                                LoadingItem()
+                            it.images?.let { it1 ->
+                                Post(
+                                    postId = postId,
+                                    images = it1.toList(),
+                                    username = username,
+                                    userPic = userPic,
+                                    title = title,
+                                    description = description,
+                                    isLiked = liked,
+                                    isBookmarked = bookmarked,
+                                    likesCount = likeCount,
+                                    onLike = { postId : String, like : Boolean ->
+                                        onPostSharedProcess(PostSharedEvent.OnLiked(postId, like))
+                                    },
+                                    onBookmark = { postId : String, bookmark : Boolean ->
+                                        onPostSharedProcess(PostSharedEvent.OnBookmarked(postId, bookmark))
+                                    },
+                                    onPostClick = {
+                                        onPostClick(postId)
+                                    },
+                                    onImageClick = {
+                                        val arrayImages = it1.toTypedArray()
+                                        onImageClick(arrayImages)
+                                    },
+                                    onUserClick = {
+                                        onUserClick(it.user!!.uid!!)
+                                    }
+                                )
                             }
                         }
                     }
-                    refresh is LoadState.Error -> {
-                        item {
-                            ErrorItem()
+                }
+
+                pagingPosts.loadState.apply {
+                    when {
+                        refresh is LoadState.Loading -> {
+                            item {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ){
+                                    LoadingItem()
+                                }
+                            }
                         }
-                    }
-                    append is LoadState.Loading -> {
-                        item {
-                            LoadingItem()
+                        refresh is LoadState.Error -> {
+                            item {
+                                ErrorItem()
+                            }
                         }
-                    }
-                    append is LoadState.Error -> {
-                        item {
-                            ErrorItem()
+                        append is LoadState.Loading -> {
+                            item {
+                                LoadingItem()
+                            }
+                        }
+                        append is LoadState.Error -> {
+                            item {
+                                ErrorItem()
+                            }
                         }
                     }
                 }
