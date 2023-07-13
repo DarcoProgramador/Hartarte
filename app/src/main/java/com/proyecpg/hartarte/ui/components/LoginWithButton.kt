@@ -62,39 +62,3 @@ fun GoogleLoginButton(
         }
     }
 }
-
-@Composable
-fun FacebookLoginButton(
-    //OnClick
-){
-
-    Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .shadow(5.dp, shape = RoundedCornerShape(20.dp)),
-        shape = RoundedCornerShape(20.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        onClick = {
-            /* TODO: Llamar a la respectiva función OnClick */
-        }
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.img_facebook),
-            contentDescription = stringResource(id = R.string.facebook_logo)
-        )
-
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Text(
-            text = stringResource(id = R.string.facebool_login),
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        )
-    }
-}
